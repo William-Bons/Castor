@@ -8,6 +8,19 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <gui:CastorConsole x:Name="Console"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Background="Transparent" x:Name="CentralMenu"/>
+
+        <gui:CastorConsole Grid.Row="3" MinHeight="120" x:Name="Console" d:Visibility="Visible"/>
+        <StatusBar Grid.Row="4" Padding="0" >
+            <TextBlock Text="DB" Padding="0"/>
+        </StatusBar>
     </Grid>
 </Window>

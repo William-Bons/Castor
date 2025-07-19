@@ -45,5 +45,17 @@ namespace Castor.Properties {
                 return ((string)(this["sqlserverConnection"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int contextValiant {
+            get {
+                return ((int)(this["contextValiant"]));
+            }
+            set {
+                this["contextValiant"] = value;
+            }
+        }
     }
 }

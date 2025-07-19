@@ -13,5 +13,8 @@
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">Data Source=DESKTOP-J9NFCEV;Initial Catalog=deps;Integrated Security=True;Encrypt=False</Value>
     </Setting>
+    <Setting Name="contextValiant" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
