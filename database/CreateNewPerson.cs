@@ -19,7 +19,7 @@ namespace Castor.database
         public CreateNewPerson(CastorCommonContext DatabaseContext)
         {
             db= DatabaseContext;
-            createNew = new CreateNew(Person);
+            createNew = new CreateNew(DatabaseContext, Person);
             createNew.DialogOK += Save;
             
         }

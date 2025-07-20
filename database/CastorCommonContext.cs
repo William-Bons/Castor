@@ -1,4 +1,5 @@
 ﻿using Castor.database.tables;
+using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Castor.database
@@ -7,6 +8,7 @@ namespace Castor.database
     {
         public enum ContextValiant { SQLITE, SQLSERVER, POSTGREE };
         public string[] VariantNames = {"Connected SQLITE Database", "Connected SQLSERVER Database", "Connected POSTGREE Database" };
+
 
         #region TALBES
         /// <summary>
@@ -18,13 +20,26 @@ namespace Castor.database
         public DbSet<Planning> Plannings => Set<Planning>();
         public DbSet<DictPlannings> DictPlannings => Set<DictPlannings>();
         #endregion
+
+        /// <summary>
+        /// Constructor. Checks database to exsists, and creates it if not
+        /// </summary>
         public CastorCommonContext()
         {
             Database.EnsureCreated();
         }
 
+        /// <summary>
+        /// need for console output
+        /// </summary>
         public string Variant => VariantNames[Properties.Settings.Default.contextValiant];
 
+
+        /// <summary>
+        /// Real connecting to database, according Parameter contextVariant
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        /// <exception cref="ArgumentException"></exception>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             switch ((ContextValiant)Properties.Settings.Default.contextValiant)
@@ -41,7 +56,7 @@ namespace Castor.database
                 default:
                     throw new ArgumentException("Propertie `contextValiant` not set correctly");
             }
-            
+            ;
         }
 
         public static CastorCommonContext Get()

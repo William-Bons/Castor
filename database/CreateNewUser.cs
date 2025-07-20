@@ -15,7 +15,7 @@ namespace Castor.database
         public CreateNewUser(CastorCommonContext DatabaseContext)
         {
             db = DatabaseContext;
-            createNew = new CreateNew(User);
+            createNew = new CreateNew(DatabaseContext, User);
             createNew.DialogOK += Save;
             
         }

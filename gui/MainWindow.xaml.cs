@@ -2,6 +2,7 @@
 using Castor.database.tables;
 using Castor.gui;
 using Castor.gui.common;
+using Castor.gui.dialogs;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,15 +18,17 @@ namespace Castor
         {
             InitializeComponent();
             new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
-            Console.Print("connection to database...");
 
             ContentRendered += async (o, e) =>
             {
+                // THIS! Connection program to database
                 await Task.Run(() =>
                 {
-                    DatabaseContext = new CastorCommonContext();
+                    DatabaseContext = CastorCommonContext.Get();
                 });
-                Console.Print("Success");
+
+                // select current user
+                new SelectUser(DatabaseContext).ShowDialog();
             };
         }
 
@@ -37,6 +40,7 @@ namespace Castor
 
                 object activeCreatedObject =
                     _type.GetConstructor([typeof(CastorCommonContext)]) != null ? Activator.CreateInstance(_type, DatabaseContext) :
+                    _type.GetConstructor([typeof(CastorCommonContext),typeof(object)]) != null ? Activator.CreateInstance(_type, DatabaseContext, sender.Tag) :
                     _type.GetConstructor([typeof(int)]) != null ? Activator.CreateInstance(_type, 0/*Tag??*/) :
                     _type.GetConstructor([typeof(string)]) != null ? Activator.CreateInstance(_type, null /*localTag*/) :
                     _type.GetConstructor([typeof(MainWindow)]) != null ? Activator.CreateInstance(_type, this) :
@@ -62,6 +66,7 @@ namespace Castor
                 //{
                 //    frame.Content = activeCreatedObject;
                 //}
+
             }
         }
 

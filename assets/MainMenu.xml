@@ -2,13 +2,13 @@
 
 <Menu Grid.Row="0">
 	<MenuItem Header="База данных">
-		<!--<MenuItem Header="Настройки">
-			<MenuItem Header="Принтеры"  CommandParameter="Animalia.Printing.SystemPrintersSettings"/>
-			<MenuItem Header="Параметры"  CommandParameter="Animalia.AProperties"/>
+		<MenuItem Header="Тесты">
+			<MenuItem Header="Запрос к БД"  CommandParameter="Castor.test.DbTests" Tag="1"/>
+			<!--<MenuItem Header="Параметры"  CommandParameter="Animalia.AProperties"/>
 			<MenuItem Header="Записать Схему"  CommandParameter="Animalia.Commands" Tag="#SaveIntegrity" />
 			<MenuItem Header="Перенос данных масс"  CommandParameter="Animalia.AV.gui.CardMassExport" />
-			<MenuItem Header="Импорт Excel"  CommandParameter="Animalia.AV.import.ImportExcelMain" />
-		</MenuItem>-->
+			<MenuItem Header="Импорт Excel"  CommandParameter="Animalia.AV.import.ImportExcelMain" />-->
+		</MenuItem>
 		<MenuItem Header="Пользователи"  CommandParameter="Castor.database.CreateNewUser" />
 		<MenuItem Header="Новый пациент" CommandParameter="Castor.database.CreateNewPerson"/>
 		<Separator/>

@@ -1,0 +1,60 @@
+﻿<Window x:Class="Castor.gui.dialogs.SelectUser"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Castor.gui.dialogs"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="SelectUser" Height="257" Width="492" x:Name="wnd">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Castor;component/assets/Style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="20" x:Name="GlobalGrid" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Margin="10" Grid.Column="1" x:Name="BaseGrid" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="1" >
+                <TextBlock Text="Имя пользователя" Padding="3"  />
+                <ComboBox  IsEditable="True" ItemsSource="{Binding Users}" DisplayMemberPath="Name" SelectedItem="{Binding LastConnectedUser}" />
+                <TextBlock Text="Пароль" VerticalAlignment="Bottom" Padding="3"/>
+                <PasswordBox x:Name="PasswdBox0"  MinHeight="23" TabIndex="1" />
+            </StackPanel>
+
+            <Separator Grid.Row="3" VerticalAlignment="Bottom"/>
+            <Button Grid.Row="4" Content="Войти" MinWidth="120" HorizontalAlignment="Right" Margin="0,10" Click="ConnectAndRegisterUser"
+            TabIndex="2" IsDefault="True" />
+
+        </Grid>
+
+        <StackPanel Orientation="Vertical">
+            <Button ToolTip="Перечитать пользователей БД" Click="ResetSavedUsers" Style="{DynamicResource TransparentButton}">
+                <Image Source="/img/48/user-icon.png" />
+            </Button>
+            <Button ToolTip="Настройка соединения" Click="SetupAnimaConnectionString" Tag="0" Style="{DynamicResource TransparentButton}">
+                <Image Source="/img/48/internet.png" />
+            </Button>
+
+        </StackPanel>
+
+    </Grid>
+
+</Window>

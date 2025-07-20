@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
@@ -17,7 +18,7 @@ namespace Castor.database.tables
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? SurName { get; set; }
-        public DateTime? Birthday { get; set; }
+        public DateTime? BirthDate { get; set; }
         public byte? Gender { get; set; } = (byte)Genders.NotSet; // 0-not set, 1-male, 2-female
         public string? snils { get; set; }
         public string? Email { get; set; }
@@ -28,7 +29,8 @@ namespace Castor.database.tables
         public string? Address { get; set; }
         [Description("no")] public string? Fias { get; set; }
         public string? Phone { get; set; }
-        public User? UserId { get; set; }
+        public User User { get; set; }
+        [Description("no")] public ICollection<Medcard>? Medcards { get; }
 
     }
 }

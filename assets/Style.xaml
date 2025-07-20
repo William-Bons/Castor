@@ -1,0 +1,385 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style TargetType="TextBlock" x:Key="HelpLineStyle">
+        <Setter Property="Language" Value="RU"/>
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Background" Value="LightYellow" />
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="FontFamily" Value="Arial Narrow"/>
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="JournalHeaderStyle">
+        <Setter Property="Language" Value="RU"/>
+        <Setter Property="FontFamily" Value="Impact"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.GradientInactiveCaptionBrushKey}}"/>
+        <Setter Property="Padding" Value="10"/>
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="PersonPageHeaderStyle">
+        <Setter Property="Language" Value="RU"/>
+        <Setter Property="FontFamily" Value="Arial Narrow"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Background" Value="LightGray"/>
+        <Setter Property="Padding" Value="25,5,10,5"/>
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="RegImageStyle" TargetType="{x:Type Image}">
+        <Setter Property="MaxHeight" Value="28"/>
+        <Setter Property="MaxWidth" Value="28" />
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+    
+    <Style TargetType="Button" x:Key="ButtonStyleGreen">
+        <Setter Property="MinWidth" Value="130" />
+        <Setter Property="Margin" Value="1" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+
+                    <Border BorderBrush="#FF185700" CornerRadius="1" BorderThickness="2" Background="#FFD2F3AA" >
+                        <TextBlock 
+                                Text="{TemplateBinding  Content}" Padding="6"
+                                VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                FontSize="16" FontFamily="Impact" FontStretch="Expanded" Foreground="DarkGreen" />
+
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type DataGridColumnHeader}" x:Key="ColumnHeaderSearch">
+        <Style.Setters>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <WrapPanel Orientation="Horizontal" >
+                            <TextBlock Grid.Column="0" Text="{Binding}" HorizontalAlignment="Left"/>
+                            <Button Grid.Column="1" Background="{x:Null}" BorderBrush="{x:Null}" Margin="10,0"
+                                    ToolTip="Фильтр/Поиск" MaxHeight="20" Command="Search" HorizontalAlignment="Right">
+                                <Image Source="/Animalia;component/img/16/viewmag.png"/>
+                            </Button>
+                        </WrapPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+    </Style>
+
+    <Style TargetType="Button" x:Key="ButtonGray">
+        <Setter Property="BorderBrush" Value="{x:Null}"/>
+        <Setter Property="FontFamily" Value="Arial Narrow"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Margin" Value="3"/>
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FFD4D4D4" Offset="1"/>
+                    <GradientStop Color="#FF979696"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type TextBlock}" x:Key="RegTextBoxStyle" >
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="TextTrimming" Value="None"/>
+        <Setter Property="FontFamily" Value="Arial Narrow" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="2" />
+    </Style>
+    <Style TargetType="Button" x:Key="TransparentButton">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MaxWidth" Value="30" />
+        <Setter Property="MaxHeight" Value="30" />
+        <Setter Property="IsTabStop" Value="False"/>
+    </Style>
+
+    <Style TargetType="Button" x:Key="PatientInfoButton">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="FontFamily" Value="Arial Narrow"/>
+        <Setter Property="MaxWidth" Value="60"/>
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="TextBlockStyle0">
+        <Setter Property="FontFamily" Value="Arial Narrow"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Margin" Value="0,5"/>
+        <Setter Property="Padding" Value="3"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Width" Value="150" />
+    </Style>
+
+    <Style TargetType="TextBox" x:Key="TextBoxStyle0">
+        <Setter Property="Margin" Value="3"/>
+        <Setter Property="FontFamily" Value="Arial Narrow"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="MinHeight" Value="50"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="AcceptsReturn" Value="True"/>
+        <Setter Property="Language" Value="RU" />
+        <Setter Property="SpellCheck.IsEnabled" Value="True"/>
+    </Style>
+
+    <Style TargetType="TextBox" x:Key="PageTextBox">
+        <Setter Property="Margin" Value="3"/>
+        <Setter Property="FontFamily" Value="Arial Narrow"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="AcceptsReturn" Value="True"/>
+        <Setter Property="Language" Value="RU" />
+        <Setter Property="Padding" Value="2" />
+
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)/ErrorContent}"/>
+            </Trigger>
+        </Style.Triggers>
+
+    </Style>
+
+    <ControlTemplate x:Key="validationTemplate">
+        <DockPanel>
+            <TextBlock Foreground="Red" FontSize="18" FontFamily="Impact">! </TextBlock>
+            <AdornedElementPlaceholder/>
+        </DockPanel>
+    </ControlTemplate>
+
+    <Style TargetType="Button" x:Key="GuiButton0">
+        <Setter Property="MinWidth" Value="130" />
+        <Setter Property="Margin" Value="1" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+
+                    <Border BorderBrush="#FF0A28AE" CornerRadius="3" BorderThickness="2" >
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                                <GradientStop Color="#FF939393" Offset="0.996"/>
+                                <GradientStop Color="White"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+
+                        <Label 
+                                Content="{TemplateBinding  Content}" 
+                                TextBlock.Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                FontSize="16" FontFamily="Tahoma" FontWeight="Bold" Foreground="#FF08005B" />
+
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="GuiButtonX">
+        <Setter Property="MinWidth" Value="130" />
+        <Setter Property="Margin" Value="1" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border BorderBrush="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" BorderThickness="3" 
+                            Background="White" CornerRadius="3" >
+                        <Label 
+                                Content="{TemplateBinding  Content}" 
+                                FontFamily="Impact" FontSize="18" HorizontalContentAlignment="Center" Padding="5"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="GuiButton1">
+        <Setter Property="MinWidth" Value="130" />
+        <Setter Property="Margin" Value="1" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border BorderBrush="DarkBlue" BorderThickness="1" Background="White" CornerRadius="1" >
+                        <Label 
+                                Content="{TemplateBinding  Content}" 
+                                FontFamily="Arial" FontSize="15" HorizontalContentAlignment="Right" Padding="3" Foreground="DarkBlue" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="GuiButton2">
+        <Setter Property="MinWidth" Value="130" />
+        <Setter Property="Margin" Value="1" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border BorderBrush="#FF60A200" BorderThickness="3" Background="White" CornerRadius="3" >
+                        <Label 
+                                Content="{TemplateBinding  Content}" 
+                                FontFamily="Arial" FontSize="18" HorizontalContentAlignment="Left" Padding="5" Foreground="#FF4A7E00" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="styleCalendar" TargetType="{x:Type Calendar}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Calendar}">
+                    <Viewbox Height="250" Width="250">
+                        <CalendarItem x:Name="PART_CalendarItem"
+                                  Background="{TemplateBinding Background}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}"/>
+                    </Viewbox>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+     <!--календарь с кнопкой сегодня--> 
+    <Style x:Key="DefaultCalendar" TargetType="Calendar">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Calendar}">
+                    <StackPanel HorizontalAlignment="Center" Name="PART_Root">
+                        <CalendarItem Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" Name="PART_CalendarItem" Style="{TemplateBinding Calendar.CalendarItemStyle}" />
+                        <!--<Button Content="Today" Command="sqlsystem:CommonCommands.SelectToday" />-->
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    
+     <!--Талоны на прием СТИЛЬ  квадрат -->
+    <!--ReceptBusyToColorConverter must be in resources inparent xaml-->
+    <DataTemplate x:Key="ListTemplate0">
+        <Border ToolTip="{Binding Person}" Margin="5" BorderThickness="2" 
+                BorderBrush="{Binding Busy, Converter={StaticResource ReceptBusyToColorConverter}}" 
+                CornerRadius="2" Width="100" Height="150">
+            <Grid Margin="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock FontFamily="Impact" FontSize="30" TextAlignment="Center" 
+                                        Foreground="{Binding Busy, Converter={StaticResource ReceptBusyToColorConverter}}">
+                    <Run Text="{Binding Time.Hours, Mode=OneWay, StringFormat=\{0:D2\}}"/>
+                    <Run Text=":"/>
+                    <Run Text="{Binding Time.Minutes, Mode=OneWay, StringFormat=\{0:D2\}}"/>
+                </TextBlock>
+
+                <TextBlock Grid.Row="1" Text="{Binding Date, StringFormat=\{0:d\}}" FontSize="15" TextAlignment="Center" Padding="0,5"/>
+                <TextBlock Grid.Row="2" Text="{Binding Number, StringFormat=№\{0:D2\}, Mode=OneWay}" FontSize="15" TextAlignment="Left" Padding="5"/>
+                <TextBlock Grid.Row="3" Text="{Binding Person}" HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="9" Padding="5"
+                                        Foreground="{Binding Busy, Converter={StaticResource ReceptBusyToColorConverter}}"
+                                        Visibility="{Binding Busy, Converter={StaticResource ObjectToVisibilityConverter}}"  />
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <!--Талоны на прием СТИЛЬ списка-->
+    <DataTemplate x:Key="ListTemplate1">
+        <StackPanel Orientation="Horizontal">
+            <Image Source="/guipanem;component/img/ticket-icon.png" MaxHeight="30" Margin="2"/>
+            <StackPanel Orientation="Vertical">
+                <TextBlock FontWeight="Bold"  TextAlignment="Center" 
+                                    Foreground="{Binding Busy, Converter={StaticResource ReceptBusyToColorConverter}}">
+                                <Run Text="{Binding TimeOfDay, StringFormat=\{0:t\}, Mode=OneWay}" FontSize="23"/>
+                                <Run Text="  "/>
+                                <Run Text="{Binding DateTime, StringFormat=\{0:d\}, Mode=OneWay}" FontSize="10"/>
+                </TextBlock>
+
+                <Separator/>
+                <TextBlock Grid.Row="2" Text="{Binding Person}" HorizontalAlignment="Center" FontSize="12"
+                                    Foreground="{Binding Busy, Converter={StaticResource ReceptBusyToColorConverter}}"
+                                    Visibility="{Binding Busy, Converter={StaticResource BooleanToVisibilityConverter}}"  />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <ItemsPanelTemplate x:Key="PanelTemplate0">
+        <WrapPanel IsItemsHost="True" Orientation="Horizontal" ScrollViewer.VerticalScrollBarVisibility="Visible" />
+    </ItemsPanelTemplate>
+
+    <ItemsPanelTemplate x:Key="PanelTemplate1">
+        <WrapPanel IsItemsHost="True" Orientation="Vertical" ScrollViewer.VerticalScrollBarVisibility="Disabled" />
+    </ItemsPanelTemplate>
+
+    <Style x:Key="ToolbarEnablerStyle" TargetType="{x:Type Button}">
+        <Setter Property="MaxHeight" Value="35"/>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.4"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="ToolBarMainPanelBorderStyle" TargetType="{x:Type Border}">
+        <Setter Property="CornerRadius" Value="1"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="true">
+                <Setter Property="CornerRadius" Value="0,0,0,0"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="ToolBarStyle1" TargetType="{x:Type ToolBar}">
+        <Setter Property="Background" Value="LightGray"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToolBar}">
+                    <Grid x:Name="Grid" SnapsToDevicePixels="true">
+                        <Border x:Name="MainPanelBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Style="{StaticResource ToolBarMainPanelBorderStyle}">
+                            <DockPanel KeyboardNavigation.TabIndex="1" KeyboardNavigation.TabNavigation="Local">
+                                <ContentPresenter x:Name="ToolBarHeader" ContentSource="Header" HorizontalAlignment="Center" Margin="4,0,4,0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+                                <ToolBarPanel x:Name="PART_ToolBarPanel" IsItemsHost="true" Margin="3,1,2,2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </DockPanel>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Header" Value="{x:Null}">
+                            <Setter Property="Visibility" TargetName="ToolBarHeader" Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="Orientation" Value="Vertical">
+                            <Setter Property="Margin" TargetName="Grid" Value="1,3,1,1"/>
+                            <Setter Property="Margin" TargetName="ToolBarHeader" Value="0,0,0,4"/>
+                            <Setter Property="Margin" TargetName="PART_ToolBarPanel" Value="1,0,2,2"/>
+                            <Setter Property="DockPanel.Dock" TargetName="ToolBarHeader" Value="Top"/>
+                            <Setter Property="Margin" TargetName="MainPanelBorder" Value="0,0,0,11"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="true">
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>
