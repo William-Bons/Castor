@@ -2,9 +2,9 @@
 using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
 
-namespace Castor.database
+namespace Castor.database.tab_medis
 {
-    public class CastorCommonContext : DbContext
+    public class MedisContext : DbContext
     {
         public enum ContextVariant { SQLITE, SQLSERVER, POSTGREE };
         public string[] VariantNames = {"Connected SQLITE Database", "Connected SQLSERVER Database", "Connected POSTGREE Database" };
@@ -14,26 +14,19 @@ namespace Castor.database
         /// <summary>
         /// Tables in database
         /// </summary>
-        public DbSet<User> Users => Set<User>();
-        public DbSet<Person> Persons => Set<Person>();
-        public DbSet<Medcard> MedCards => Set<Medcard>();
-        public DbSet<Planning> Plannings => Set<Planning>();
-        public DbSet<DictPlannings> DictPlannings => Set<DictPlannings>();
+        public DbSet<patserv> patserv => Set<patserv>();
+        public DbSet<patient> patient => Set<patient>();
+        public DbSet<visit> visit => Set<visit>();
+        public DbSet<dep> dep => Set<dep>();
         #endregion
 
         /// <summary>
         /// Constructor. Checks database to exsists, and creates it if not
         /// </summary>
-        public CastorCommonContext()
+        public MedisContext()
         {
-            _contextVariant = (ContextVariant)Properties.Settings.Default.contextValiant;
+            _contextVariant = ContextVariant.POSTGREE;
             //Database.EnsureCreated();
-        }
-
-        public CastorCommonContext(ContextVariant variant)
-        {
-            _contextVariant = variant;
-
         }
 
         /// <summary>
@@ -58,19 +51,12 @@ namespace Castor.database
                     optionsBuilder.UseSqlServer(Properties.Settings.Default.sqlserverConnection);
                     break;
                 case ContextVariant.POSTGREE:
-                    optionsBuilder.UseNpgsql("Host=172.23.1.220;Port=5433;Database=med;Username=SOLUTION_MED;Password=elsoft");
+                    optionsBuilder.UseNpgsql("Host=172.23.1.220;Port=5432;Database=med;Username=SOLUTION_MED;Password=elsoft");
                     break;
                 default:
                     throw new ArgumentException("Propertie `contextValiant` not set correctly");
             }
             ;
         }
-
-        public static CastorCommonContext Get()
-        {
-            return new CastorCommonContext();
-        }
-
-        
     }
 }

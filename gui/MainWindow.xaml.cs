@@ -1,8 +1,10 @@
 ﻿using Castor.database;
+using Castor.database.tab_medis;
 using Castor.database.tables;
 using Castor.gui;
 using Castor.gui.common;
 using Castor.gui.dialogs;
+using Castor.test;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -26,6 +28,8 @@ namespace Castor
                 {
                     DatabaseContext = CastorCommonContext.Get();
                 });
+
+                new DbTests(null, 3);
 
                 // select current user
                 new SelectUser(DatabaseContext).ShowDialog();
