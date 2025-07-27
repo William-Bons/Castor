@@ -1,12 +1,11 @@
 ﻿using Castor.database;
-using Castor.database.tab_medis;
 using Castor.database.tables;
 using Castor.gui;
 using Castor.gui.common;
 using Castor.gui.dialogs;
-using Castor.test;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Castor
 {
@@ -15,7 +14,7 @@ namespace Castor
     /// </summary>
     public partial class MainWindow : Window
     {
-        private CastorCommonContext DatabaseContext;
+        private CastorCommonContext? DatabaseContext;
         public MainWindow()
         {
             InitializeComponent();
@@ -23,96 +22,52 @@ namespace Castor
 
             ContentRendered += async (o, e) =>
             {
+                Cursor = Cursors.Wait;
+
                 // THIS! Connection program to database
                 await Task.Run(() =>
                 {
                     DatabaseContext = CastorCommonContext.Get();
                 });
+                Console.Print($"conncted: {DatabaseContext.Variant}");
 
-                new DbTests(null, 3);
+                // load Kurwa
+                MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.Kurwa" });
 
                 // select current user
-                new SelectUser(DatabaseContext).ShowDialog();
+                MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.gui.dialogs.SelectUser" });
+
+                Cursor = Cursors.Arrow;
             };
         }
 
-        private void MainWindow_MenuItemRise(MenuItem sender)
+        private void MainWindow_MenuItemRise(CastorMenuItem _castorMenuItem)
         {
-            if (sender?.CommandParameter is string _classType &&    // check CommandParameter is string
-                Type.GetType(_classType) is Type _type)             // try get Type from string
+
+            if (_castorMenuItem?.ClassName is string _className &&    // check CommandParameter is string
+                Type.GetType(_className) is Type _class)             // try get Type from string
             {
 
-                object activeCreatedObject =
-                    _type.GetConstructor([typeof(CastorCommonContext)]) != null ? Activator.CreateInstance(_type, DatabaseContext) :
-                    _type.GetConstructor([typeof(CastorCommonContext),typeof(object)]) != null ? Activator.CreateInstance(_type, DatabaseContext, sender.Tag) :
-                    _type.GetConstructor([typeof(int)]) != null ? Activator.CreateInstance(_type, 0/*Tag??*/) :
-                    _type.GetConstructor([typeof(string)]) != null ? Activator.CreateInstance(_type, null /*localTag*/) :
-                    _type.GetConstructor([typeof(MainWindow)]) != null ? Activator.CreateInstance(_type, this) :
-                    Activator.CreateInstance(_type);
+                object? activeCreatedObject =
+                    _class.GetConstructor([typeof(CastorCommonContext)]) != null ? Activator.CreateInstance(_class, DatabaseContext) :
+                    _class.GetConstructor([typeof(CastorCommonContext), typeof(object)]) != null ? Activator.CreateInstance(_class, DatabaseContext, _castorMenuItem.Parameter) :
+                    _class.GetConstructor([typeof(MainWindow)]) != null ? Activator.CreateInstance(_class, this) :
+                    Activator.CreateInstance(_class);
 
-                if (activeCreatedObject is IConsoleMessage obj)
-                {
-                    obj.ConsoleMessage += (message) => Console.Print($"{message}");
-                }
-
-                if (activeCreatedObject is IDialog dlg)
-                {
-                    dlg.Show();
-                }
-
-
-
-                if (activeCreatedObject is Window _aw)
-                {
-                    _aw.ShowDialog();
-                }
-                //else if (activeCreatedObject is Page)
-                //{
-                //    frame.Content = activeCreatedObject;
-                //}
-
+                if (activeCreatedObject is IConsoleMessage obj) obj.ConsoleMessage += (message) => Console.Print($"{message}");
+                if (activeCreatedObject is IRun _objectIRun) _objectIRun.Run();
+                if (activeCreatedObject is IDialog _objectDialog) _objectDialog.Show();
+                if (activeCreatedObject is Page) CentralFrame.Content = activeCreatedObject;
+                if (activeCreatedObject is ISwithPage swp) swp.SwitchPage += SwitchFramePage;
             }
         }
 
-        private void OpenDb()
+        private void SwitchFramePage(string className, object param)
         {
-            using (CastorCommonContext db = CastorCommonContext.Get())
-            {
-                //Console.Print(db.Variant);
-
-                // создаем два объекта User
-                //User tom = new User { Name = "Tom", Department = 6 };
-                //User alice = new User { Name = "Alice", Department = 12 };
-
-                //// добавляем их в бд
-                //db.Users.Add(tom);
-                //db.Users.Add(alice);
-                //db.SaveChanges();
-                //Console.Print("Объекты успешно сохранены");
-
-                Medcard m1 = new Medcard { Department = 6, User = new User { Name = "Irma", Department = 12, Rights = 100 }, Person = new Person { FirstName = "Kukukina" } };
-                db.MedCards.Add(m1);
-
-                Person p1 = new Person { FirstName = "Romanik", Age = 23 };
-                db.Persons.Add(p1);
-
-                Person p2 = new Person { FirstName = "Sologk", Age = 34 };
-                db.Persons.Add(p2);
-
-                Person p3 = new Person { FirstName = "Ffeowse", Age = 12 };
-                db.Persons.Add(p3);
-
-                db.SaveChanges();
-
-                // получаем объекты из бд и выводим на консоль
-                //var users = db.MedCards.ToList();
-                //Console.Print("Список объектов:");
-                //foreach (Medcard u in users)
-                //{
-                //    Console.Print($"{u.Id}.{u.User} - {u.Person}");
-                //}
-            }
+            MainWindow_MenuItemRise(new CastorMenuItem() { ClassName=className, Parameter=param });
         }
+
+
 
 
     }

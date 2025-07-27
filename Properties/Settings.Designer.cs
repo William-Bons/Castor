@@ -57,5 +57,29 @@ namespace Castor.Properties {
                 this["contextValiant"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public long LastConnectedUserId {
+            get {
+                return ((long)(this["LastConnectedUserId"]));
+            }
+            set {
+                this["LastConnectedUserId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public long LastSelectedDep {
+            get {
+                return ((long)(this["LastSelectedDep"]));
+            }
+            set {
+                this["LastSelectedDep"] = value;
+            }
+        }
     }
 }

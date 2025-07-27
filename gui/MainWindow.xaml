@@ -19,6 +19,8 @@
 
         <Menu Grid.Row="0" Background="Transparent" x:Name="CentralMenu"/>
 
+        <Frame Grid.Row="2" x:Name="CentralFrame" Visibility="Visible" NavigationUIVisibility="Hidden"/>
+
         <gui:CastorConsole Grid.Row="3" MinHeight="120" x:Name="Console" d:Visibility="Visible"/>
         <StatusBar Grid.Row="4" Padding="0" >
             <TextBlock Text="DB" Padding="0"/>

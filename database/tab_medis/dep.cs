@@ -212,5 +212,6 @@ public partial class dep
     /// </summary>
     public long? nsi_id { get; set; }
 
-    public virtual ICollection<visit> Visits { get; set; }
+    public virtual ICollection<visit>? Visits { get; set; }
+    public virtual ICollection<docdep>? Docdeps { get; set; }
 }

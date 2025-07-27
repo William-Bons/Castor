@@ -78,12 +78,7 @@ namespace Castor.gui
 
         public object Get(CastorCommonContext Db, string TableName)
         {
-            if (TableName == "Users")
-                return Db.Users;
-            else if (TableName == "DictPlannings")
-                return Db.DictPlannings;
-            else
-                return null;
+            return null;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Castor.database.tables;
+using Castor.gui;
 using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,9 +15,6 @@ namespace Castor.database
         /// <summary>
         /// Tables in database
         /// </summary>
-        public DbSet<User> Users => Set<User>();
-        public DbSet<Person> Persons => Set<Person>();
-        public DbSet<Medcard> MedCards => Set<Medcard>();
         public DbSet<Planning> Plannings => Set<Planning>();
         public DbSet<DictPlannings> DictPlannings => Set<DictPlannings>();
         #endregion
@@ -24,10 +22,20 @@ namespace Castor.database
         /// <summary>
         /// Constructor. Checks database to exsists, and creates it if not
         /// </summary>
-        public CastorCommonContext()
+        private CastorCommonContext()
         {
             _contextVariant = (ContextVariant)Properties.Settings.Default.contextValiant;
-            //Database.EnsureCreated();
+            if(!Database.CanConnect())
+            {
+                Database.EnsureCreated();
+
+                DictPlannings.Add(new DictPlannings() { docdepid = 0, description = "ЭЛН", isprivate = true, period = 15 });
+                DictPlannings.Add(new DictPlannings() { docdepid = 0, description = "НГ", isprivate = true, period = 30 });
+                DictPlannings.Add(new DictPlannings() { docdepid = 0, description = "НГ СУД", isprivate = true, period = 180 });
+
+                SaveChanges();
+            }
+            
         }
 
         public CastorCommonContext(ContextVariant variant)

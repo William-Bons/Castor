@@ -324,4 +324,5 @@ public partial class visit
     public virtual visit? root { get; set; }
     public virtual patient? Patient { get; set; }
     public virtual dep? Dep { get; set; }
+    public virtual docdep? Doctor { get; set; }
 }

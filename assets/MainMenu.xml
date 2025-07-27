@@ -1,44 +1,47 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
+<!--ClassName = Class Type name-->
+<!--ClassName Parameter = string: parameter to constructor-->
+
 <Menu Grid.Row="0">
 	<MenuItem Header="База данных">
 		<MenuItem Header="Тесты">
-			<MenuItem Header="Запрос к БД"  CommandParameter="Castor.test.DbTests" Tag="1"/>
-			<!--<MenuItem Header="Параметры"  CommandParameter="Animalia.AProperties"/>
-			<MenuItem Header="Записать Схему"  CommandParameter="Animalia.Commands" Tag="#SaveIntegrity" />
-			<MenuItem Header="Перенос данных масс"  CommandParameter="Animalia.AV.gui.CardMassExport" />
-			<MenuItem Header="Импорт Excel"  CommandParameter="Animalia.AV.import.ImportExcelMain" />-->
+			<MenuItem Header="Запрос к БД"  ClassName="Castor.test.DbTests" Parameter ="TTestSelectTable1" />
 		</MenuItem>
-		<MenuItem Header="Пользователи"  CommandParameter="Castor.database.CreateNewUser" />
-		<MenuItem Header="Новый пациент" CommandParameter="Castor.database.CreateNewPerson"/>
+		<MenuItem Header="Пользователи"  ClassName="Castor.database.CreateNewUser" />
+		<MenuItem Header="Новый пациент" ClassName="Castor.gui.pages.LoadPatientsFromMedis"/>
 		<Separator/>
-		<MenuItem Header="Console"  CommandParameter="Animalia.Commands" Tag="#ShowConsole" />
+		<MenuItem Header="Console"   />
 	</MenuItem>
 	<MenuItem Header="Пациент" >
-		<MenuItem Header="Новый"  CommandParameter="Animalia.Persons.PersonInfo" Tag="-1"/>
-		<MenuItem Header="Открыть по номеру карты" Command="local:CommonCommands.BarCode" CommandParameter="B" InputGestureText="F3"/>
-		<MenuItem Header="Открыть последнего" Command="local:CommonCommands.Open" CommandParameter="O" InputGestureText="F2"/>
+		<MenuItem Header="Новый"  ClassName="Animalia.Persons.PersonInfo" Parameter="-1"/>
+		<MenuItem Header="Открыть по номеру карты" ClassName="local:CommonCommands.BarCode" Parameter="B" InputGestureText="F3"/>
+		<MenuItem Header="Открыть последнего" ClassName="local:CommonCommands.Open" Parameter="O" InputGestureText="F2"/>
 	</MenuItem>
 
 	<MenuItem Header="Журналы">
-		<MenuItem Header="Журнал ВК"  CommandParameter="Animalia.CommityJournal" />
-		<MenuItem Header="Журнал операций"  CommandParameter="Animalia.ActionsJournal"/>
-		<MenuItem Header="Журнал рецептов"  CommandParameter="Animalia.ReceptsJournal"/>
-		<MenuItem Header="Журнал записей"   CommandParameter="Animalia.RecordsJournal" />
-		<MenuItem Header="Журнал госпитализаций"   CommandParameter="Animalia.HospitalsJournal" />
-		<MenuItem Header="Перекидка"   CommandParameter="Animalia.Pages.CycleControl" />
-		<MenuItem Header="Карты"  CommandParameter="Animalia.Reestr.CardsReestr" />
+		<MenuItem Header="Журнал ВК"  ClassName="Animalia.CommityJournal" />
+		<MenuItem Header="Журнал операций"  ClassName="Animalia.ActionsJournal"/>
+		<MenuItem Header="Журнал рецептов"  ClassName="Animalia.ReceptsJournal"/>
+		<MenuItem Header="Журнал записей"   ClassName="Animalia.RecordsJournal" />
+		<MenuItem Header="Журнал госпитализаций"   ClassName="Animalia.HospitalsJournal" />
+		<MenuItem Header="Перекидка"   ClassName="Animalia.Pages.CycleControl" />
+		<MenuItem Header="Карты"  ClassName="Animalia.Reestr.CardsReestr" />
 	</MenuItem>
 	<MenuItem Header="Контракты">
-		<MenuItem Header="Добавить контракт"  CommandParameter="Animalia.AppendContractDialog"/>
+		<MenuItem Header="Добавить контракт"  ClassName="Animalia.AppendContractDialog"/>
 	</MenuItem>
-	<MenuItem Header="Сменить пользователя"  CommandParameter="Animalia.Commands" Tag="#NewUser" />
-	<MenuItem Header="Наша Марка"  CommandParameter="Anstatistic.Statforma, Anstatistic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-	<MenuItem Header="NewMedCommPage"  CommandParameter="Animalia.Vk.NewMedCommPage" />
-	<MenuItem Header="MedcommReestr"  CommandParameter="Animalia.Reestr.MedcommReestr" />
-	<MenuItem Header="PayedTicketPage"  CommandParameter="Animalia.Ticket.PayedTicketPage" />
-	<MenuItem Header="SemdReestr"  CommandParameter="Animalia.Reestr.SemdReestr" />
-	<MenuItem Header="Avicenna"  CommandParameter="Animalia.AV.gui.AvicennaUserWork" />
-	<MenuItem Header="Avicenna2"  CommandParameter="Animalia.AV.gui.AddresToMDBSConverter" />
-	<MenuItem Header="Avicenna4"  CommandParameter="Animalia.AV.import.Consistence" />
+	
+	<MenuItem Header="Misk">
+		<MenuItem Header="Сменить пользователя"  ClassName="Animalia.Commands" Parameter="#NewUser" />
+		<MenuItem Header="Наша Марка"  ClassName="Anstatistic.Statforma, Anstatistic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		<MenuItem Header="NewMedCommPage"  ClassName="Animalia.Vk.NewMedCommPage" />
+		<MenuItem Header="MedcommReestr"  ClassName="Animalia.Reestr.MedcommReestr" />
+		<MenuItem Header="PayedTicketPage"  ClassName="Animalia.Ticket.PayedTicketPage" />
+		<MenuItem Header="SemdReestr"  ClassName="Animalia.Reestr.SemdReestr" />
+		<MenuItem Header="Avicenna"  ClassName="Animalia.AV.gui.AvicennaUserWork" />
+		<MenuItem Header="Avicenna2"  ClassName="Animalia.AV.gui.AddresToMDBSConverter" />
+		<MenuItem Header="Avicenna4"  ClassName="Animalia.AV.import.Consistence" />
+	</MenuItem>
+
 </Menu>

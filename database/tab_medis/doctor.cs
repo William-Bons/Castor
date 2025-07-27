@@ -200,4 +200,5 @@ public partial class doctor
     /// </summary>
     public long? mo_id { get; set; }
 
+    public virtual ICollection<visit>? Visits { get; set; } 
 }

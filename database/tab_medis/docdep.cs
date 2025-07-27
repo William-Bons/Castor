@@ -166,4 +166,6 @@ public partial class docdep
     /// </summary>
     public short? pat_age_to { get; set; }
 
+    public virtual ICollection<visit>? Visits { get; set; }
+
 }

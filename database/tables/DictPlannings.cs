@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace Castor.database.tables
 {
+    [Serializable]
     public class DictPlannings
     {
-        public int Id { get; set; }
-        public string Description { get; set; } = string.Empty;
-        public int? UserId { get; set; }
-        public bool Private { get; set; } = true;
+        [Key] public int keyid { get; set; }
+        public string description { get; set; } = string.Empty;
+        public long? docdepid { get; set; }
+        public bool isprivate { get; set; } = true;
+        public int period { get; set; }
+
+        
     }
 }

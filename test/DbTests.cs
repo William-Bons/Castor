@@ -2,45 +2,45 @@
 using Castor.database.tab_medis;
 using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Castor.test
 {
-    public class DbTests : IConsoleMessage
+
+    public class DbTests : IConsoleMessage, IRun
     {
+        private object TestNo = null;
         private CastorCommonContext Db;
         public event ConsoleMessageHandler ConsoleMessage;
 
-        public DbTests(CastorCommonContext db, object testNo) 
+
+        public DbTests(CastorCommonContext db, object testNo)
         {
-            Db=db;
-            switch (testNo)
+            Db = db;
+            TestNo = testNo;
+        }
+
+        public void Run()
+        {
+            MethodInfo methodInfo = typeof(DbTests).GetMethod(TestNo.ToString());
+            methodInfo?.Invoke(this, null);
+        }
+
+
+        public async Task TTestSelectTable1()
+        {
+            ConsoleMessage?.Invoke("running Test selectTable");
+            Func<Task> asyncLambda = async () =>
             {
-                case 1:
-                    _ = TTestSelectTable1();
-                    break;
-                case 2:
-                    _ = TTestSelectTable2();
-                    break;
-                case 3:
-                    _ = TTestSelectTable3();
-                    break;
-            }
+                var plann = await Db.DictPlannings.ToListAsync();
+                ConsoleMessage?.Invoke($"Gets {plann.Count} plannings");
+                foreach (var user in plann)
+                    ConsoleMessage?.Invoke($"{user.keyid}\t\t => {user.description}");
+            };
+            await asyncLambda();
         }
 
-        
-
-        private async Task TTestSelectTable1()
-        {
-            var users = await Db.Users.ToListAsync();
-            ;
-        }
-
-        private async Task TTestSelectTable2()
+        public async Task TTestSelectTable2()
         {
             await Task.Run(() =>
             {
@@ -58,11 +58,11 @@ namespace Castor.test
             });
         }
 
-        private async Task TTestSelectTable3()
+        public async Task TTestSelectTable3()
         {
             await Task.Run(() =>
             {
-                using(MedisContext cc = new MedisContext())
+                using (MedisContext cc = new MedisContext())
                 {
                     //var req = cc.patient
                     //    .Where(pat => pat.keyid == 2315389)
@@ -72,7 +72,7 @@ namespace Castor.test
                     //;
 
                     var qwe = cc.dep
-                        .Where(d => d.keyid==2704)
+                        .Where(d => d.keyid == 2704)
                         .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
                         .ThenInclude(v => v.Patient)
                         .ToList();
@@ -80,5 +80,7 @@ namespace Castor.test
                 }
             });
         }
+
+
     }
 }

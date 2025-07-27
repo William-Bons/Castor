@@ -27,14 +27,18 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition />
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="1" >
+                <TextBlock Text="Отделение" Padding="3"  />
+                <ComboBox  IsEditable="True" ItemsSource="{Binding Departments}" DisplayMemberPath="text" SelectedItem="{Binding SelectedDepartment}" />
                 <TextBlock Text="Имя пользователя" Padding="3"  />
-                <ComboBox  IsEditable="True" ItemsSource="{Binding Users}" DisplayMemberPath="Name" SelectedItem="{Binding LastConnectedUser}" />
+                <ComboBox  IsEditable="True" ItemsSource="{Binding Users}" DisplayMemberPath="text" SelectedItem="{Binding LastConnectedUser}" />
                 <TextBlock Text="Пароль" VerticalAlignment="Bottom" Padding="3"/>
                 <PasswordBox x:Name="PasswdBox0"  MinHeight="23" TabIndex="1" />
             </StackPanel>
@@ -44,17 +48,6 @@
             TabIndex="2" IsDefault="True" />
 
         </Grid>
-
-        <StackPanel Orientation="Vertical">
-            <Button ToolTip="Перечитать пользователей БД" Click="ResetSavedUsers" Style="{DynamicResource TransparentButton}">
-                <Image Source="/img/48/user-icon.png" />
-            </Button>
-            <Button ToolTip="Настройка соединения" Click="SetupAnimaConnectionString" Tag="0" Style="{DynamicResource TransparentButton}">
-                <Image Source="/img/48/internet.png" />
-            </Button>
-
-        </StackPanel>
-
     </Grid>
 
 </Window>
