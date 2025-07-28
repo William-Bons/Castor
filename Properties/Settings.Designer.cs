@@ -25,7 +25,7 @@ namespace Castor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=Z:/castor/departments.db")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=departments.db")]
         public string sqliteConnection {
             get {
                 return ((string)(this["sqliteConnection"]));
@@ -48,7 +48,7 @@ namespace Castor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int contextValiant {
             get {
                 return ((int)(this["contextValiant"]));

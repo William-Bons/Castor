@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="sqliteConnection" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data Source=Z:/castor/departments.db</Value>
+      <Value Profile="(Default)">Data Source=departments.db</Value>
     </Setting>
     <Setting Name="sqlserverConnection" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
@@ -14,7 +14,7 @@
       <Value Profile="(Default)">Data Source=DESKTOP-J9NFCEV;Initial Catalog=deps;Integrated Security=True;Encrypt=False</Value>
     </Setting>
     <Setting Name="contextValiant" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="LastConnectedUserId" Type="System.Int64" Scope="User">
       <Value Profile="(Default)">0</Value>
