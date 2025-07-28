@@ -13,7 +13,7 @@ namespace Castor.gui.dialogs
     {
         public delegate void DialogOKHandler();
         public event DialogOKHandler DialogOK;
-        public CreateNew(CastorCommonContext Db, MetaTable TableObject)
+        public CreateNew(CastorContext Db, MetaTable TableObject)
         {
             InitializeComponent();
             DataContext = this;

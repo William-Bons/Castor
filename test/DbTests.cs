@@ -10,11 +10,11 @@ namespace Castor.test
     public class DbTests : IConsoleMessage, IRun
     {
         private object TestNo = null;
-        private CastorCommonContext Db;
+        private CastorContext Db;
         public event ConsoleMessageHandler ConsoleMessage;
 
 
-        public DbTests(CastorCommonContext db, object testNo)
+        public DbTests(CastorContext db, object testNo)
         {
             Db = db;
             TestNo = testNo;

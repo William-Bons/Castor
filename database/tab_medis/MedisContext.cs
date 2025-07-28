@@ -51,7 +51,7 @@ namespace Castor.database.tab_medis
                     optionsBuilder.UseSqlServer(Properties.Settings.Default.sqlserverConnection);
                     break;
                 case ContextVariant.POSTGREE:
-                    optionsBuilder.UseNpgsql("Host=172.23.1.220;Port=5432;Database=med;Username=SOLUTION_MED;Password=elsoft");
+                    optionsBuilder.UseNpgsql(Properties.Settings.Default.postgreeConnection);
                     break;
                 default:
                     throw new ArgumentException("Propertie `contextValiant` not set correctly");

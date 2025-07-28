@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Castor.database
 {
-    public class CastorCommonContext : DbContext
+    public class CastorContext : DbContext
     {
         public enum ContextVariant { SQLITE, SQLSERVER, POSTGREE };
         public string[] VariantNames = {"Connected SQLITE Database", "Connected SQLSERVER Database", "Connected POSTGREE Database" };
@@ -15,30 +15,30 @@ namespace Castor.database
         /// <summary>
         /// Tables in database
         /// </summary>
-        public DbSet<Planning> Plannings => Set<Planning>();
-        public DbSet<DictPlannings> DictPlannings => Set<DictPlannings>();
+        public DbSet<planning> Plannings => Set<planning>();
+        public DbSet<dictionary> DictPlannings => Set<dictionary>();
         #endregion
 
         /// <summary>
         /// Constructor. Checks database to exsists, and creates it if not
         /// </summary>
-        private CastorCommonContext()
+        private CastorContext()
         {
             _contextVariant = (ContextVariant)Properties.Settings.Default.contextValiant;
             if(!Database.CanConnect())
             {
                 Database.EnsureCreated();
 
-                DictPlannings.Add(new DictPlannings() { docdepid = 0, description = "ЭЛН", isprivate = true, period = 15 });
-                DictPlannings.Add(new DictPlannings() { docdepid = 0, description = "НГ", isprivate = true, period = 30 });
-                DictPlannings.Add(new DictPlannings() { docdepid = 0, description = "НГ СУД", isprivate = true, period = 180 });
+                DictPlannings.Add(new dictionary() { docdepid = 0, description = "ЭЛН", isprivate = true, period = 15 });
+                DictPlannings.Add(new dictionary() { docdepid = 0, description = "НГ", isprivate = true, period = 30 });
+                DictPlannings.Add(new dictionary() { docdepid = 0, description = "НГ СУД", isprivate = true, period = 180 });
 
                 SaveChanges();
             }
             
         }
 
-        public CastorCommonContext(ContextVariant variant)
+        public CastorContext(ContextVariant variant)
         {
             _contextVariant = variant;
 
@@ -65,18 +65,15 @@ namespace Castor.database
                 case ContextVariant.SQLSERVER:
                     optionsBuilder.UseSqlServer(Properties.Settings.Default.sqlserverConnection);
                     break;
-                case ContextVariant.POSTGREE:
-                    optionsBuilder.UseNpgsql("Host=172.23.1.220;Port=5433;Database=med;Username=SOLUTION_MED;Password=elsoft");
-                    break;
                 default:
                     throw new ArgumentException("Propertie `contextValiant` not set correctly");
             }
             ;
         }
 
-        public static CastorCommonContext Get()
+        public static CastorContext Get()
         {
-            return new CastorCommonContext();
+            return new CastorContext();
         }
 
         

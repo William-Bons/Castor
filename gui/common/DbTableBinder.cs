@@ -10,7 +10,7 @@ namespace Castor.gui
 {
     public class DbTableBinder
     {
-        public DbTableBinder(CastorCommonContext Db, MetaTable TableObject, Grid grid)
+        public DbTableBinder(CastorContext Db, MetaTable TableObject, Grid grid)
         {
             // define Grid columns 1/2 and 2/3
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -76,7 +76,7 @@ namespace Castor.gui
             }
         }
 
-        public object Get(CastorCommonContext Db, string TableName)
+        public object Get(CastorContext Db, string TableName)
         {
             return null;
         }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Castor.database.tables
 {
-    public class Planning
+    public class planning
     {
         [Key] public int keyid { get; set; }
         public long patientid { get; set; }
@@ -15,12 +15,14 @@ namespace Castor.database.tables
         public long visitid { get; set; }
         public long depid { get; set; }
         public DateTime created_date {  get; set; } = DateTime.Now;
-        public int plantype { get; set; }
+        public int dictionaryid { get; set; }
         public DateTime start_date {  get; set; }
         public DateTime? next_date { get; set; }
         public int cycles { get; set; } = 0;
         public string? description { get; set; }
         public bool executed { get; set; } = false;
+
+        public virtual dictionary? Dictionary { get; set; }
 
     }
 }

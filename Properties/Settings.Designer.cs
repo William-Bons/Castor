@@ -81,5 +81,17 @@ namespace Castor.Properties {
                 this["LastSelectedDep"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Host=172.23.1.220;Port=5432;Database=med;Username=SOLUTION_MED;Password=elsoft")]
+        public string postgreeConnection {
+            get {
+                return ((string)(this["postgreeConnection"]));
+            }
+            set {
+                this["postgreeConnection"] = value;
+            }
+        }
     }
 }

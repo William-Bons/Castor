@@ -14,7 +14,7 @@ namespace Castor
     /// </summary>
     public partial class MainWindow : Window
     {
-        private CastorCommonContext? DatabaseContext;
+        private CastorContext? DatabaseContext;
         public MainWindow()
         {
             InitializeComponent();
@@ -27,7 +27,7 @@ namespace Castor
                 // THIS! Connection program to database
                 await Task.Run(() =>
                 {
-                    DatabaseContext = CastorCommonContext.Get();
+                    DatabaseContext = CastorContext.Get();
                 });
                 Console.Print($"conncted: {DatabaseContext.Variant}");
 
@@ -49,8 +49,8 @@ namespace Castor
             {
 
                 object? activeCreatedObject =
-                    _class.GetConstructor([typeof(CastorCommonContext)]) != null ? Activator.CreateInstance(_class, DatabaseContext) :
-                    _class.GetConstructor([typeof(CastorCommonContext), typeof(object)]) != null ? Activator.CreateInstance(_class, DatabaseContext, _castorMenuItem.Parameter) :
+                    _class.GetConstructor([typeof(CastorContext)]) != null ? Activator.CreateInstance(_class, DatabaseContext) :
+                    _class.GetConstructor([typeof(CastorContext), typeof(object)]) != null ? Activator.CreateInstance(_class, DatabaseContext, _castorMenuItem.Parameter) :
                     _class.GetConstructor([typeof(MainWindow)]) != null ? Activator.CreateInstance(_class, this) :
                     Activator.CreateInstance(_class);
 

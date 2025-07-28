@@ -12,7 +12,7 @@ namespace Castor.gui.pages
     public partial class MakeNewPlanning : Window, IDialog
     {
 
-        public MakeNewPlanning(CastorCommonContext castorCommonContext, object _visit)
+        public MakeNewPlanning(CastorContext castorCommonContext, object _visit)
         {
             Visit = (visit?)_visit;
             InitializeComponent();
@@ -20,7 +20,7 @@ namespace Castor.gui.pages
 
             Planns = castorCommonContext.DictPlannings.ToList();
 
-            Planning = new Planning();
+            Planning = new planning();
             Planning.patientid = Visit.patientid.Value;
             Planning.docdepid = Visit.doctorid.Value;
             Planning.depid = Visit.depid.Value;
@@ -29,7 +29,7 @@ namespace Castor.gui.pages
         }
 
         public visit? Visit { get; set; }
-        public ICollection<DictPlannings>? Planns { get; set; }
-        public Planning Planning { get; set; }
+        public ICollection<dictionary>? Planns { get; set; }
+        public planning Planning { get; set; }
     }
 }

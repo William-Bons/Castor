@@ -25,6 +25,13 @@ namespace Castor.gui.dialogs
             {
                 using (MedisContext medis = new MedisContext())
                 {
+                    if(!medis.Database.CanConnect())
+                    {
+                        ConsoleMessage?.Invoke("Cannot set connection to POSTGREE");
+                        IsEnabled = false;
+                        return;
+                    }
+
                     Departments = medis.dep
                         .Where(dep => dep.rootid == 1482) // ref Department
                         .Include(dep => dep.Docdeps)
