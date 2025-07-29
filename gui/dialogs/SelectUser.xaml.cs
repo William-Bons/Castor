@@ -12,7 +12,7 @@ namespace Castor.gui.dialogs
     public partial class SelectUser : Window, INotifyPropertyChanged, IConsoleMessage, IDialog
     {
         private static docdep _lastUser;
-        private dep _selectedDepartment;
+        private static dep _selectedDepartment;
         public event PropertyChangedEventHandler? PropertyChanged;
         public event ConsoleMessageHandler ConsoleMessage;
 
@@ -91,6 +91,7 @@ namespace Castor.gui.dialogs
             }
         }
         public static docdep ConnectedUser => _lastUser;
+        public static dep SelectedDep => _selectedDepartment;
 
         private void ConnectAndRegisterUser(object sender, RoutedEventArgs e)
         {

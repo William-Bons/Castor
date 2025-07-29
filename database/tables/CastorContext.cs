@@ -29,9 +29,12 @@ namespace Castor.database
             {
                 Database.EnsureCreated();
 
-                DictPlannings.Add(new dictionary() { docdepid = 0, description = "ЭЛН", isprivate = true, period = 15 });
-                DictPlannings.Add(new dictionary() { docdepid = 0, description = "НГ", isprivate = true, period = 30 });
-                DictPlannings.Add(new dictionary() { docdepid = 0, description = "НГ СУД", isprivate = true, period = 180 });
+                DictPlannings.Add(new dictionary() { description = "ЭЛН", isprivate = true, period = 15 });
+                DictPlannings.Add(new dictionary() { description = "НГ", isprivate = true, period = 30 });
+                DictPlannings.Add(new dictionary() { description = "НГ СУД", isprivate = true, period = 180 });
+                DictPlannings.Add(new dictionary() { description = "Хронизация", isprivate = true, period = 90 });
+                DictPlannings.Add(new dictionary() { description = "Инвалидность", isprivate = true, period = 30 });
+                DictPlannings.Add(new dictionary() { description = "ПНИ", isprivate = true, period = 30 });
 
                 SaveChanges();
             }

@@ -325,4 +325,5 @@ public partial class visit
     public virtual patient? Patient { get; set; }
     public virtual dep? Dep { get; set; }
     public virtual docdep? Doctor { get; set; }
+    public virtual int DaysInDep => dat != null ? (DateTime.Now - dat).Value.Days+1 : 0;
 }

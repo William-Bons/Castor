@@ -41,7 +41,7 @@ namespace Castor.gui.pages
             using (MedisContext cc = new MedisContext())
             {
                 depList = cc.dep
-                    .Where(d => d.keyid == 2704)
+                    .Where(d => d.keyid == SelectUser.SelectedDep.keyid)
                     .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
                     .ThenInclude(v => v.Doctor)
                     .Include(d => d.Visits.Where(v => !v.dat1.HasValue))

@@ -24,6 +24,7 @@
                 <DataGridTextColumn Header="Отделение" Binding="{Binding Dep.text}"/>
                 <DataGridTextColumn Header="Пациент" Binding="{Binding Patient.fullname}"/>
                 <DataGridTextColumn Header="Врач" Binding="{Binding Doctor.text}" />
+                <DataGridTextColumn Header="Дней" Binding="{Binding DaysInDep}" />
             </DataGrid.Columns>
         </DataGrid>
         

@@ -5,16 +5,21 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Castor.gui.pages"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      Height="400" Width="600"
       Title="MakeNewPlanning">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -27,21 +32,61 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Пациент" Padding="5"/>
             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Patient.fullname}" DataContext="{Binding Visit}" Padding="5"/>
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Вид планнера" Padding="5"/>
-            <ComboBox  Grid.Row="1" Grid.Column="1" Margin="3" ItemsSource="{Binding Planns}" DisplayMemberPath="description" SelectedValuePath="keyid"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Отделение" Padding="5"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Dep.text}" DataContext="{Binding Visit}" Padding="5"/>
 
-            <TextBlock  Grid.Row="2" Grid.Column="0" Text="Дата начала" Padding="5"/>
-            <DatePicker Grid.Row="2" Grid.Column="1" Margin="3" SelectedDate="{Binding Planning.start_date}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Вид планнера" Padding="5"/>
+            <ComboBox  Grid.Row="2" Grid.Column="1" Margin="3" ItemsSource="{Binding Planns}" DisplayMemberPath="description" SelectedValuePath="keyid" SelectedValue="{Binding Planning.dictionaryid}" SelectionChanged="ComboBox_SelectionChanged" x:Name="DictionaryCombo"/>
 
+            <TextBlock  Grid.Row="3" Grid.Column="0" Text="Дата начала" Padding="5"/>
+            <DatePicker Grid.Row="3" Grid.Column="1" Margin="3" SelectedDate="{Binding Planning.start_date}"/>
+
+            <TextBlock  Grid.Row="4" Grid.Column="0" Text="Дата уведомления" Padding="5"/>
+            <DatePicker Grid.Row="4" Grid.Column="1" Margin="3" SelectedDate="{Binding Planning.next_date}" SelectedDateChanged="NextDayChanged"/>
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="Цикл" Padding="5"/>
+            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Planning.cycles}" Padding="5"/>
+
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Описание" Padding="5"/>
+            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Planning.description}"  Margin="3" Padding="2"/>
+
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Выполнение завершено" Padding="5"/>
+            <CheckBox  Grid.Row="7" Grid.Column="1" IsChecked="{Binding Planning.executed}" Margin="5" />
+            
+            
         </Grid>
+        
+        <Grid Grid.Row="1" Grid.Column="1" Margin="10" HorizontalAlignment="Right">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="0" Content="Следующий цикл" Click="MakeNextCycle" Margin="5"/>
+            <Button Grid.Row="1" Content="Завершить" Click="ClosePlan" Margin="5"/>
+            <Button Grid.Row="10" Content="Записать" Click="SaveToCastorBase" Margin="5"/>
+        </Grid>
+        
+        <StatusBar Grid.Row="100" Grid.ColumnSpan="2">
+            <TextBlock Padding="2">
+                <Run Text="    Дней госпитализации: "/>
+                <Run Text="{Binding Planning.DaysInDep, Mode=OneWay}"/>
+            </TextBlock>
+            <TextBlock Padding="2">
+                <Run Text="    Дней до следующего цикла: "/>
+                <Run Text="{Binding Planning.DaysToNext, Mode=OneWay}"/>
+            </TextBlock>
+        </StatusBar>
     </Grid>
 </Window>
