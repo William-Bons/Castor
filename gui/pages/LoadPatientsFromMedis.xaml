@@ -13,12 +13,12 @@
         </Grid.RowDefinitions>
 
         <ToolBar Grid.Row="0" Background="Transparent">
-            <Button ToolTip="Abkm">
+            <Button ToolTip="Фильтровать по выбранному врачу" Click="CurrentDocdepFilter">
                 <Image Source="/img/filter.png" Width="32" Height="32"  />
             </Button>
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData.Visits, Mode=OneWay}" AutoGenerateColumns="False" IsReadOnly="True" MouseDoubleClick="PatientSelectedToPlan">
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData.Visits, Mode=OneWay}" AutoGenerateColumns="False" IsReadOnly="True" MouseDoubleClick="PatientSelectedToPlan" x:Name="PatientsTable">
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Загружать" />
                 <DataGridTextColumn Header="Отделение" Binding="{Binding Dep.text}"/>

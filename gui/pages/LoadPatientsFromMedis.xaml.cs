@@ -1,5 +1,6 @@
 ﻿using Castor.database.tab_medis;
 using Castor.gui.common;
+using Castor.gui.dialogs;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.Windows.Controls;
@@ -54,6 +55,14 @@ namespace Castor.gui.pages
         {
             visit _current = (visit)((DataGrid)sender).CurrentItem;
             SwitchPage?.Invoke("Castor.gui.pages.MakeNewPlanning", _current);
+        }
+
+        private void CurrentDocdepFilter(object sender, System.Windows.RoutedEventArgs e)
+        {
+            using (MedisContext cc = new MedisContext())
+            {
+                
+            }
         }
     }
 }
