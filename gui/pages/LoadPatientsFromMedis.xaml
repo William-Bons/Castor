@@ -18,12 +18,14 @@
             </Button>
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData.Visits, Mode=OneWay}" AutoGenerateColumns="False" IsReadOnly="True" MouseDoubleClick="PatientSelectedToPlan" x:Name="PatientsTable">
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData.Visits, Mode=OneWay}" AutoGenerateColumns="False" IsReadOnly="True" MouseDoubleClick="PatientSelectedToPlan" x:Name="PatientsTable" Language="RU">
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Загружать" />
                 <DataGridTextColumn Header="Отделение" Binding="{Binding Dep.text}"/>
                 <DataGridTextColumn Header="Пациент" Binding="{Binding Patient.fullname}"/>
                 <DataGridTextColumn Header="Врач" Binding="{Binding Doctor.text}" />
+                <DataGridTextColumn Header="Возраст" Binding="{Binding Patient.age}" />
+                <DataGridTextColumn Header="Дней" Binding="{Binding dat, StringFormat=\{0:d\}}" />
                 <DataGridTextColumn Header="Дней" Binding="{Binding DaysInDep}" />
             </DataGrid.Columns>
         </DataGrid>

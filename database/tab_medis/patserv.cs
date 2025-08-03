@@ -396,4 +396,5 @@ public partial class patserv
 
     public virtual patserv? root { get; set; }
     public virtual patient? Patient { get; set; }
+    public virtual visit? Visit { get; set; }
 }

@@ -320,10 +320,10 @@ public partial class visit
     public long? booking_id { get; set; }
 
     public virtual ICollection<visit> Inverseroot { get; set; } = new List<visit>();
-
+    public virtual ICollection<patserv>? Patservs { get; set; }
     public virtual visit? root { get; set; }
     public virtual patient? Patient { get; set; }
     public virtual dep? Dep { get; set; }
     public virtual docdep? Doctor { get; set; }
-    public virtual int DaysInDep => dat != null ? (DateTime.Now - dat).Value.Days+1 : 0;
+    public virtual int DaysInDep => dat != null ? (DateTime.Now - dat).Value.Days : 0;
 }

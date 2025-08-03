@@ -29,6 +29,8 @@ namespace Castor.gui.pages
             Planning.depid = Visit.depid.Value;
             Planning.visitid = Visit.keyid;
             Planning.start_date = Visit.dat.Value;
+            Planning.patient = Visit.Patient.fullname;
+            Planning.doctor = Visit.Doctor.text;
             _context.Plannings.Add(Planning);
         }
 

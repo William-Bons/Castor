@@ -16,7 +16,8 @@ namespace Castor.database.tables
         public int cycles { get; set; } = 0;    // num of iteration
         public string? description { get; set; } // 
         public bool executed { get; set; } = false;  // if finished
-
+        public string patient {  get; set; }
+        public string doctor { get; set; }
         public virtual dictionary? Dictionary { get; set; }
         public virtual int DaysInDep => start_date != null ? (DateTime.Now - start_date).Value.Days : 0;
         public virtual int DaysToNext => next_date != null && created_date != null ? (next_date - created_date).Value.Days+1 : 0;

@@ -47,6 +47,9 @@ namespace Castor.gui.pages
                     .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
                     .ThenInclude(v => v.Patient)
                     .ToList();
+
+
+
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
             }
         }

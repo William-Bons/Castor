@@ -474,4 +474,5 @@ public partial class patient
     public virtual ICollection<visit> Visits { get; set; }
     public virtual ICollection<patserv> Patservs { get; set; }
     public virtual string fullname => Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase($"{lastname} {firstname} {secondname}");
+    public virtual int? age => (int?)((DateTime.Today - birthdate).Value.Days / 365.25);
 }

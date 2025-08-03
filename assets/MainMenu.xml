@@ -8,8 +8,8 @@
 		<MenuItem Header="Тесты">
 			<MenuItem Header="Запрос к БД"  ClassName="Castor.test.DbTests" Parameter ="TTestSelectTable1" />
 		</MenuItem>
-		<MenuItem Header="Пользователи"  ClassName="Castor.database.CreateNewUser" />
-		<MenuItem Header="Новый пациент" ClassName="Castor.gui.pages.LoadPatientsFromMedis"/>
+		<MenuItem Header="Планирование"  ClassName="Castor.gui.pages.PlannsList" />
+		<MenuItem Header="Список пациентов в отделении" ClassName="Castor.gui.pages.LoadPatientsFromMedis"/>
 		<Separator/>
 		<MenuItem Header="Console"   />
 	</MenuItem>
