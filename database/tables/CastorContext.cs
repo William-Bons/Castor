@@ -7,8 +7,11 @@ namespace Castor.database
 {
     public class CastorContext : DbContext
     {
+        /// <summary>
+        /// Контекст подключения к локальной базе данных Castor
+        /// </summary>
         public enum ContextVariant { SQLITE, SQLSERVER, POSTGREE };
-        public string[] VariantNames = {"Connected SQLITE Database", "Connected SQLSERVER Database", "Connected POSTGREE Database" };
+        public string[] VariantNames = {"SQLITE", "SQLSERVER", "POSTGREE" };
         private ContextVariant _contextVariant;
 
         #region TALBES
@@ -50,7 +53,7 @@ namespace Castor.database
         /// <summary>
         /// need for console output
         /// </summary>
-        public string Variant => VariantNames[(int)_contextVariant];
+        public string Variant => $"{VariantNames[(int)_contextVariant]}: {Database.GetDbConnection().DataSource} @ {Database.GetDbConnection().Database}";
 
 
         /// <summary>

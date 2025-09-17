@@ -9,10 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="img\filter.png" />
     <None Remove="img\kurwa.jpg" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FastReport.OpenSource" Version="2025.2.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,6 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="img\filter.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="img\kurwa.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

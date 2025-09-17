@@ -1,8 +1,7 @@
 ﻿using Castor.database;
-using Castor.database.tables;
+using Castor.database.tab_medis;
 using Castor.gui;
 using Castor.gui.common;
-using Castor.gui.dialogs;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -29,7 +28,13 @@ namespace Castor
                 {
                     DatabaseContext = CastorContext.Get();
                 });
-                Console.Print($"conncted: {DatabaseContext.Variant}");
+                Console.Print($"conncted: {DatabaseContext?.Variant}");
+
+                // Test Connection To Medis Database
+                using (MedisContext mc = new MedisContext())
+                {
+                    Console.Print(mc.Variant);
+                }
 
                 // load Kurwa
                 MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.Kurwa" });
@@ -59,12 +64,24 @@ namespace Castor
                 if (activeCreatedObject is IDialog _objectDialog) _objectDialog.Show();
                 if (activeCreatedObject is Page) CentralFrame.Content = activeCreatedObject;
                 if (activeCreatedObject is ISwithPage swp) swp.SwitchPage += SwitchFramePage;
+                if (activeCreatedObject is IMainStatusBar msb) msb.PrintStatusMessage += PrintStatusMessage;
+            }
+        }
+
+        private void PrintStatusMessage(string message, string barName)
+        {
+            foreach (var item in MainStatusBar.Items)
+            {
+                if (item is TextBlock _iTextBlock && _iTextBlock.Name == barName)
+                {
+                    _iTextBlock.Text = message;
+                }
             }
         }
 
         private void SwitchFramePage(string className, object param)
         {
-            MainWindow_MenuItemRise(new CastorMenuItem() { ClassName=className, Parameter=param });
+            MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = className, Parameter = param });
         }
 
 

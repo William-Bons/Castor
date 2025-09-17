@@ -6,6 +6,8 @@ using System.Globalization;
 namespace Castor.database.tab_medis;
 
 /// <summary>
+///  Класс таблицы базы данных Медис
+///  
 /// Пациент
 /// </summary>
 public partial class patient

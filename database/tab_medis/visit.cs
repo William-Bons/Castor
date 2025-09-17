@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 namespace Castor.database.tab_medis;
 
 /// <summary>
+///  Класс таблицы базы данных Медис
+///  
 /// Визиты пациентов; Периоды госпитализации;
 /// </summary>
 public partial class visit

@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 namespace Castor.database.tab_medis;
 
 /// <summary>
+/// Класс таблицы базы данных Медис
+/// 
 /// Справочник подразделений
 /// 1480 - ДПБ
 /// 1482 - стационарные подразделения ДПБ

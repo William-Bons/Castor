@@ -7,7 +7,7 @@ namespace Castor.gui
     public class MenuLoader
     {
         public delegate void MenuItemRiseEvent(CastorMenuItem sender);
-        public event MenuItemRiseEvent MenuItemRise;
+        public event MenuItemRiseEvent? MenuItemRise;
 
         private object _mainMenu;
         private string _menuFilePath;

@@ -22,8 +22,9 @@
         <Frame Grid.Row="2" x:Name="CentralFrame" Visibility="Visible" NavigationUIVisibility="Hidden"/>
 
         <gui:CastorConsole Grid.Row="3" MinHeight="120" x:Name="Console" d:Visibility="Visible"/>
-        <StatusBar Grid.Row="4" Padding="0" >
-            <TextBlock Text="DB" Padding="0"/>
+        <StatusBar Grid.Row="4" Padding="0" x:Name="MainStatusBar">
+            <TextBlock Padding="0" x:Name="main" d:Text="DB" />
+            <TextBlock Name="status" Padding="0" d:Text="Total : 44" />
         </StatusBar>
     </Grid>
 </Window>

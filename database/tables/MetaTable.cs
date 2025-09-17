@@ -2,7 +2,8 @@
 
 namespace Castor.database.tables
 {
-    public abstract class MetaTable
+    [Obsolete]
+    public abstract class MetaTable 
     {
         public PropertyInfo[] getInfo()
         {

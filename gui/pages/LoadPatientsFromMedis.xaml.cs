@@ -11,10 +11,11 @@ namespace Castor.gui.pages
     /// <summary>
     /// Логика взаимодействия для LoadPatientsFromMedis.xaml
     /// </summary>
-    public partial class LoadPatientsFromMedis : Page, INotifyPropertyChanged, ISwithPage
+    public partial class LoadPatientsFromMedis : Page, INotifyPropertyChanged, ISwithPage, IMainStatusBar
     {
         public event PropertyChangedEventHandler? PropertyChanged;
-        public event SwitchPageHandler SwitchPage;
+        public event SwitchPageHandler? SwitchPage;
+        public event PrintStatusMessageHandler? PrintStatusMessage;
 
         private ICollection<dep>? depList;
         public LoadPatientsFromMedis()
@@ -27,10 +28,11 @@ namespace Castor.gui.pages
             {
                 await Task.Run(() => LoadFromMedis());
                 Cursor = Cursors.Arrow;
+                PrintStatusMessage?.Invoke($"Total count: {(depList?.Count > 0 ? LoadedData?.Visits?.Count : 0)}", "status");
             };
         }
 
-        public object LoadedData
+        public dep? LoadedData
         {
             get => depList != null && depList?.Count > 0 ? depList?.First<dep>() : null;
         }
@@ -48,9 +50,8 @@ namespace Castor.gui.pages
                     .ThenInclude(v => v.Patient)
                     .ToList();
 
-
-
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
+                
             }
         }
 

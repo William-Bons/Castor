@@ -8,6 +8,9 @@ namespace Castor.gui.common
 {
     public interface IRun
     {
+        /// <summary>
+        /// Интерфейс для реализации в классе метода Run запускающего методы класса
+        /// </summary>
         public void Run();
     }
 }

@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations;
 namespace Castor;
 
 /// <summary>
+///  Класс таблицы базы данных Медис
+///  
 /// Услуги пациента
 /// </summary>
 public partial class patserv

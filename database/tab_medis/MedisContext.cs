@@ -1,14 +1,17 @@
 ﻿using Castor.database.tables;
 using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
+using System.Windows;
 
 namespace Castor.database.tab_medis
 {
+    /// <summary>
+    /// Класс контекста данных базы данных Медис
+    /// осуществляет подключение к базе данных и дальнейшеее взаимодействие с ней
+    /// подключение - Postgree
+    /// </summary>
     public class MedisContext : DbContext
     {
-        public enum ContextVariant { SQLITE, SQLSERVER, POSTGREE };
-        public string[] VariantNames = {"Connected SQLITE Database", "Connected SQLSERVER Database", "Connected POSTGREE Database" };
-        private ContextVariant _contextVariant;
 
         #region TALBES
         /// <summary>
@@ -25,14 +28,15 @@ namespace Castor.database.tab_medis
         /// </summary>
         public MedisContext()
         {
-            _contextVariant = ContextVariant.POSTGREE;
-            //Database.EnsureCreated();
+            // EnsureCreated - функция проверки существования базы и ее создания в случае отрицательной проверки
+            // для подключения к областной базе не нужна
+            // Database.EnsureCreated(); -- uncomment if you want create new database
         }
 
         /// <summary>
         /// need for console output
         /// </summary>
-        public string Variant => VariantNames[(int)_contextVariant];
+        public string Variant => $"POSSTGREE: {Database.GetDbConnection().DataSource} @ {Database.GetDbConnection().Database}";
 
 
         /// <summary>
@@ -42,21 +46,14 @@ namespace Castor.database.tab_medis
         /// <exception cref="ArgumentException"></exception>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            switch (_contextVariant)
+            try
             {
-                case ContextVariant.SQLITE:
-                    optionsBuilder.UseSqlite(Properties.Settings.Default.sqliteConnection);
-                    break;
-                case ContextVariant.SQLSERVER:
-                    optionsBuilder.UseSqlServer(Properties.Settings.Default.sqlserverConnection);
-                    break;
-                case ContextVariant.POSTGREE:
-                    optionsBuilder.UseNpgsql(Properties.Settings.Default.postgreeConnection);
-                    break;
-                default:
-                    throw new ArgumentException("Propertie `contextValiant` not set correctly");
+                optionsBuilder.UseNpgsql(Properties.Settings.Default.postgreeConnection);
             }
-            ;
+            catch (Exception ex) 
+            {
+                MessageBox.Show($"Rised exception:\n{ex.Message}", ex.Source, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
