@@ -189,5 +189,5 @@ public partial class patdiag
     /// </summary>
     public long? organ_id { get; set; }
 
-    public virtual ICollection<visit> Visits { get; set; }
+    public virtual visit? Visits { get; set; }
 }

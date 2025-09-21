@@ -48,6 +48,10 @@ namespace Castor.gui.pages
                     .ThenInclude(v => v.Doctor)
                     .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
                     .ThenInclude(v => v.Patient)
+                    .ToList();
+
+                ICollection<dep> deps = cc.dep
+                    .Where(d => d.keyid == SelectUser.SelectedDep.keyid)
                     .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
                     .ThenInclude(v => v.Diagnosis)
                     .ToList();
