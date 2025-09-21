@@ -18,7 +18,7 @@
             </Button>
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData.Visits, Mode=OneWay}" AutoGenerateColumns="False" IsReadOnly="True" MouseDoubleClick="PatientSelectedToPlan" x:Name="PatientsTable" Language="RU">
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData.Visits, Mode=OneWay}" AutoGenerateColumns="True" IsReadOnly="True" MouseDoubleClick="PatientSelectedToPlan" x:Name="PatientsTable" Language="RU">
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Загружать" />
                 <DataGridTextColumn Header="Отделение" Binding="{Binding Dep.text}"/>

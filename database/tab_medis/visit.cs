@@ -321,6 +321,7 @@ public partial class visit
     /// </summary>
     public long? booking_id { get; set; }
 
+    public virtual patdiag? Diagnosis { get; set; }
     public virtual ICollection<visit> Inverseroot { get; set; } = new List<visit>();
     public virtual ICollection<patserv>? Patservs { get; set; }
     public virtual visit? root { get; set; }

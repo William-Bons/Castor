@@ -2,9 +2,11 @@
 using Castor.database.tab_medis;
 using Castor.gui;
 using Castor.gui.common;
+using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Castor
 {
@@ -31,16 +33,28 @@ namespace Castor
                 Console.Print($"conncted: {DatabaseContext?.Variant}");
 
                 // Test Connection To Medis Database
-                using (MedisContext mc = new MedisContext())
+                IPStatus ips = MedisContext.PingHost();
+                if (ips == IPStatus.Success)
                 {
-                    Console.Print(mc.Variant);
+                    using (MedisContext mc = new MedisContext())
+                    {
+                        Console.Print(mc.Variant);
+                    }
+
+                    // select current user
+                    MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.gui.dialogs.SelectUser" });
+                    // load Kurwa
+                    MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.Kurwa" });
                 }
+                else
+                {
+                    Console.Print(ips.ToString());
 
-                // load Kurwa
-                MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.Kurwa" });
-
-                // select current user
-                MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.gui.dialogs.SelectUser" });
+                    // make new page with result of connection test and shows it
+                    Page page = new Page();
+                    page.Content = new TextBlock { Text = ips.ToString(), FontSize = 30, Foreground = Brushes.Red, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+                    CentralFrame.Content = page;
+                }
 
                 Cursor = Cursors.Arrow;
             };

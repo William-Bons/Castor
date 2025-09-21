@@ -48,6 +48,8 @@ namespace Castor.gui.pages
                     .ThenInclude(v => v.Doctor)
                     .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
                     .ThenInclude(v => v.Patient)
+                    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
+                    .ThenInclude(v => v.Diagnosis)
                     .ToList();
 
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));

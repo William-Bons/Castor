@@ -1,6 +1,7 @@
 ﻿using Castor.database.tables;
 using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 using System.Windows;
 
 namespace Castor.database.tab_medis
@@ -53,6 +54,22 @@ namespace Castor.database.tab_medis
             catch (Exception ex) 
             {
                 MessageBox.Show($"Rised exception:\n{ex.Message}", ex.Source, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public static IPStatus PingHost(string nameOrAddress= "172.23.1.220")
+        {
+            try
+            {
+                using (Ping pinger = new Ping())
+                {
+                    PingReply reply = pinger.Send(nameOrAddress,1000);
+                    return reply.Status;
+                }
+            }
+            catch (PingException)
+            {
+                return IPStatus.Unknown;
             }
         }
     }
