@@ -473,6 +473,8 @@ public partial class patient
     /// Документ, удостоверяющий личность (основной). Код подразделения, выдавшего документ
     /// </summary>
     public string? passdep_code { get; set; }
+
+    public virtual ICollection<patdiag> Diagnoses { get; set; }
     public virtual ICollection<visit> Visits { get; set; }
     public virtual ICollection<patserv> Patservs { get; set; }
     public virtual string fullname => Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase($"{lastname} {firstname} {secondname}");

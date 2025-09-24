@@ -1,6 +1,7 @@
 ﻿using Castor.database.tab_medis;
 using Castor.gui.common;
 using Castor.gui.dialogs;
+using Castor.test;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.Windows.Controls;
@@ -48,23 +49,23 @@ namespace Castor.gui.pages
                     .ThenInclude(v => v.Doctor)
                     .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
                     .ThenInclude(v => v.Patient)
+                    .ThenInclude(p => p.Diagnoses)
                     .ToList();
-
-                ICollection<dep> deps = cc.dep
-                    .Where(d => d.keyid == SelectUser.SelectedDep.keyid)
-                    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
-                    .ThenInclude(v => v.Diagnosis)
-                    .ToList();
-
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
-                
             }
         }
 
+        /// <summary>
+        /// Double click on grid`s cell
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PatientSelectedToPlan(object sender, MouseButtonEventArgs e)
         {
             visit _current = (visit)((DataGrid)sender).CurrentItem;
-            SwitchPage?.Invoke("Castor.gui.pages.MakeNewPlanning", _current);
+            //SwitchPage?.Invoke("Castor.gui.pages.MakeNewPlanning", _current);
+            new TablePage(_current.Patient.Diagnoses);
+            ;
         }
 
         private void CurrentDocdepFilter(object sender, System.Windows.RoutedEventArgs e)

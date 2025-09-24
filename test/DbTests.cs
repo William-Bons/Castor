@@ -1,6 +1,7 @@
 ﻿using Castor.database;
 using Castor.database.tab_medis;
 using Castor.gui.common;
+using Castor.gui.dialogs;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -46,13 +47,12 @@ namespace Castor.test
             {
                 using (MedisContext cc = new MedisContext())
                 {
-                    var ptn = cc.patient
-                    .Where(p => p.keyid == 2315389)
+                    ICollection<dep> deps = cc.dep
+                    .Where(d => d.keyid == SelectUser.SelectedDep.keyid)
+                    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
+                    .ThenInclude(v => v.Patient)
+                    .ThenInclude(p => p.Diagnoses)
                     .ToList();
-
-                    var patsr = cc.patserv
-                        .Where(b => b.patientid == 2315389)
-                        .ToList();
                     ;
                 }
             });

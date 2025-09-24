@@ -6,7 +6,9 @@
 <Menu Grid.Row="0">
 	<MenuItem Header="База данных">
 		<MenuItem Header="Тесты">
-			<MenuItem Header="Запрос к БД"  ClassName="Castor.test.DbTests" Parameter ="TTestSelectTable1" />
+			<MenuItem Header="Запрос к БД 1"  ClassName="Castor.test.DbTests" Parameter ="TTestSelectTable1" />
+			<MenuItem Header="Запрос к БД 2"  ClassName="Castor.test.DbTests" Parameter ="TTestSelectTable2" />
+			<MenuItem Header="Запрос к БД 3"  ClassName="Castor.test.DbTests" Parameter ="TTestSelectTable3" />
 		</MenuItem>
 		<MenuItem Header="Планирование"  ClassName="Castor.gui.pages.PlannsList" />
 		<MenuItem Header="Список пациентов в отделении" ClassName="Castor.gui.pages.LoadPatientsFromMedis"/>
