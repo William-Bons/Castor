@@ -2,8 +2,10 @@
 using Castor.database.tab_medis;
 using Castor.gui.common;
 using Castor.gui.dialogs;
+using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Reflection.Metadata;
 
 namespace Castor.test
 {
@@ -81,6 +83,29 @@ namespace Castor.test
             });
         }
 
+        public void TCreateHtml()
+        {
+            var html =
+                @"<body>
+                    <h1>This is <b>bold</b> heading</h1>
+                    <P>This is <u>underlined</u> paragraph</P>
+                </body>";
+
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.OptionOutputOriginalCase = true;
+            htmlDoc.OptionDefaultUseOriginalName = true;
+            htmlDoc.OptionPreserveXmlNamespaces = true;
+            htmlDoc.OptionOutputAsXml = true;
+            htmlDoc.OptionOutputUpperCase = true;
+
+
+            htmlDoc.LoadHtml(html);
+
+            var htmlBody = htmlDoc.DocumentNode.SelectSingleNode("//body");
+            HtmlNode newPara = HtmlNode.CreateNode("<P>This a new paragraph cap</P>");
+            htmlBody.ChildNodes.Add(newPara);
+            ;
+        }
 
     }
 }

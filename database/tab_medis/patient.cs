@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Linq;
 
 namespace Castor.database.tab_medis;
 
@@ -479,4 +480,10 @@ public partial class patient
     public virtual ICollection<patserv> Patservs { get; set; }
     public virtual string fullname => Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase($"{lastname} {firstname} {secondname}");
     public virtual int? age => (int?)((DateTime.Today - birthdate).Value.Days / 365.25);
+    public virtual patdiag? CurrentDs =>
+        Diagnoses?.Count > 0 ?
+        Diagnoses.MaxBy(d => d.dat)
+        : null;
+
+    
 }

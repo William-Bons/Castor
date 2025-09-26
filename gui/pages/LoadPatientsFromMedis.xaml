@@ -27,6 +27,7 @@
                 <DataGridTextColumn Header="Возраст" Binding="{Binding Patient.age}" />
                 <DataGridTextColumn Header="Дней" Binding="{Binding dat, StringFormat=\{0:d\}}" />
                 <DataGridTextColumn Header="Дней" Binding="{Binding DaysInDep}" />
+                <DataGridTextColumn Header="Ds" Binding="{Binding Patient.CurrentDs.text}" />
             </DataGrid.Columns>
         </DataGrid>
         
