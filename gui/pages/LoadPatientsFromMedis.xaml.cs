@@ -1,6 +1,7 @@
 ﻿using Castor.database.tab_medis;
 using Castor.gui.common;
 using Castor.gui.dialogs;
+using Castor.Properties;
 using Castor.test;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
@@ -44,7 +45,7 @@ namespace Castor.gui.pages
             using (MedisContext cc = new MedisContext())
             {
                 depList = cc.dep
-                    .Where(d => d.keyid == SelectUser.SelectedDep.keyid)
+                    .Where(d => d.keyid == Settings.Default.LastSelectedDep)
                     .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
                     .ThenInclude(v => v.Doctor)
                     .Include(d => d.Visits.Where(v => !v.dat1.HasValue))

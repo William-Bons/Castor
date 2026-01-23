@@ -9,8 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="gui\pages\MakeNewPlanning.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="img\filter.png" />
     <None Remove="img\kurwa.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="gui\pages\MakeNewPlanning.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="gui\pages\MakeNewPlanning.xaml" />
+    <None Include="gui\pages\MakeNewPlanning.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,16 +1,17 @@
-CREATE TABLE "movebook" (
+CREATE TABLE "Movebooks" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"card_id"	INTEGER NOT NULL,
+	"patientid"	INTEGER,
 	"fio"	TEXT NOT NULL,
 	"birthdate"	DATE NOT NULL,
 	"datein"	DATE NOT NULL,
-	"dateout"	DATE NOT NULL,
+	"dateout"	DATE,
 	"ordered"	NUMERIC,
 	"dsin"	TEXT NOT NULL,
 	"dsout"	TEXT,
 	"outto"	NUMERIC,
 	"city"	NUMERIC,
-	"firt"	NUMERIC,
+	"first"	NUMERIC,
 	"second"	NUMERIC,
 	"early"	NUMERIC,
 	"unvoluntary"	NUMERIC,
@@ -21,21 +22,13 @@ CREATE TABLE "movebook" (
 	"Bi"	int GENERATED ALWAYS AS (iif("dsin" == "20", 1, 0)) VIRTUAL,
 	"Ci"	int GENERATED ALWAYS AS (iif("dsin" == "70" OR "dsin" == "71" OR "dsin" == "72", 1, 0)) VIRTUAL,
 	"Di"	int GENERATED ALWAYS AS (iif("dsin" == "02" OR "dsin" == "03" OR "dsin" == "04" OR "dsin" == "05" OR "dsin" == "06" OR "dsin" == "07" OR "dsin" == "50" OR "dsin" == "60" OR "dsin" == "61" OR "dsin" == "62" OR "dsin" == "90" OR "dsin" == "91" OR "dsin" == "40" OR "dsin" == "41" OR "dsin" == "42" OR "dsin" == "43" OR "dsin" == "45", 1, 0)) VIRTUAL,
-	"Ei"	int GENERATED ALWAYS AS (iif("dsin" == "10" OR "dsin" == "15" OR "dsin" == "19", 1, 0)) VIRTUAL, contr_in TEXT GENERATED ALWAYS as (
-iif(Ai==0 and Bi==0 and Ci==0 and Di==0 and Ei=0, "Error: diagnosis is not classified", NULL)
-), Ao int GENERATED ALWAYS as (
-iif(dsout == "21" or dsout=="22" or dsout=="23" or dsout =="25" or dsout=="30" or dsout =="31" or dsout =="32" or dsout=="00" or dsout=="01",1,0)
-), Bo int GENERATED ALWAYS as (
-iif(dsout == "20",1,0)
-), Co int GENERATED ALWAYS as (
-iif(dsout == "70" or dsout =="71" or dsout=="72",1,0)
-), 'Do' int GENERATED ALWAYS as (
-iif(dsout == "02" or dsout=="03" or dsout =="04" or dsout =="05" or dsout =="06" or dsout =="07" or dsout=="50" or dsout =="60" or dsout=="61" or dsout =="62" 
-	or dsout=="90" or dsout =="91" or dsout =="40" or dsout =="41" or dsout =="42" or dsout=="43" or dsout =="45",1,0)
-), Eo int GENERATED ALWAYS as (
-iif(dsout == "10" or dsout =="15" or dsout =="19",1,0)
-), contr_out TEXT GENERATED ALWAYS as (
-iif(Ao==0 and Bo==0 and Co==0 and 'Do'==0 and Eo=0, "Error: diagnosis is not classified", NULL)
-),
+	"Ei"	int GENERATED ALWAYS AS (iif("dsin" == "10" OR "dsin" == "15" OR "dsin" == "19", 1, 0)) VIRTUAL,
+	"contr_in"	TEXT GENERATED ALWAYS AS (iif("Ai" == 0 AND "Bi" == 0 AND "Ci" == 0 AND "Di" == 0 AND "Ei" = 0, "Error: diagnosis is not classified", NULL)) VIRTUAL,
+	"Ao"	int GENERATED ALWAYS AS (iif("dsout" == "21" OR "dsout" == "22" OR "dsout" == "23" OR "dsout" == "25" OR "dsout" == "30" OR "dsout" == "31" OR "dsout" == "32" OR "dsout" == "00" OR "dsout" == "01", 1, 0)) VIRTUAL,
+	"Bo"	int GENERATED ALWAYS AS (iif("dsout" == "20", 1, 0)) VIRTUAL,
+	"Co"	int GENERATED ALWAYS AS (iif("dsout" == "70" OR "dsout" == "71" OR "dsout" == "72", 1, 0)) VIRTUAL,
+	"Do"	int GENERATED ALWAYS AS (iif("dsout" == "02" OR "dsout" == "03" OR "dsout" == "04" OR "dsout" == "05" OR "dsout" == "06" OR "dsout" == "07" OR "dsout" == "50" OR "dsout" == "60" OR "dsout" == "61" OR "dsout" == "62" OR "dsout" == "90" OR "dsout" == "91" OR "dsout" == "40" OR "dsout" == "41" OR "dsout" == "42" OR "dsout" == "43" OR "dsout" == "45", 1, 0)) VIRTUAL,
+	"Eo"	int GENERATED ALWAYS AS (iif("dsout" == "10" OR "dsout" == "15" OR "dsout" == "19", 1, 0)) VIRTUAL,
+	"contr_out"	TEXT GENERATED ALWAYS AS (iif("Ao" == 0 AND "Bo" == 0 AND "Co" == 0 AND 'Do' == 0 AND "Eo" = 0, "Error: diagnosis is not classified", NULL)) VIRTUAL,
 	PRIMARY KEY("id" AUTOINCREMENT)
 )

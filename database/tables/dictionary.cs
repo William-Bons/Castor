@@ -13,6 +13,6 @@ namespace Castor.database.tables
         public bool isprivate { get; set; } = true;
         public int period { get; set; }
 
-        public virtual ICollection<planning>? Plannings { get; set; }
+        public virtual ICollection<Planning>? Plannings { get; set; }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Castor.database.tables;
-using Castor.gui;
-using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
+using System.Windows;
 
 namespace Castor.database
 {
@@ -11,15 +10,16 @@ namespace Castor.database
         /// Контекст подключения к локальной базе данных Castor
         /// </summary>
         public enum ContextVariant { SQLITE, SQLSERVER, POSTGREE };
-        public string[] VariantNames = {"SQLITE", "SQLSERVER", "POSTGREE" };
+        public string[] VariantNames = { "SQLITE", "SQLSERVER", "POSTGREE" };
         private ContextVariant _contextVariant;
 
         #region TALBES
         /// <summary>
         /// Tables in database
         /// </summary>
-        public DbSet<planning> Plannings => Set<planning>();
+        public DbSet<Planning> Plannings => Set<Planning>();
         public DbSet<dictionary> DictPlannings => Set<dictionary>();
+        public DbSet<Movebook> Movebooks => Set<Movebook>();
         #endregion
 
         /// <summary>
@@ -28,20 +28,10 @@ namespace Castor.database
         private CastorContext()
         {
             _contextVariant = (ContextVariant)Properties.Settings.Default.contextValiant;
-            if(!Database.CanConnect())
+            if (!Database.CanConnect())
             {
-                Database.EnsureCreated();
-
-                DictPlannings.Add(new dictionary() { description = "ЭЛН", isprivate = true, period = 15 });
-                DictPlannings.Add(new dictionary() { description = "НГ", isprivate = true, period = 30 });
-                DictPlannings.Add(new dictionary() { description = "НГ СУД", isprivate = true, period = 180 });
-                DictPlannings.Add(new dictionary() { description = "Хронизация", isprivate = true, period = 90 });
-                DictPlannings.Add(new dictionary() { description = "Инвалидность", isprivate = true, period = 30 });
-                DictPlannings.Add(new dictionary() { description = "ПНИ", isprivate = true, period = 30 });
-
-                SaveChanges();
+                MessageBox.Show("SQLITE Database is not exist", "SQLITE", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            
         }
 
         public CastorContext(ContextVariant variant)
@@ -82,6 +72,6 @@ namespace Castor.database
             return new CastorContext();
         }
 
-        
+
     }
 }

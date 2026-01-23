@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Castor.gui.dialogs"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="SelectUser" Height="257" Width="492" x:Name="wnd">
+        Title="SelectUser" Width ="500" x:Name="wnd">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -22,14 +22,13 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Grid Margin="10" Grid.Column="1" x:Name="BaseGrid" >
+        <Grid Margin="10" Grid.Column="1" x:Name="BaseGrid" Height="Auto">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition />
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>

@@ -37,7 +37,7 @@ namespace Castor.gui.pages
             };
         }
 
-        public ICollection<planning> Plannings { get; set; }
+        public ICollection<Planning> Plannings { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -46,7 +46,7 @@ namespace Castor.gui.pages
             using (CastorContext cc = new CastorContext(CastorContext.ContextVariant.SQLITE))
             {
                 Plannings = cc.Plannings
-                    .Include(d => d.Dictionary)
+                    //.Include(d => d.dictionary)
                     .ToList();
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Plannings)));
             }

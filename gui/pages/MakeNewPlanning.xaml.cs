@@ -23,7 +23,7 @@ namespace Castor.gui.pages
 
             Planns = castorContext.DictPlannings.ToList();
 
-            Planning = new planning();
+            Planning = new Planning();
             Planning.patientid = Visit.patientid.Value;
             Planning.docdepid = Visit.doctorid.Value;
             Planning.depid = Visit.depid.Value;
@@ -34,19 +34,19 @@ namespace Castor.gui.pages
             _context.Plannings.Add(Planning);
         }
 
-        public MakeNewPlanning(CastorContext castorContext, planning planning)
+        public MakeNewPlanning(CastorContext castorContext, Planning planning)
         {
             _context = castorContext;
             InitializeComponent();
             DataContext = this;
             Planns = castorContext.DictPlannings.ToList();
 
-            Planning = planning;
+            Planning = Planning;
         }
 
         public visit? Visit { get; set; }
         public ICollection<dictionary>? Planns { get; set; }
-        public planning Planning { get; set; }
+        public Planning Planning { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

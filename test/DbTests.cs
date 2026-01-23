@@ -35,10 +35,12 @@ namespace Castor.test
             ConsoleMessage?.Invoke("running Test selectTable");
             Func<Task> asyncLambda = async () =>
             {
-                var plann = await Db.DictPlannings.ToListAsync();
-                ConsoleMessage?.Invoke($"Gets {plann.Count} plannings");
-                foreach (var user in plann)
-                    ConsoleMessage?.Invoke($"{user.keyid}\t\t => {user.description}");
+                //var plann = await Db.DictPlannings.ToListAsync();
+                //ConsoleMessage?.Invoke($"Gets {plann.Count} plannings");
+                //foreach (var user in plann)
+                //    ConsoleMessage?.Invoke($"{user.keyid}\t\t => {user.description}");
+
+                
             };
             await asyncLambda();
         }
@@ -47,16 +49,19 @@ namespace Castor.test
         {
             await Task.Run(() =>
             {
-                using (MedisContext cc = new MedisContext())
-                {
-                    ICollection<dep> deps = cc.dep
-                    .Where(d => d.keyid == SelectUser.SelectedDep.keyid)
-                    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
-                    .ThenInclude(v => v.Patient)
-                    .ThenInclude(p => p.Diagnoses)
-                    .ToList();
-                    ;
-                }
+                //using (MedisContext cc = new MedisContext())
+                //{
+                //    ICollection<dep> deps = cc.dep
+                //    .Where(d => d.keyid == SelectUser.SelectedDep.keyid)
+                //    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
+                //    .ThenInclude(v => v.Patient)
+                //    .ThenInclude(p => p.Diagnoses)
+                //    .ToList();
+                //    ;
+                //}
+
+                var movebook = Db.Movebooks.ToListAsync();
+                ConsoleMessage?.Invoke($"{movebook.Result}");
             });
         }
 

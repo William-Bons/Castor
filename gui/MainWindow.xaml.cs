@@ -2,6 +2,7 @@
 using Castor.database.tab_medis;
 using Castor.gui;
 using Castor.gui.common;
+using Castor.Properties;
 using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,29 +33,14 @@ namespace Castor
                 });
                 Console.Print($"conncted: {DatabaseContext?.Variant}");
 
-                // Test Connection To Medis Database
-                IPStatus ips = MedisContext.PingHost();
-                if (ips == IPStatus.Success)
+                // select current user
+                if (Settings.Default.LastConnectedUserId <= 0 && Settings.Default.LastSelectedDep <= 0)
                 {
-                    using (MedisContext mc = new MedisContext())
-                    {
-                        Console.Print(mc.Variant);
-                    }
-
-                    // select current user
                     MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.gui.dialogs.SelectUser" });
-                    // load Kurwa
-                    MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.Kurwa" });
                 }
-                else
-                {
-                    Console.Print(ips.ToString());
-
-                    // make new page with result of connection test and shows it
-                    Page page = new Page();
-                    page.Content = new TextBlock { Text = ips.ToString(), FontSize = 30, Foreground = Brushes.Red, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
-                    CentralFrame.Content = page;
-                }
+                
+                // load Kurwa
+                MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.Kurwa" });
 
                 Cursor = Cursors.Arrow;
             };
