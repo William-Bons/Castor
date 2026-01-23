@@ -1,0 +1,2 @@
+insert into movebook (card_id,fio,birthdate,datein,dateout, ordered, dsin, dsout, outto, city, first, second, early, unvoluntary, date_lastout)
+ SELECT card_id, fio, birthdate, datein, dateout, ordered, dsin, dsout, outto, city, first, second, early, unvoluntary, date_lastout from exp0; 
