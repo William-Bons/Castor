@@ -40,6 +40,8 @@ namespace Castor.test
                 //foreach (var user in plann)
                 //    ConsoleMessage?.Invoke($"{user.keyid}\t\t => {user.description}");
 
+                _ = Db.Movebooks.ToList();
+                ;
                 
             };
             await asyncLambda();

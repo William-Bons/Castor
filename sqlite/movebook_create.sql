@@ -1,3 +1,4 @@
+DROP TABLE "Movebooks"; 
 CREATE TABLE "Movebooks" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"card_id"	INTEGER NOT NULL,
@@ -16,6 +17,8 @@ CREATE TABLE "Movebooks" (
 	"early"	NUMERIC,
 	"unvoluntary"	NUMERIC,
 	"date_lastout"	DATE,
+	"closed" NUMERIC,
+	"days" INT GENERATED ALWAYS AS (julianday(dateout) - julianday(datein) ) VIRTUAL,
 	"agein"	INT GENERATED ALWAYS AS (CAST(strftime('%Y', "datein") AS INTEGER) - CAST(strftime('%Y', "birthdate") AS INTEGER) - (strftime('%m-%d', "datein") < strftime('%m-%d', "birthdate"))) VIRTUAL,
 	"ageout"	INT GENERATED ALWAYS AS (CAST(strftime('%Y', "dateout") AS INTEGER) - CAST(strftime('%Y', "birthdate") AS INTEGER) - (strftime('%m-%d', "dateout") < strftime('%m-%d', "birthdate"))) VIRTUAL,
 	"Ai"	int GENERATED ALWAYS AS (iif("dsin" == "21" OR "dsin" == "22" OR "dsin" == "23" OR "dsin" == "25" OR "dsin" == "30" OR "dsin" == "31" OR "dsin" == "32" OR "dsin" == "00" OR "dsin" == "01", 1, 0)) VIRTUAL,

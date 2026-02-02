@@ -3,6 +3,7 @@ using Castor.database.tables;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Castor.gui.pages
     /// <summary>
     /// Логика взаимодействия для Thebook.xaml
     /// </summary>
-    public partial class Thebook : Page
+    public partial class Thebook : Page, INotifyPropertyChanged
     {
         private CastorContext context;
 
@@ -29,17 +30,23 @@ namespace Castor.gui.pages
         {
             InitializeComponent();
             context = castorContext;
+            DataContext = this;
 
+            Loaded += async (a, b) =>
+            {
+                await Task.Run(() => Load());
+            };
             
         }
-        public Movebook LoadedData { get; private set; }
+        public ICollection<Movebook> LoadedData { get; private set; }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private async Task Load()
         {
-            await Task.Run(() =>
-            {
-                LoadedData = context.Movebooks.ToListAsync();
-            });
+
+            LoadedData = context.Movebooks.ToList<Movebook>();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
         }
     }
 }

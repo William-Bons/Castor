@@ -1,5 +1,8 @@
 ﻿using Castor.database.tables;
+using Castor.gui;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace Castor.database
@@ -12,13 +15,12 @@ namespace Castor.database
         public enum ContextVariant { SQLITE, SQLSERVER, POSTGREE };
         public string[] VariantNames = { "SQLITE", "SQLSERVER", "POSTGREE" };
         private ContextVariant _contextVariant;
+        private static CastorContext? _instance;
 
         #region TALBES
         /// <summary>
         /// Tables in database
         /// </summary>
-        public DbSet<Planning> Plannings => Set<Planning>();
-        public DbSet<dictionary> DictPlannings => Set<dictionary>();
         public DbSet<Movebook> Movebooks => Set<Movebook>();
         #endregion
 
@@ -30,20 +32,23 @@ namespace Castor.database
             _contextVariant = (ContextVariant)Properties.Settings.Default.contextValiant;
             if (!Database.CanConnect())
             {
-                MessageBox.Show("SQLITE Database is not exist", "SQLITE", MessageBoxButton.OK, MessageBoxImage.Error);
+                CreateNewDatabase();
             }
-        }
-
-        public CastorContext(ContextVariant variant)
-        {
-            _contextVariant = variant;
-
         }
 
         /// <summary>
         /// need for console output
         /// </summary>
         public string Variant => $"{VariantNames[(int)_contextVariant]}: {Database.GetDbConnection().DataSource} @ {Database.GetDbConnection().Database}";
+
+        public static CastorContext Current
+        {
+            get
+            {
+                if (_instance == null) _instance = new CastorContext();
+                return _instance;
+            }
+        }
 
 
         /// <summary>
@@ -56,6 +61,7 @@ namespace Castor.database
             switch (_contextVariant)
             {
                 case ContextVariant.SQLITE:
+                    //todo: Check file .db exists !!!!
                     optionsBuilder.UseSqlite(Properties.Settings.Default.sqliteConnection);
                     break;
                 case ContextVariant.SQLSERVER:
@@ -67,11 +73,20 @@ namespace Castor.database
             ;
         }
 
-        public static CastorContext Get()
+        private void CreateNewDatabase()
         {
-            return new CastorContext();
-        }
+            FormattableString sqlLine;
+            using(FileStream file = new FileStream("sqlite/movebook_create.sql", FileMode.Open))
+            {
+                using(TextReader reader = new StreamReader(file))
+                {
+                    sqlLine = FormattableStringFactory.Create(reader.ReadToEnd());
+                }
+            }
 
+            Database.EnsureCreated();
+            Database.ExecuteSql(sqlLine);
+        }
 
     }
 }
