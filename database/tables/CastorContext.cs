@@ -15,7 +15,6 @@ namespace Castor.database
         public enum ContextVariant { SQLITE, SQLSERVER, POSTGREE };
         public string[] VariantNames = { "SQLITE", "SQLSERVER", "POSTGREE" };
         private ContextVariant _contextVariant;
-        private static CastorContext? _instance;
 
         #region TALBES
         /// <summary>
@@ -27,7 +26,7 @@ namespace Castor.database
         /// <summary>
         /// Constructor. Checks database to exsists, and creates it if not
         /// </summary>
-        private CastorContext()
+        public CastorContext()
         {
             _contextVariant = (ContextVariant)Properties.Settings.Default.contextValiant;
             if (!Database.CanConnect())
@@ -41,14 +40,6 @@ namespace Castor.database
         /// </summary>
         public string Variant => $"{VariantNames[(int)_contextVariant]}: {Database.GetDbConnection().DataSource} @ {Database.GetDbConnection().Database}";
 
-        public static CastorContext Current
-        {
-            get
-            {
-                if (_instance == null) _instance = new CastorContext();
-                return _instance;
-            }
-        }
 
 
         /// <summary>

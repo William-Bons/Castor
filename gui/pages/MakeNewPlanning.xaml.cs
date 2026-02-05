@@ -14,7 +14,7 @@ namespace Castor.gui.pages
     public partial class MakeNewPlanning : Window, IDialog, INotifyPropertyChanged
     {
         private CastorContext _context;
-        public MakeNewPlanning(CastorContext castorContext, object _visit)
+        public MakeNewPlanning(object _visit)
         {
             _context = castorContext;
             Visit = (visit?)_visit;
@@ -34,7 +34,7 @@ namespace Castor.gui.pages
             _context.Plannings.Add(Planning);
         }
 
-        public MakeNewPlanning(CastorContext castorContext, Planning planning)
+        public MakeNewPlanning(Planning planning)
         {
             _context = castorContext;
             InitializeComponent();

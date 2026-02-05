@@ -13,13 +13,11 @@ namespace Castor.test
     public class DbTests : IConsoleMessage, IRun
     {
         private object TestNo = null;
-        private CastorContext Db;
         public event ConsoleMessageHandler ConsoleMessage;
 
 
-        public DbTests(CastorContext db, object testNo)
+        public DbTests(object testNo)
         {
-            Db = db;
             TestNo = testNo;
         }
 
@@ -40,9 +38,10 @@ namespace Castor.test
                 //foreach (var user in plann)
                 //    ConsoleMessage?.Invoke($"{user.keyid}\t\t => {user.description}");
 
-                _ = Db.Movebooks.ToList();
-                ;
-                
+                using (CastorContext Db = new CastorContext())
+                {
+                    _ = Db.Movebooks.ToList();
+                }
             };
             await asyncLambda();
         }
@@ -61,9 +60,11 @@ namespace Castor.test
                 //    .ToList();
                 //    ;
                 //}
-
-                var movebook = Db.Movebooks.ToListAsync();
-                ConsoleMessage?.Invoke($"{movebook.Result}");
+                using (CastorContext Db = new CastorContext())
+                {
+                    var movebook = Db.Movebooks.ToListAsync();
+                    ConsoleMessage?.Invoke($"{movebook.Result}");
+                }
             });
         }
 

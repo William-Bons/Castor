@@ -3,6 +3,7 @@ using Castor.database.tab_medis;
 using Castor.gui;
 using Castor.gui.common;
 using Castor.Properties;
+using Microsoft.IdentityModel.Tokens;
 using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,27 +21,20 @@ namespace Castor
         {
             InitializeComponent();
             new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
-            _ = CastorContext.Current;
 
             ContentRendered += async (o, e) =>
             {
                 Cursor = Cursors.Wait;
 
-                // THIS! Connection program to database
-                //await Task.Run(() =>
-                //{
-                //    DatabaseContext = CastorContext.Get();
-                //});
-                //Console.Print($"conncted: {DatabaseContext?.Variant}");
-
                 // select current user
-                //if (Settings.Default.LastConnectedUserId <= 0 && Settings.Default.LastSelectedDep <= 0)
-                //{
-                //    MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.gui.dialogs.SelectUser" });
-                //}
-                
-                // load Kurwa
-                MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.Kurwa" });
+                if (Settings.Default.AskUserBeforeStart && Settings.Default.LastConnectedUserId <= 0 && Settings.Default.LastSelectedDep <= 0)
+                {
+                    MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.gui.dialogs.SelectUser" });
+                }
+
+                // load page according Settings.Default.StartLoadedPage
+                if (!Settings.Default.StartLoadingPage.IsNullOrEmpty())
+                    MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = Settings.Default.StartLoadingPage });
 
                 Cursor = Cursors.Arrow;
             };
@@ -54,9 +48,8 @@ namespace Castor
             {
 
                 object? activeCreatedObject =
-                    _class.GetConstructor([typeof(CastorContext)]) != null ? Activator.CreateInstance(_class, CastorContext.Current) :
-                    _class.GetConstructor([typeof(CastorContext), typeof(object)]) != null ? Activator.CreateInstance(_class, CastorContext.Current, _castorMenuItem.Parameter) :
                     _class.GetConstructor([typeof(MainWindow)]) != null ? Activator.CreateInstance(_class, this) :
+                    _class.GetConstructor([typeof(object)]) != null ? Activator.CreateInstance(_class, _castorMenuItem.Parameter) :
                     Activator.CreateInstance(_class);
 
                 if (activeCreatedObject is IConsoleMessage obj) obj.ConsoleMessage += (message) => Console.Print($"{message}");

@@ -16,7 +16,7 @@ namespace Castor.gui
         /// <param name="Db"></param>
         /// <param name="TableObject"></param>
         /// <param name="grid"></param>
-        public DbTableBinder(CastorContext Db, MetaTable TableObject, Grid grid)
+        public DbTableBinder(MetaTable TableObject, Grid grid)
         {
             // define Grid columns 1/2 and 2/3
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });

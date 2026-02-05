@@ -93,5 +93,29 @@ namespace Castor.Properties {
                 this["postgreeConnection"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Castor.gui.pages.Thebook")]
+        public string StartLoadingPage {
+            get {
+                return ((string)(this["StartLoadingPage"]));
+            }
+            set {
+                this["StartLoadingPage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AskUserBeforeStart {
+            get {
+                return ((bool)(this["AskUserBeforeStart"]));
+            }
+            set {
+                this["AskUserBeforeStart"] = value;
+            }
+        }
     }
 }

@@ -1,21 +1,8 @@
 ﻿using Castor.database;
 using Castor.database.tables;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Castor.gui.pages
 {
@@ -25,28 +12,43 @@ namespace Castor.gui.pages
     public partial class Thebook : Page, INotifyPropertyChanged
     {
         private CastorContext context;
+        private bool need_save = false;
 
-        public Thebook(CastorContext castorContext)
+        public Thebook()
         {
             InitializeComponent();
-            context = castorContext;
             DataContext = this;
-
-            Loaded += async (a, b) =>
-            {
-                await Task.Run(() => Load());
-            };
-            
+            Task.Run(() => Load());
         }
+
         public ICollection<Movebook> LoadedData { get; private set; }
+        public Visibility SaveButtonVisible => need_save ? Visibility.Visible : Visibility.Collapsed;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        private void PatientsTable_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            need_save = true;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
+        }
+
         private async Task Load()
         {
+            if (context != null) context.Dispose();
 
-            LoadedData = context.Movebooks.ToList<Movebook>();
+            context = new CastorContext();
+            LoadedData = context.Movebooks.ToList();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
+
         }
+
+        private void NeedRefreshTable(object sender, System.Windows.RoutedEventArgs e)
+        {
+            need_save = false;
+            context.SaveChanges(true);
+            Load();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
+        }
+
     }
 }
