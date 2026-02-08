@@ -11,6 +11,10 @@ namespace Castor.gui.common
         /// <summary>
         /// Интерфейс для класса Window показывающий что класс необходимо выводить как диалог
         /// </summary>
+
+        public delegate void DialogOKHandler();
+        
+
         public void Show();
     }
 }

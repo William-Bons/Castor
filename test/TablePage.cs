@@ -1,4 +1,5 @@
 ﻿using Castor.database.tab_medis;
+using Castor.database.tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,9 @@ namespace Castor.test
     public class TablePage
     {
         private Window host;
-        private ICollection<patdiag> rows;
+        private ICollection<visit> rows;
 
-        public TablePage(ICollection<patdiag> collection)
+        public TablePage(ICollection<visit> collection)
         {
             rows = collection;
             if (rows != null && rows.Count > 0)

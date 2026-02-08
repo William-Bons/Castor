@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castor.database.tables;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,7 +14,7 @@ namespace Castor.database.tab_medis;
 /// 2742 - 6 отд
 /// 2709 - 12 отд
 /// </summary>
-public partial class dep
+public partial class dep 
 {
     [Key] public long keyid { get; set; }
 

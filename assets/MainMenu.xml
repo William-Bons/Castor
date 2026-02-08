@@ -17,7 +17,7 @@
 		<MenuItem Header="Console"   />
 	</MenuItem>
 	<MenuItem Header="Пациент" >
-		<MenuItem Header="Новый"  ClassName="" Parameter="-1"/>
+		<MenuItem Header="Новый"  ClassName="Castor.gui.dialogs.CreateNew" />
 		<MenuItem Header="Открыть по номеру карты" ClassName="" Parameter="B" InputGestureText="F3"/>
 		<MenuItem Header="Открыть последнего" ClassName="" Parameter="O" InputGestureText="F2"/>
 	</MenuItem>

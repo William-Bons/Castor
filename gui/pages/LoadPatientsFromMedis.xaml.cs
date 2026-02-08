@@ -65,7 +65,7 @@ namespace Castor.gui.pages
         {
             visit _current = (visit)((DataGrid)sender).CurrentItem;
             //SwitchPage?.Invoke("Castor.gui.pages.MakeNewPlanning", _current);
-            new TablePage(_current.Patient.Diagnoses);
+            //new TablePage(_current.Patient.Diagnoses);
             ;
         }
 

@@ -72,7 +72,7 @@ namespace Castor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2704")]
         public long LastSelectedDep {
             get {
                 return ((long)(this["LastSelectedDep"]));

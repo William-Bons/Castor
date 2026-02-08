@@ -5,15 +5,104 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Castor.gui.dialogs"
         mc:Ignorable="d"
-        Title="CreateNew" Height="321" Width="435">
+        Title="Поступление" Height="626" Width="879">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Margin="10" x:Name="Face"/>
-        
+        <Grid Grid.Row="0" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="1" Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Отделение" Padding="5"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Dep.text}" DataContext="{Binding Visit}" Padding="5"/>
+                
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Пациент" Padding="5"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Patient.fullname}" DataContext="{Binding Visit}" Padding="5"/>
+                <Button    Grid.Row="1" Grid.Column="1" Content="..." Width="23" Height="23" HorizontalAlignment="Right" Click="SelectPatientFromMedis"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Поступил из" Padding="5"/>
+                <ComboBox  Grid.Row="2" Grid.Column="1" Margin="3" ItemsSource="{Binding Planns}" DisplayMemberPath="description" SelectedValuePath="keyid" SelectedValue="{Binding Movebook.Ordered}" />
+
+                <TextBlock  Grid.Row="3" Grid.Column="0" Text="Дата поступления" Padding="5"/>
+                <DatePicker Grid.Row="3" Grid.Column="1" Margin="3" SelectedDate="{Binding Movebook.Datein}"/>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Диагноз поступления" Padding="5"/>
+                <TextBox   Grid.Row="4" Grid.Column="1" Text="{Binding Movebook.Dsin}"  Margin="3" Padding="2"/>
+
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Городской" Padding="5"/>
+                <CheckBox  Grid.Row="5" Grid.Column="1" IsChecked="{Binding Movebook.City}" Margin="5" Content="отметьте поле, если пациент прописан в городе, в ином случае оставте поле неотмеченым" FontSize="11"/>
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Впервые в жизни" Padding="5"/>
+                <CheckBox  Grid.Row="6" Grid.Column="1" IsChecked="{Binding Movebook.First}" Margin="5" Content="отметьте поле, если пациент ранее никогда не лечился в любых психиатрических стационарах" FontSize="11"/>
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="Повторно в году" Padding="5"/>
+                <CheckBox  Grid.Row="7" Grid.Column="1" IsChecked="{Binding Movebook.Second}" Margin="5" Content="отметьте поле, если пациент поступает повторно в этом календарном году" FontSize="11"/>
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="Недобровольно" Padding="5"/>
+                <CheckBox  Grid.Row="8" Grid.Column="1" IsChecked="{Binding Movebook.Unvoluntary}" Margin="5" Content="отметьте поле, если пациент поступил по ст 29" FontSize="11"/>
+
+                <TextBlock Grid.Row="9" Grid.Column="0" Text="Ранний возврат" Padding="5" />
+                <CheckBox  Grid.Row="9" Grid.Column="1" IsChecked="{Binding Movebook.Early}" Margin="5" Content="отметьте поле, если пациент поступил менее чем через 2 недели после выписки" FontSize="11" />
+                <TextBlock  Grid.Row="10" Grid.Column="0" Text="Дата пред выписки" Padding="5"/>
+                <DatePicker Grid.Row="10" Grid.Column="1" Margin="3" SelectedDate="{Binding Movebook.Date_lastout}"/>
+                <Rectangle Grid.Row="9" Grid.RowSpan="2" Grid.ColumnSpan="2" Stroke="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" />
+
+
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.Column="1" Margin="10" HorizontalAlignment="Right">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="{Binding Movebook.card_id}" />
+                <Button Grid.Row="1" Content="Завершить"  Margin="5"/>
+                <Button Grid.Row="10" Content="Записать"  Margin="5"/>
+            </Grid>
+
+            <StatusBar Grid.Row="100" Grid.ColumnSpan="2">
+                <TextBlock Padding="2">
+                <Run Text="    Дней госпитализации: "/>
+                <Run Text="{Binding Planning.DaysInDep, Mode=OneWay}"/>
+                </TextBlock>
+                <TextBlock Padding="2">
+                <Run Text="    Дней до следующего цикла: "/>
+                <Run Text="{Binding Planning.DaysToNext, Mode=OneWay}"/>
+                </TextBlock>
+            </StatusBar>
+        </Grid>
+
+
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
             <Button Content="Cancel" Width="100" Click="Cancel"/>
             <Separator Width="5" Visibility="Hidden"/>
