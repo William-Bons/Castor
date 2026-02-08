@@ -11,13 +11,13 @@
 			<MenuItem Header="Запрос к БД 3"  ClassName="Castor.test.DbTests" Parameter ="TTestSelectTable3" />
 			<MenuItem Header="Create Html Test"  ClassName="Castor.test.DbTests" Parameter ="TCreateHtml" />
 		</MenuItem>
-		<MenuItem Header="Движение пациентов"  ClassName="Castor.gui.pages.Thebook" />
+		<MenuItem Header="Движение пациентов"  ClassName="Castor.gui.movebook.Thebook" />
 		<MenuItem Header="Список пациентов в отделении" ClassName="Castor.gui.pages.LoadPatientsFromMedis"/>
 		<Separator/>
 		<MenuItem Header="Console"   />
 	</MenuItem>
 	<MenuItem Header="Пациент" >
-		<MenuItem Header="Новый"  ClassName="Castor.gui.dialogs.CreateNew" />
+		<MenuItem Header="Новый"  ClassName="Castor.gui.movebook.CreateNew" />
 		<MenuItem Header="Открыть по номеру карты" ClassName="" Parameter="B" InputGestureText="F3"/>
 		<MenuItem Header="Открыть последнего" ClassName="" Parameter="O" InputGestureText="F2"/>
 	</MenuItem>

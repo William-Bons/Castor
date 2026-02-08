@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Castor.gui.pages
+namespace Castor.gui.movebook
 {
     /// <summary>
     /// Логика взаимодействия для Thebook.xaml

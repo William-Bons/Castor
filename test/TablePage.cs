@@ -16,25 +16,16 @@ namespace Castor.test
     public class TablePage
     {
         private Window host;
-        private ICollection<visit> rows;
 
-        public TablePage(ICollection<visit> collection)
-        {
-            rows = collection;
-            if (rows != null && rows.Count > 0)
-            {
-                CreateView();
-            }
-        }
-
-        private void CreateView()
+        public TablePage(string UserControlClass)
         {
             host = new Window() { Width = 400, Height = 600 };
-            DataGrid dataGrid = new DataGrid();
-            host.Content = dataGrid;
-
-            dataGrid.ItemsSource = rows;
+            object NewClass = Activator.CreateInstance(Type.GetType(UserControlClass));
+            host.Content = NewClass;
             host.Show();
         }
+
+        
+
     }
 }
