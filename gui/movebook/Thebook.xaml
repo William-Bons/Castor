@@ -21,7 +21,7 @@
             </Button>
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="True" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" >
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="True" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" MouseDoubleClick="PatientsTable_MouseDoubleClick" >
             <!--<DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Загружать" />
                 <DataGridTextColumn Header="№ карты" Binding="{Binding Card_id}"/>

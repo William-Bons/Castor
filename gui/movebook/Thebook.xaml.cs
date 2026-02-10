@@ -50,5 +50,13 @@ namespace Castor.gui.movebook
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
         }
 
+        private void PatientsTable_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if( ((DataGrid)sender).SelectedItem is Movebook mvb)
+            {
+                Disorder disorder = new Disorder(mvb);
+                disorder.ShowDialog();
+            }
+        }
     }
 }
