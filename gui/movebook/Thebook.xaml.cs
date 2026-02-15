@@ -1,5 +1,6 @@
 ﻿using Castor.database;
 using Castor.database.tables;
+using Castor.gui.dialogs;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +22,7 @@ namespace Castor.gui.movebook
             Task.Run(() => Load());
         }
 
+        public DatePeriod Period { get; set; }
         public ICollection<Movebook> LoadedData { get; private set; }
         public Visibility SaveButtonVisible => need_save ? Visibility.Visible : Visibility.Collapsed;
 
@@ -37,7 +39,17 @@ namespace Castor.gui.movebook
             if (context != null) context.Dispose();
 
             context = new CastorContext();
-            LoadedData = context.Movebooks.ToList();
+            if (Period.Set)
+            {
+                LoadedData = context.Movebooks
+                    .Where(x => (x.Datein >= DateOnly.FromDateTime(Period.Start) && x.Datein <= DateOnly.FromDateTime(Period.End)) ||
+                    (x.Dateout >= DateOnly.FromDateTime(Period.Start) && x.Dateout <= DateOnly.FromDateTime(Period.End)))
+                    .ToList();
+            }
+            else
+            {
+                LoadedData = context.Movebooks.ToList();
+            }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
 
         }
@@ -50,13 +62,41 @@ namespace Castor.gui.movebook
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
         }
 
-        private void PatientsTable_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void DisorderPatient(object sender, EventArgs e)
         {
-            if( ((DataGrid)sender).SelectedItem is Movebook mvb)
+            if(PatientsTable.SelectedItem is Movebook mvb)
             {
                 Disorder disorder = new Disorder(mvb);
                 disorder.ShowDialog();
             }
+        }
+
+        private void SaveInXml(object sender, RoutedEventArgs e)
+        {
+            DatePeriod datePeriod = SelectDatePeriod.Show();
+
+            MonthOutput monthOutput = new MonthOutput(
+                LoadedData.Where(b => b.Datein >= DateOnly.FromDateTime(datePeriod.Start)).ToList());
+
+            MonthReportHtml monthReportHtml = new MonthReportHtml(datePeriod);
+            monthReportHtml.WriteToPdf();
+        }
+
+        private void LoadPatient(object sender, RoutedEventArgs e)
+        {
+            CreateNew createNew = new CreateNew();
+            createNew.ShowDialog();
+            NeedRefreshTable(sender, e);
+        }
+
+        private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DatePeriod dp = new DatePeriod();
+            dp.Start = dpStart.SelectedDate.HasValue ? dpStart.SelectedDate.Value : dp.Start;
+            dp.End = dpEnd.SelectedDate.HasValue ? dpEnd.SelectedDate.Value : dp.End;
+            dp.Set = dp.Start > DateTime.MinValue && dp.End > DateTime.MinValue;
+            Period=dp;
+            Load();
         }
     }
 }

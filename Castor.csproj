@@ -13,12 +13,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="img\add-icon.png" />
+    <None Remove="img\edit.png" />
     <None Remove="img\filter.png" />
     <None Remove="img\kurwa.jpg" />
+    <None Remove="img\registrator.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Page Remove="assets\Style.xaml" />
     <Page Remove="gui\pages\MakeNewPlanning.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="assets\Style.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,18 +39,27 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Select.HtmlToPdf.NetCore" Version="25.2.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="img\add-icon.png" />
+    <Resource Include="img\edit.png" />
     <Resource Include="img\filter.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="img\kurwa.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="img\registrator.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Properties\ResourceRu.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ResourceRu.resx</DependentUpon>
+    </Compile>
     <Compile Update="Properties\Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
@@ -51,7 +68,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Properties\ResourceRu.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ResourceRu.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="assets\BlockTrTd.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="assets\MainMenu.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="assets\MonthReportStyle.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">

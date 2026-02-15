@@ -3,7 +3,13 @@ using System.Collections.Generic;
 
 namespace Castor.database.tables;
 
-public partial class Movebook
+public struct DatePeriod
+{
+    public bool Set;
+    public DateTime Start;
+    public DateTime End;
+}
+public /*partial ??? */ class Movebook
 {
     public int Id { get; set; }
     public int Card_Id { get; set; }
