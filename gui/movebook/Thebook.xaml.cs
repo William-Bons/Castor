@@ -4,6 +4,7 @@ using Castor.gui.dialogs;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Castor.gui.movebook
 {
@@ -19,10 +20,9 @@ namespace Castor.gui.movebook
         {
             InitializeComponent();
             DataContext = this;
-            Task.Run(() => Load());
+            Task.Run(() => Load(new DatePeriod()));
         }
 
-        public DatePeriod Period { get; set; }
         public ICollection<Movebook> LoadedData { get; private set; }
         public Visibility SaveButtonVisible => need_save ? Visibility.Visible : Visibility.Collapsed;
 
@@ -34,7 +34,7 @@ namespace Castor.gui.movebook
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
         }
 
-        private async Task Load()
+        private async Task Load(DatePeriod Period)
         {
             if (context != null) context.Dispose();
 
@@ -49,6 +49,7 @@ namespace Castor.gui.movebook
             else
             {
                 LoadedData = context.Movebooks.ToList();
+                ;
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
 
@@ -58,7 +59,7 @@ namespace Castor.gui.movebook
         {
             need_save = false;
             context.SaveChanges(true);
-            Load();
+            Task.Run(()=> Load(new DatePeriod()));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
         }
 
@@ -73,13 +74,16 @@ namespace Castor.gui.movebook
 
         private void SaveInXml(object sender, RoutedEventArgs e)
         {
+            
             DatePeriod datePeriod = SelectDatePeriod.Show();
 
+            Cursor = Cursors.Wait;
             MonthOutput monthOutput = new MonthOutput(
                 LoadedData.Where(b => b.Datein >= DateOnly.FromDateTime(datePeriod.Start)).ToList());
 
             MonthReportHtml monthReportHtml = new MonthReportHtml(datePeriod);
             monthReportHtml.WriteToPdf();
+            Cursor = Cursors.Arrow;
         }
 
         private void LoadPatient(object sender, RoutedEventArgs e)
@@ -91,12 +95,13 @@ namespace Castor.gui.movebook
 
         private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
+            Cursor = Cursors.Wait;
             DatePeriod dp = new DatePeriod();
             dp.Start = dpStart.SelectedDate.HasValue ? dpStart.SelectedDate.Value : dp.Start;
             dp.End = dpEnd.SelectedDate.HasValue ? dpEnd.SelectedDate.Value : dp.End;
-            dp.Set = dp.Start > DateTime.MinValue && dp.End > DateTime.MinValue;
-            Period=dp;
-            Load();
+            dp.Set = dp.Start > DateTime.MinValue && dp.End > DateTime.MinValue && dp.End>dp.Start;
+            Task.Run(()=> Load(dp));
+            Cursor = Cursors.Arrow;
         }
     }
 }
