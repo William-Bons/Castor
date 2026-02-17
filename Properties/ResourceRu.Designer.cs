@@ -61,7 +61,7 @@ namespace Castor.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на &lt;tr&gt;
+        ///   Ищет локализованную строку, похожую на  &lt;tr&gt;
         /// &lt;td&gt;Психозы&lt;/td&gt;  
         /// &lt;td&gt;{0}&lt;/td&gt; 
         ///&lt;/tr&gt; 
@@ -81,6 +81,10 @@ namespace Castor.Properties {
         /// &lt;td&gt;Наркологические&lt;/td&gt;   
         /// &lt;td&gt;{4}&lt;/td&gt;
         ///&lt;/tr&gt; 
+        ///&lt;tr&gt; 
+        /// &lt;td&gt;  - из них с алкоголизмом&lt;/td&gt;   
+        /// &lt;td&gt;{5}&lt;/td&gt;
+        ///&lt;/tr&gt; 
         ///.
         /// </summary>
         internal static string BlockTrTd {
@@ -90,37 +94,42 @@ namespace Castor.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на &lt;!DOCTYPE html&gt; 
+        ///&lt;html&gt; 
+        ///&lt;meta http-equiv=&apos;Content-Type&apos; content=&apos;text/html;charset=UTF-8&apos;&gt;
+        ///&lt;head&gt;
+        ///    &lt;style&gt;
+        ///    /* This CSS rule makes the table use 100% of its parent container&apos;s width */
+        ///    p {{
+        ///        font-size: 16pt;
+        ///    }}
+        ///
+        ///    table {{
+        ///        width: 100%;
+        ///        border-collapse: collapse; /* Optional: Makes borders look nicer */
+        ///        font-size: 14pt;
+        ///    }}
+        ///
+        ///    th, td {{
+        ///        border: 1px solid black;
+        ///        padding: 2px;
+        ///        text-align: left;
+        ///    }}
+        ///
+        ///    th, td [остаток строки не уместился]&quot;;.
+        /// </summary>
+        internal static string MonthReport {
+            get {
+                return ResourceManager.GetString("MonthReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на &lt;p style=\&quot;font-size: 16pt;\&quot;&gt;Отчет за период {0} - {1} 6 женского отделения первого эпизода&lt;/p&gt;.
         /// </summary>
         internal static string MonthReportHeaderString {
             get {
                 return ResourceManager.GetString("MonthReportHeaderString", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на 
-        ///&lt;style&gt;
-        ////* This CSS rule makes the table use 100% of its parent container&apos;s width */
-        ///table {
-        ///    width: 100%;
-        ///    border-collapse: collapse; /* Optional: Makes borders look nicer */
-        ///    font-size: 14pt;
-        ///}
-        ///th, td {
-        ///    border: 1px solid black;
-        ///    padding: 2px;
-        ///    text-align: left;
-        ///}
-        ///th,td :nth-child(2) {
-        ///    width: 20%;
-        ///}
-        ///&lt;/style&gt;
-        ///.
-        /// </summary>
-        internal static string MonthReportStyle {
-            get {
-                return ResourceManager.GetString("MonthReportStyle", resourceCulture);
             }
         }
     }

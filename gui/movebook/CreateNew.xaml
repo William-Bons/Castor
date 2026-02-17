@@ -52,7 +52,11 @@
                 <Button    Grid.Row="1" Grid.Column="1" Content="..." Width="23" Height="23" HorizontalAlignment="Right" Click="SelectPatientFromMedis"/>
 
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Поступил из" Padding="5"/>
-                <ComboBox  Grid.Row="2" Grid.Column="1" Margin="3" ItemsSource="{Binding Planns}" DisplayMemberPath="description" SelectedValuePath="keyid" SelectedValue="{Binding Movebook.Ordered}" />
+                <ComboBox  Grid.Row="2" Grid.Column="1" Margin="3" SelectedValuePath="Tag" SelectedValue="{Binding Movebook.Ordered}">
+                    <ComboBoxItem Tag="0">Дома</ComboBoxItem>
+                    <ComboBoxItem Tag="1">Стацонара</ComboBoxItem>
+                    <ComboBoxItem Tag="2">ПНИ</ComboBoxItem>
+                </ComboBox>
 
                 <TextBlock  Grid.Row="3" Grid.Column="0" Text="Дата поступления" Padding="5"/>
                 <DatePicker Grid.Row="3" Grid.Column="1" Margin="3" SelectedDate="{Binding Movebook.Datein}" x:Name="DateInControl"/>

@@ -1,19 +1,7 @@
 ﻿using Castor.database;
 using Castor.database.tables;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Castor.gui.movebook
 {
@@ -29,14 +17,19 @@ namespace Castor.gui.movebook
             DataContext = this;
         }
 
-        public Movebook Movebook {  get; set; }
+        public Movebook Movebook { get; set; }
 
         private void SaveInDb(object sender, RoutedEventArgs e)
         {
+            if (!Validate())
+            {
+                MessageBox.Show("Не все необходимые данные введены","ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             using (CastorContext castor = new CastorContext())
             {
                 Movebook.Dateout = DateOnly.FromDateTime(DateInControl.SelectedDate.Value);
-                FormattableString fstr = $@"UPDATE Movebooks set dsout={Movebook.Dsout}, dateout={Movebook.Dateout}, city={Movebook.City}, early={Movebook.Early}, unvoluntary={Movebook.Unvoluntary}, first={Movebook.First}, second={Movebook.Second}, closed={Movebook.Closed}, outto={Movebook.Outto}
+                FormattableString fstr = $@"UPDATE Movebooks set dsout={Movebook.Dsout}, dateout={Movebook.Dateout}, city={Movebook.City}, early={Movebook.Early}, unvoluntary={Movebook.Unvoluntary}, first={Movebook.First}, second={Movebook.Second}, closed={Movebook.Closed}, outto={Movebook.Outto}, deceased={Movebook.Deceased}
                   where Id={Movebook.Id}";
                 castor.Database.ExecuteSql(fstr);
                 castor.SaveChanges();
@@ -46,6 +39,11 @@ namespace Castor.gui.movebook
         private void Cancel(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private bool Validate()
+        {
+            return !string.IsNullOrWhiteSpace(Movebook.Dsout) && Movebook.Outto.HasValue && DateInControl.SelectedDate.HasValue;
         }
     }
 }

@@ -29,6 +29,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -61,9 +62,16 @@
 
             <TextBlock Grid.Row="9" Grid.Column="0" Text="История сдана" Padding="5" />
             <CheckBox  Grid.Row="9" Grid.Column="1" IsChecked="{Binding Movebook.Closed}" Margin="5" Content="" FontSize="11" />
+            
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="Скончался" Padding="5" />
+            <CheckBox  Grid.Row="10" Grid.Column="1" IsChecked="{Binding Movebook.Deceased}" Margin="5" Content="" FontSize="11" />
 
-            <TextBlock Grid.Row="10" Grid.Column="0" Text="Выбыл в" Padding="5"/>
-            <ComboBox  Grid.Row="10" Grid.Column="1" Margin="3" ItemsSource="{Binding Planns}" DisplayMemberPath="description" SelectedValuePath="keyid" SelectedValue="{Binding Movebook.Outto}" />
+            <TextBlock Grid.Row="11" Grid.Column="0" Text="Выбыл в" Padding="5"/>
+            <ComboBox  Grid.Row="11" Grid.Column="1" Margin="3" SelectedValuePath="Tag" SelectedValue="{Binding Movebook.Outto}">
+                <ComboBoxItem Tag="0">Домой</ComboBoxItem>
+                <ComboBoxItem Tag="1">В стационар</ComboBoxItem>
+                <ComboBoxItem Tag="2">В ПНИ</ComboBoxItem>
+            </ComboBox>
 
 
         </Grid>

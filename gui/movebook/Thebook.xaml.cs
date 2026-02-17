@@ -78,12 +78,8 @@ namespace Castor.gui.movebook
             DatePeriod datePeriod = SelectDatePeriod.Show();
 
             Cursor = Cursors.Wait;
-            MonthOutput monthOutput = new MonthOutput(
-                LoadedData.Where(b => b.Datein >= DateOnly.FromDateTime(datePeriod.Start)).ToList());
-
             MonthReportHtml monthReportHtml = new MonthReportHtml(datePeriod);
             monthReportHtml.DisplayReportAsHTML();
-            //monthReportHtml.WriteToPdf();
             Cursor = Cursors.Arrow;
         }
 

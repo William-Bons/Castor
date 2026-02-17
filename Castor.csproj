@@ -13,9 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="img\acroread.png" />
     <None Remove="img\add-icon.png" />
     <None Remove="img\edit.png" />
     <None Remove="img\filter.png" />
+    <None Remove="img\floppy_mount.png" />
     <None Remove="img\kurwa.jpg" />
     <None Remove="img\registrator.png" />
   </ItemGroup>
@@ -43,11 +45,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="img\acroread.png" />
     <Resource Include="img\add-icon.png" />
     <Resource Include="img\edit.png" />
     <Resource Include="img\filter.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="img\floppy_mount.png" />
     <Resource Include="img\kurwa.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -81,7 +85,7 @@
     <None Update="assets\MainMenu.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="assets\MonthReportStyle.css">
+    <None Update="assets\MonthReport.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">

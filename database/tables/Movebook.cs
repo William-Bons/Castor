@@ -30,6 +30,8 @@ public /*partial ??? */ class Movebook
     public string? Date_Lastout { get; set; }
     public int? Closed { get; set; }
     public int? Days { get; set; }
+    public int? Visitid { get; set; }
+    public int? Deceased { get; set; }
     public virtual int? Agein { get; set; }
     public virtual int? Ageout { get; set; }
     public virtual int? Ai { get; set; }
@@ -37,11 +39,13 @@ public /*partial ??? */ class Movebook
     public virtual int? Ci { get; set; }
     public virtual int? Di { get; set; }
     public virtual int? Ei { get; set; }
+    public virtual int? Fi { get; set; }
     public virtual string? Contr_In { get; set; }
     public virtual int? Ao { get; set; }
     public virtual int? Bo { get; set; }
     public virtual int? Co { get; set; }
     public virtual int? Do { get; set; }
     public virtual int? Eo { get; set; }
+    public virtual int? Fo { get; set; }
     public virtual string? Contr_Out { get; set; }
 }

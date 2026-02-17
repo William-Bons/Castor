@@ -121,10 +121,10 @@
   <data name="BlockTrTd" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\assets\BlockTrTd.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="MonthReport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\assets\MonthReport.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="MonthReportHeaderString" xml:space="preserve">
     <value>&lt;p style=\"font-size: 16pt;\"&gt;Отчет за период {0} - {1} 6 женского отделения первого эпизода&lt;/p&gt;</value>
-  </data>
-  <data name="MonthReportStyle" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\assets\MonthReportStyle.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

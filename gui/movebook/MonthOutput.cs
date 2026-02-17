@@ -28,7 +28,9 @@ namespace Castor.gui.movebook
         public int ValueE { get; set; }
 
     }
-    public class MonthOutput
+
+    [Obsolete]
+    public class MonthOutput 
     {
         private MonthOutput() { }
         public MonthOutput(ICollection<Movebook> movebooks) 
