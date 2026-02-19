@@ -26,7 +26,7 @@
       <Value Profile="(Default)">Host=172.23.1.220;Port=5432;Database=med;Username=SOLUTION_MED;Password=elsoft</Value>
     </Setting>
     <Setting Name="StartLoadingPage" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Castor.gui.pages.Thebook</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="AskUserBeforeStart" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

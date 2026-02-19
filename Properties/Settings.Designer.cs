@@ -96,7 +96,7 @@ namespace Castor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Castor.gui.pages.Thebook")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string StartLoadingPage {
             get {
                 return ((string)(this["StartLoadingPage"]));

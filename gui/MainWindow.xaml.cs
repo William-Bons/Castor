@@ -38,6 +38,15 @@ namespace Castor
 
                 Cursor = Cursors.Arrow;
             };
+
+            Closed += (a, b) =>
+            {
+                if (!string.IsNullOrWhiteSpace(CentralFrame?.Content?.GetType().ToString()))
+                {
+                    Settings.Default.StartLoadingPage = CentralFrame.Content?.GetType().ToString();
+                    Settings.Default.Save();
+                }
+            };
         }
 
         private void MainWindow_MenuItemRise(CastorMenuItem _castorMenuItem)
