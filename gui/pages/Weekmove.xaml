@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="Castor.gui.pages.Weekmove"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Castor.gui.pages"
+             mc:Ignorable="d" 
+             d:DesignHeight="460.409" d:DesignWidth="252.313">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <DatePicker Margin="3" SelectedDate="{Binding Start}" SelectedDateChanged="Calculate" Focusable="False"/>
+            <Separator />
+            <DatePicker Margin="3" SelectedDate="{Binding End}" SelectedDateChanged="Calculate" Focusable="False"/>
+            <Separator />
+            <Button Width="23" Height="23" Background="Transparent" BorderThickness="0" Click="Calculate" Focusable="False">
+                <Image Source="/img/registrator.png" />
+            </Button>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="5" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" FontFamily="Courier New" FontSize="30">
+                <Run Text="Поступило: " />
+            </TextBlock>
+            <TextBlock Grid.Row="1" FontFamily="Courier New" FontSize="30">
+                <Run Text="Выбыло: "/>
+            </TextBlock>
+            <TextBlock Grid.Row="2" FontFamily="Courier New" FontSize="30">
+                <Run Text="Сдано: " />
+            </TextBlock>
+
+            <TextBlock Grid.Row="0" Grid.Column="1" FontFamily="Courier New" FontSize="30">
+                <Run Text="{Binding Entered}"/>
+            </TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="1" FontFamily="Courier New" FontSize="30">
+                <Run Text="{Binding Exited}" />
+            </TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="1" FontFamily="Courier New" FontSize="30">
+                <Run Text="{Binding Closed}" />
+            </TextBlock>
+        </Grid>
+    </Grid>
+</UserControl>

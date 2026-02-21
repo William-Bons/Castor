@@ -1,12 +1,7 @@
 ﻿using Castor.database;
 using Castor.database.tables;
-using Castor.gui.dialogs;
-using SelectPdf;
-using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace Castor.gui.movebook
 {

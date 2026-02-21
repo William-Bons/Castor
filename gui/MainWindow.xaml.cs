@@ -1,14 +1,10 @@
-﻿using Castor.database;
-using Castor.database.tab_medis;
-using Castor.gui;
+﻿using Castor.gui;
 using Castor.gui.common;
 using Castor.Properties;
 using Microsoft.IdentityModel.Tokens;
-using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace Castor
 {
