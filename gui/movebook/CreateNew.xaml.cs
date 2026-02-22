@@ -14,10 +14,11 @@ namespace Castor.gui.movebook
     /// <summary>
     /// Логика взаимодействия для CreateNewUser.xaml
     /// </summary>
-    public partial class CreateNew : Window, IDialog, INotifyPropertyChanged
+    public partial class CreateNew : Window, IDialog, INotifyPropertyChanged, IConsoleMessage
     {
-        public event DialogOKHandler DialogOK;
+        public event DialogOKHandler? DialogOK;
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event ConsoleMessageHandler? ConsoleMessage;
 
         public CreateNew()
         {
@@ -26,7 +27,7 @@ namespace Castor.gui.movebook
         }
 
         public Movebook Movebook { get; private set; } = new Movebook();
-        public visit Visit { get; private set; }
+        public visit Visit { get; private set; } = new visit();
 
         private void SaveInDb(object sender, RoutedEventArgs e)
         {
@@ -37,10 +38,15 @@ namespace Castor.gui.movebook
             }
             using (CastorContext castor = new CastorContext())
             {
-                FormattableString fstr = $@"INSERT INTO Movebooks (card_id, patientid, fio, birthdate, datein, dateout, ordered, dsin, city,first,second,early,unvoluntary,date_lastout,visitid) VALUES ({Movebook.Card_Id}, {Movebook.Patientid},{Movebook.Fio},{Movebook.Birthdate},{Movebook.Datein},{Movebook.Dateout},{Movebook.Ordered},{Movebook.Dsin},{Movebook.City},{Movebook.First},{Movebook.Second},{Movebook.Early},{Movebook.Unvoluntary},{Movebook.Date_Lastout},{Movebook.Visitid})";
-
-                castor.Database.ExecuteSql(fstr);
-                castor.SaveChanges();
+                try
+                {
+                    castor.Movebooks.Update(Movebook);
+                    castor.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    ConsoleMessage?.Invoke(ex.Message);
+                }
             }
 
             DialogOK?.Invoke();
@@ -56,36 +62,44 @@ namespace Castor.gui.movebook
         {
             using (MedisContext medisContext = new MedisContext())
             {
-                ICollection<dep>? depList = medisContext.dep
-                    .Where(d => d.keyid == Settings.Default.LastSelectedDep)
-                    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
-                    .ThenInclude(v => v.Doctor)
-                    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
-                    .ThenInclude(v => v.Patient)
-                    .ThenInclude(p => p.Diagnoses)
-                    .ToList();
-
-                Popup popup = new Popup();
-                var a = new SelectPatientInVisits(depList.First().Visits);
-                a.Selected += (object sel) =>
+                try
                 {
-                    popup.IsOpen = false;
-                    Visit = (visit)sel;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Visit)));
-                    Movebook.Card_Id = (int)Visit.num;
-                    Movebook.Patientid = (int?)Visit?.Patient?.num;
-                    Movebook.Fio = Visit?.Patient?.fullname;
-                    Movebook.Birthdate = DateOnly.FromDateTime(Visit.Patient.birthdate.Value);
-                    Movebook.Datein = DateOnly.FromDateTime(Visit.dat.Value);
-                    Movebook.Visitid = (int?)Visit?.keyid;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Movebook)));
-                    DateInControl.SelectedDate = Visit?.dat;
+                    ICollection<dep>? depList = medisContext.dep
+                        .Where(d => d.keyid == Settings.Default.LastSelectedDep)
+                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
+                        .ThenInclude(v => v.Doctor)
+                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
+                        .ThenInclude(v => v.Patient)
+                        .ThenInclude(p => p.Diagnoses)
+                        .ToList();
 
-                };
-                popup.Child = a;
-                popup.StaysOpen = false;
-                popup.Placement = PlacementMode.MousePoint;
-                popup.IsOpen = true;
+                    Popup popup = new Popup();
+                    var a = new SelectPatientInVisits(depList.First().Visits);
+                    a.Selected += (object sel) =>
+                    {
+                        popup.IsOpen = false;
+                        Visit = (visit)sel;
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Visit)));
+                        Movebook.Ordered = 0;
+                        Movebook.Card_Id = Visit.num;
+                        Movebook.Patientid = Visit?.Patient?.num;
+                        Movebook.Fio = Visit?.Patient?.fullname;
+                        Movebook.Birthdate = DateOnly.FromDateTime(Visit.Patient.birthdate.Value);
+                        Movebook.Datein = DateOnly.FromDateTime(Visit.dat.Value);
+                        Movebook.Visitid = Visit?.keyid;
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Movebook)));
+                        DateInControl.SelectedDate = Visit?.dat;
+
+                    };
+                    popup.Child = a;
+                    popup.StaysOpen = false;
+                    popup.Placement = PlacementMode.MousePoint;
+                    popup.IsOpen = true;
+                }
+                catch(Exception ex)
+                {
+                    ConsoleMessage?.Invoke(ex.Message);
+                }
             }
         }
 

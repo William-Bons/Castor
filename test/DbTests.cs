@@ -40,7 +40,14 @@ namespace Castor.test
 
                 using (CastorContext Db = new CastorContext())
                 {
-                    _ = Db.Movebooks.ToList();
+                    try
+                    {
+                        _ = Db.Movebooks.ToList();
+                    }
+                    catch (Exception ex)
+                    {
+                        ConsoleMessage?.Invoke(ex.Message);
+                    }
                 }
             };
             await asyncLambda();
@@ -50,20 +57,10 @@ namespace Castor.test
         {
             await Task.Run(() =>
             {
-                //using (MedisContext cc = new MedisContext())
-                //{
-                //    ICollection<dep> deps = cc.dep
-                //    .Where(d => d.keyid == SelectUser.SelectedDep.keyid)
-                //    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
-                //    .ThenInclude(v => v.Patient)
-                //    .ThenInclude(p => p.Diagnoses)
-                //    .ToList();
-                //    ;
-                //}
                 using (CastorContext Db = new CastorContext())
                 {
-                    var movebook = Db.Movebooks.ToListAsync();
-                    ConsoleMessage?.Invoke($"{movebook.Result}");
+                        var movebook = Db.Movebooks.ToListAsync();
+                        ConsoleMessage?.Invoke($"{movebook.Result}");
                 }
             });
         }

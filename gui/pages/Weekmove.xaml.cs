@@ -38,7 +38,7 @@ namespace Castor.gui.pages
             {
                 Entered = castor.Movebooks.Where(x => x.Datein >= DateOnly.FromDateTime(Start) && x.Datein <= DateOnly.FromDateTime(End)).Count();
                 Exited = castor.Movebooks.Where(x => x.Dateout >= DateOnly.FromDateTime(Start) && x.Dateout <= DateOnly.FromDateTime(End)).Count();
-                Closed = castor.Movebooks.Where(x => x.Dateout >= DateOnly.FromDateTime(Start) && x.Dateout <= DateOnly.FromDateTime(End) && x.Closed > 0).Count();
+                Closed = castor.Movebooks.Where(x => x.Dateout >= DateOnly.FromDateTime(Start) && x.Dateout <= DateOnly.FromDateTime(End) && x.Closed==true).Count();
 
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Entered)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Exited)));

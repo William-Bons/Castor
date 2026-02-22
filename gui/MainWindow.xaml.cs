@@ -53,8 +53,8 @@ namespace Castor
             {
 
                 object? activeCreatedObject =
-                    _class.GetConstructor([typeof(MainWindow)]) != null ? Activator.CreateInstance(_class, this) :
                     _class.GetConstructor([typeof(object)]) != null ? Activator.CreateInstance(_class, _castorMenuItem.Parameter) :
+                    _class.GetConstructor([typeof(MainWindow)]) != null ? Activator.CreateInstance(_class, this) :
                     Activator.CreateInstance(_class);
 
                 if (activeCreatedObject is IConsoleMessage obj) obj.ConsoleMessage += (message) => Console.Print($"{message}");

@@ -28,7 +28,7 @@ namespace Castor.gui.movebook
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void PatientsTable_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        private void PatientsTable_CellEditEnding(object sender, EventArgs e)
         {
             need_save = true;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));

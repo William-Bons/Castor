@@ -78,7 +78,7 @@ namespace Castor.database
             try
             {
                 Database.EnsureCreated();
-                Database.ExecuteSql(sqlLine);
+                //Database.ExecuteSql(sqlLine);
             }
             catch (Exception ex)
             {

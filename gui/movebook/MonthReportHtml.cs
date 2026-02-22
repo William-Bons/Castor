@@ -25,8 +25,8 @@ namespace Castor.gui.movebook
                 _mainStringBuilding.AppendFormat(Properties.ResourceRu.MonthReport,
                     string.Format(Properties.ResourceRu.MonthReportHeaderString, DateOnly.FromDateTime(datePeriod.Start), DateOnly.FromDateTime(datePeriod.End)),
                     create1(movebooks, "Поступило всего"),
-                    create1(movebooks.Where(x => x.First == 1).ToList(), "Поступило впервые в жизни"),
-                    create1(movebooks.Where(x => x.Second == 1).ToList(), "Поступило повторно в году"),
+                    create1(movebooks.Where(x => x.First == true).ToList(), "Поступило впервые в жизни"),
+                    create1(movebooks.Where(x => x.Second == true).ToList(), "Поступило повторно в году"),
                     create2(disorders, "Выбыло всего")
                     );
 

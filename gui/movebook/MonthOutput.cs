@@ -41,8 +41,8 @@ namespace Castor.gui.movebook
             Header = h ;
 
             DataAllIn = calculate(movebooks); // ALL ENTERED
-            DataFirstIn = calculate(movebooks.Where(x => x.First==1).ToList());   // ENTERED FIRST
-            DataLastIn = calculate(movebooks.Where(x => x.Second==1).ToList());   // ENTERED SECOND TIME
+            DataFirstIn = calculate(movebooks.Where(x => x.First==true).ToList());   // ENTERED FIRST
+            DataLastIn = calculate(movebooks.Where(x => x.Second==true).ToList());   // ENTERED SECOND TIME
 
             Save();
         }

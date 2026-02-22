@@ -36,7 +36,7 @@
             </StackPanel>
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="False" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" MouseDoubleClick="DisorderPatient" >
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="True" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" CurrentCellChanged="PatientsTable_CellEditEnding" MouseDoubleClick="DisorderPatient" >
             <DataGrid.Columns>
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
