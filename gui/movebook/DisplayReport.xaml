@@ -22,7 +22,7 @@
             </Button>
         </ToolBar>
 
-        <WebBrowser Grid.Row="1" x:Name="Browser"/>
+        <WebBrowser Grid.Row="1" x:Name="Browser" />
 
     </Grid>
 </Window>

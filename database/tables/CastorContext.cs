@@ -21,6 +21,7 @@ namespace Castor.database
         /// Tables in database
         /// </summary>
         public DbSet<Movebook> Movebooks => Set<Movebook>();
+        public DbSet<Reports>  Reports => Set<Reports>();
         #endregion
 
         /// <summary>

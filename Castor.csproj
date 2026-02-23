@@ -15,6 +15,7 @@
   <ItemGroup>
     <None Remove="img\acroread.png" />
     <None Remove="img\add-icon.png" />
+    <None Remove="img\ariadna-logo.png" />
     <None Remove="img\edit.png" />
     <None Remove="img\filter.png" />
     <None Remove="img\floppy_mount.png" />
@@ -47,6 +48,7 @@
   <ItemGroup>
     <Resource Include="img\acroread.png" />
     <Resource Include="img\add-icon.png" />
+    <Resource Include="img\ariadna-logo.png" />
     <Resource Include="img\edit.png" />
     <Resource Include="img\filter.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

@@ -1,18 +1,9 @@
 ﻿using SelectPdf;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace Castor.gui.movebook
 {
@@ -22,14 +13,14 @@ namespace Castor.gui.movebook
     public partial class DisplayReport : Window
     {
         private PdfDocument pdfDocument;
-        public DisplayReport(MonthReportHtml monthReportHtml)
+        public DisplayReport(StringBuilder monthReportHtml)
         {
             InitializeComponent();
 
 
             // show report 
             //webBrowser.Language = System.Windows.Markup.XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag);
-            Browser.NavigateToString(monthReportHtml.MainString.ToString());
+            Browser.NavigateToString(monthReportHtml.ToString());
 
             HtmlToPdf converter = new HtmlToPdf();
             converter.Options.PdfPageSize = PdfPageSize.A4;
@@ -37,7 +28,7 @@ namespace Castor.gui.movebook
             converter.Options.MarginLeft = 25;
             converter.Options.MarginRight = 25;
             converter.Options.MarginTop = 25;
-            pdfDocument = converter.ConvertHtmlString(monthReportHtml.MainString.ToString());
+            pdfDocument = converter.ConvertHtmlString(monthReportHtml.ToString());
         }
 
         private void SaveToDisk(object sender, RoutedEventArgs e)

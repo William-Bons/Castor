@@ -7,7 +7,10 @@ namespace Castor.gui.movebook
 {
     public class MonthReportHtml
     {
-        StringBuilder _mainStringBuilding = new StringBuilder();
+        StringBuilder _MainStringBuilding = new StringBuilder();
+        Reports _CreatedReport = new Reports();
+
+
         public MonthReportHtml() { }
         public MonthReportHtml(DatePeriod datePeriod)
         {
@@ -22,7 +25,7 @@ namespace Castor.gui.movebook
 
                 // create header of report
 
-                _mainStringBuilding.AppendFormat(Properties.ResourceRu.MonthReport,
+                _MainStringBuilding.AppendFormat(Properties.ResourceRu.MonthReport,
                     string.Format(Properties.ResourceRu.MonthReportHeaderString, DateOnly.FromDateTime(datePeriod.Start), DateOnly.FromDateTime(datePeriod.End)),
                     create1(movebooks, "Поступило всего"),
                     create1(movebooks.Where(x => x.First == true).ToList(), "Поступило впервые в жизни"),
@@ -30,11 +33,17 @@ namespace Castor.gui.movebook
                     create2(disorders, "Выбыло всего")
                     );
 
+                _CreatedReport.Id = 0;
+                _CreatedReport.Created = DateTime.Now;
+                _CreatedReport.DateStart = DateOnly.FromDateTime(datePeriod.Start);
+                _CreatedReport.DateEnd = DateOnly.FromDateTime(datePeriod.End);
+                _CreatedReport.ReportName = this.GetType().FullName;
+                _CreatedReport.ReportData = Encoding.UTF8.GetBytes(_MainStringBuilding.ToString());
+                
+                context.Reports.Update(_CreatedReport);
+                context.SaveChanges();
             }
         }
-
-        public StringBuilder MainString => _mainStringBuilding;
-
 
         /// <summary>
         /// write report to disk
@@ -46,7 +55,7 @@ namespace Castor.gui.movebook
             {
                 using (TextWriter writer = new StreamWriter(fs))
                 {
-                    writer.Write(_mainStringBuilding);
+                    writer.Write(_MainStringBuilding);
                 }
             }
         }
@@ -56,20 +65,31 @@ namespace Castor.gui.movebook
         /// </summary>
         public void DisplayReportAsHTML()
         {
-            DisplayReport displayReport = new DisplayReport(this);
+            using(CastorContext context = new CastorContext())
+            {
+                _CreatedReport.Printed = true;
+                context.Reports.Update(_CreatedReport);
+                context.SaveChanges();
+            }
+
+            DisplayReport displayReport = new DisplayReport(_MainStringBuilding);
             displayReport.ShowDialog();
         }
 
+        /// <summary>
+        /// Build table in html from come IN patients
+        /// </summary>
+        /// <param name="movebooks"></param>
+        /// <param name="blockHeader"></param>
+        /// <returns></returns>
         private string create1(ICollection<Movebook> movebooks, string blockHeader)
         {
             var sb = new StringBuilder();
 
-            // Table start and styling
-            sb.AppendLine("<table>");
-            sb.AppendLine($"<tr><th>{blockHeader}</th><th>{movebooks.Count()}</th></tr>");
-
             // Add Data Rows
             sb.AppendFormat(Properties.ResourceRu.BlockTrTd,
+                blockHeader,
+                movebooks.Count(),
                 movebooks.Where(x => x.Ai == 1).Count(),
                 movebooks.Where(x => x.Bi == 1).Count(),
                 movebooks.Where(x => x.Ci == 1).Count(),
@@ -77,21 +97,23 @@ namespace Castor.gui.movebook
                 movebooks.Where(x => x.Ei == 1).Count(),
                 movebooks.Where(x => x.Fi == 1).Count());
 
-            // Table end
-            sb.Append("</table>");
             return sb.ToString();
         }
 
+        /// <summary>
+        /// builg table from come OUT patients
+        /// </summary>
+        /// <param name="movebooks"></param>
+        /// <param name="blockHeader"></param>
+        /// <returns></returns>
         private string create2(ICollection<Movebook> movebooks, string blockHeader)
         {
             var sb = new StringBuilder();
 
-            // Table start and styling
-            sb.AppendLine("<table>");
-            sb.AppendLine($"<tr><th>{blockHeader}</th><th>{movebooks.Count()}</th></tr>");
-
             // Add Data Rows
             sb.AppendFormat(Properties.ResourceRu.BlockTrTd,
+                blockHeader,
+                movebooks.Count(),
                 movebooks.Where(x => x.Ao == 1).Count(),
                 movebooks.Where(x => x.Bo == 1).Count(),
                 movebooks.Where(x => x.Co == 1).Count(),
@@ -99,8 +121,6 @@ namespace Castor.gui.movebook
                 movebooks.Where(x => x.Eo == 1).Count(),
                 movebooks.Where(x => x.Fo == 1).Count());
 
-            // Table end
-            sb.Append("</table>");
             return sb.ToString();
         }
     }

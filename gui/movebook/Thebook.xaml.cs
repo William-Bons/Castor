@@ -100,5 +100,11 @@ namespace Castor.gui.movebook
             Task.Run(()=> Load(dp));
             Cursor = Cursors.Arrow;
         }
+
+        private void ImportList(object sender, RoutedEventArgs e)
+        {
+            ImportMedisPeriod importMedisPeriod = new ImportMedisPeriod();
+            importMedisPeriod.ShowDialog();
+        }
     }
 }

@@ -19,6 +19,9 @@
             <Button ToolTip="Фильтровать" Click="NeedRefreshTable"  Width="32" Height="32">
                 <Image Source="/img/filter.png" />
             </Button>
+            <Button ToolTip="Импортировать из Медис" Click="ImportList"  Width="32" Height="32">
+                <Image Source="/img/ariadna-logo.png" />
+            </Button>
             <Button ToolTip="Отчет" Click="LoadPatient"  Width="32" Height="32">
                 <Image Source="/img/add-icon.png" />
             </Button>

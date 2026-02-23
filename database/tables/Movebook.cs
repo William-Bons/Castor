@@ -6,9 +6,9 @@ namespace Castor.database.tables;
 
 public struct DatePeriod
 {
-    public bool Set;
-    public DateTime Start;
-    public DateTime End;
+    public bool Set {  get; set; }
+    public DateTime Start { get; set; }
+    public DateTime End { get; set; }
 }
 public class Movebook
 {

@@ -1,0 +1,31 @@
+﻿<Window x:Class="Castor.gui.movebook.ImportMedisPeriod"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Castor.gui.movebook"
+        mc:Ignorable="d"
+        Title="ImportMedisPeriod" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ToolBar Grid.Row="1" Background="Transparent">
+            <DatePicker SelectedDate="{Binding Start}" DataContext="{Binding DatePeriod}" Height="23" x:Name="DP0"/>
+            <Separator />
+            <DatePicker SelectedDate="{Binding End}"  DataContext="{Binding DatePeriod}" Height="23" x:Name="DP1"/>
+            <Button ToolTip="Импортировать" Click="LoadRecords">
+                <Image Source="/img/ariadna-logo.png" Width="32" Height="25"  />
+            </Button>
+        </ToolBar>
+
+        <DataGrid Grid.Row="2" AutoGenerateColumns="True" ItemsSource="{Binding DataRowSource, Mode=OneWay}">
+            
+        </DataGrid>
+
+    </Grid>
+</Window>
