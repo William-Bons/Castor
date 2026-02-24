@@ -5,6 +5,7 @@ using Castor.gui.common;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using static Castor.gui.common.IDialog;
@@ -64,21 +65,40 @@ namespace Castor.gui.movebook
             {
                 try
                 {
+
                     ICollection<dep>? depList = medisContext.dep
                         .Where(d => d.keyid == Settings.Default.LastSelectedDep)
-                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
+                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days < 8 ))
                         .ThenInclude(v => v.Doctor)
-                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
+                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime( )- v.dat1).Value.Days < 8 ))
                         .ThenInclude(v => v.Patient)
                         .ThenInclude(p => p.Diagnoses)
                         .ToList();
 
-                    Popup popup = new Popup();
                     var a = new SelectPatientInVisits(depList.First().Visits);
+
+                    Popup popup = new Popup();
+                    popup.Child = a;
+                    popup.StaysOpen = false;
+                    popup.Placement = PlacementMode.MousePoint;
+                    popup.IsOpen = true;
+
                     a.Selected += (object sel) =>
                     {
                         popup.IsOpen = false;
                         Visit = (visit)sel;
+
+                        using (MedisContext medisContext = new MedisContext())
+                        {
+                            var DS = medisContext.diagnos
+                                .Where(d => d.keyid == Visit.Patient.CurrentDs.diagid)?.First();
+
+                            var RD = medisContext.diagnos
+                                .Where(d => d.keyid == DS.rootid)?.First();
+
+                            Movebook.Dsin = RD.code;
+                        }
+
                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Visit)));
                         Movebook.Ordered = 0;
                         Movebook.Card_Id = Visit.num;
@@ -88,13 +108,10 @@ namespace Castor.gui.movebook
                         Movebook.Datein = DateOnly.FromDateTime(Visit.dat.Value);
                         Movebook.Visitid = Visit?.keyid;
                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Movebook)));
-                        DateInControl.SelectedDate = Visit?.dat;
 
                     };
-                    popup.Child = a;
-                    popup.StaysOpen = false;
-                    popup.Placement = PlacementMode.MousePoint;
-                    popup.IsOpen = true;
+
+                    
                 }
                 catch(Exception ex)
                 {

@@ -37,8 +37,8 @@ namespace Castor.gui.movebook
         private async Task Load(DatePeriod Period)
         {
             if (context != null) context.Dispose();
-
             context = new CastorContext();
+
             if (Period.Set)
             {
                 LoadedData = context.Movebooks
@@ -55,20 +55,22 @@ namespace Castor.gui.movebook
 
         }
 
-        private void NeedRefreshTable(object sender, System.Windows.RoutedEventArgs e)
+        private async void NeedRefreshTable(object sender, System.Windows.RoutedEventArgs e)
         {
             need_save = false;
             context.SaveChanges(true);
-            Task.Run(()=> Load(new DatePeriod()));
+            
+            await Task.Run(()=> Load(new DatePeriod()));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
         }
 
-        private void DisorderPatient(object sender, EventArgs e)
+        private async void DisorderPatient(object sender, EventArgs e)
         {
             if(PatientsTable.SelectedItem is Movebook mvb)
             {
                 Disorder disorder = new Disorder(mvb);
                 disorder.ShowDialog();
+                await Task.Run(() => Load(new DatePeriod()));
             }
         }
 
@@ -90,14 +92,14 @@ namespace Castor.gui.movebook
             NeedRefreshTable(sender, e);
         }
 
-        private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        private async void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             Cursor = Cursors.Wait;
             DatePeriod dp = new DatePeriod();
             dp.Start = dpStart.SelectedDate.HasValue ? dpStart.SelectedDate.Value : dp.Start;
             dp.End = dpEnd.SelectedDate.HasValue ? dpEnd.SelectedDate.Value : dp.End;
             dp.Set = dp.Start > DateTime.MinValue && dp.End > DateTime.MinValue && dp.End>dp.Start;
-            Task.Run(()=> Load(dp));
+            await Task.Run(()=> Load(dp));
             Cursor = Cursors.Arrow;
         }
 
@@ -105,6 +107,12 @@ namespace Castor.gui.movebook
         {
             ImportMedisPeriod importMedisPeriod = new ImportMedisPeriod();
             importMedisPeriod.ShowDialog();
+        }
+
+        private void DeleteRow(object sender, RoutedEventArgs e)
+        {
+            LoadedData.Remove(PatientsTable.SelectedItem as Movebook); //todo DO NOT WORK!
+            NeedRefreshTable(sender, e);
         }
     }
 }

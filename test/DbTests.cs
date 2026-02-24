@@ -38,16 +38,10 @@ namespace Castor.test
                 //foreach (var user in plann)
                 //    ConsoleMessage?.Invoke($"{user.keyid}\t\t => {user.description}");
 
-                using (CastorContext Db = new CastorContext())
+                using (MedisContext medis = new MedisContext())
                 {
-                    try
-                    {
-                        _ = Db.Movebooks.ToList();
-                    }
-                    catch (Exception ex)
-                    {
-                        ConsoleMessage?.Invoke(ex.Message);
-                    }
+                    var a = medis.diagnos.First();
+                    ;
                 }
             };
             await asyncLambda();

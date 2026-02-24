@@ -11,6 +11,7 @@
             <DataGridTextColumn Header="No" Binding="{Binding Patient.num}"/>
             <DataGridTextColumn Header="No" Binding="{Binding num}"/>
             <DataGridTextColumn Header="Date" Binding="{Binding dat, StringFormat=d}"  />
+            <DataGridTextColumn Header="Date" Binding="{Binding dat1, StringFormat=d}"  />
             <DataGridTextColumn Header="Name" Binding="{Binding Patient.lastname}"/>
             <DataGridTextColumn Header="Birth" Binding="{Binding Patient.birthdate, StringFormat=d}" />
         </DataGrid.Columns>

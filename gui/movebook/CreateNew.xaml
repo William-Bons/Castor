@@ -5,7 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Castor.gui.movebook"
         mc:Ignorable="d" 
-        Title="Поступление" Height="586" Width="632" WindowStartupLocation="CenterScreen" Topmost="True">
+        Title="Поступление" Height="534" Width="632" WindowStartupLocation="CenterScreen" Topmost="True"
+        FontFamily="Courier New" FontSize="16">
+    
+    <Window.Resources>
+        <local:DateOnlyConverter x:Key="DateOnlyConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -64,7 +69,7 @@
                 </ComboBox>
 
                 <TextBlock  Grid.Row="3" Grid.Column="0" Text="Дата поступления" Padding="5"/>
-                <DatePicker Grid.Row="3" Grid.Column="1" Margin="3" SelectedDate="{Binding Movebook.Datein}" x:Name="DateInControl"/>
+                <DatePicker Grid.Row="3" Grid.Column="1" Margin="3" SelectedDate="{Binding Movebook.Datein, Converter={StaticResource DateOnlyConverter}}" x:Name="DateInControl"/>
 
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Диагноз поступления" Padding="5"/>
                 <TextBox   Grid.Row="4" Grid.Column="1" Text="{Binding Movebook.Dsin}"  Margin="3" Padding="2"/>
@@ -81,7 +86,7 @@
                 <TextBlock Grid.Row="9" Grid.Column="0" Text="Ранний возврат" Padding="5" />
                 <CheckBox  Grid.Row="9" Grid.Column="1" IsChecked="{Binding Movebook.Early}" Margin="5" ToolTip="отметьте поле, если пациент поступил менее чем через 2 недели после выписки" FontSize="11" />
                 <TextBlock  Grid.Row="10" Grid.Column="0" Text="Дата пред выписки" Padding="5"/>
-                <DatePicker Grid.Row="10" Grid.Column="1" Margin="3" SelectedDate="{Binding Movebook.Date_lastout}"/>
+                <DatePicker Grid.Row="10" Grid.Column="1" Margin="3" SelectedDate="{Binding Movebook.Date_lastout, Converter={StaticResource DateOnlyConverter}}"/>
                 <Rectangle Grid.Row="9" Grid.RowSpan="2" Grid.ColumnSpan="2" Stroke="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" />
 
 
