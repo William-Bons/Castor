@@ -23,8 +23,13 @@
             </Button>
         </ToolBar>
 
-        <DataGrid Grid.Row="2" AutoGenerateColumns="True" ItemsSource="{Binding DataRowSource, Mode=OneWay}">
-            
+        <DataGrid Grid.Row="2" AutoGenerateColumns="True" ItemsSource="{Binding DataRowSource, Mode=OneWay}" x:Name="ImportDataGrid">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Диагнозы все" Click="ShowAllDiagnosis"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+
         </DataGrid>
 
     </Grid>
