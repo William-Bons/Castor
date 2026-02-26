@@ -6,6 +6,7 @@ using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Reflection.Metadata;
+using System.Text.RegularExpressions;
 
 namespace Castor.test
 {
@@ -49,14 +50,12 @@ namespace Castor.test
 
         public async Task TTestSelectTable2()
         {
-            await Task.Run(() =>
+            string[] ds = { "F20", "F21","F32.2","F25","F43.2","F01.0","G20","F70.0","F23.1","20.0","21"  };
+            foreach (string s in ds)
             {
-                using (CastorContext Db = new CastorContext())
-                {
-                        var movebook = Db.Movebooks.ToListAsync();
-                        ConsoleMessage?.Invoke($"{movebook.Result}");
-                }
-            });
+                ConsoleMessage?.Invoke($"{s} == {Regex.IsMatch(s, @"^F(21|01|22|23|25|30|31|32)")}");
+            }
+
         }
 
         public async Task TTestSelectTable3()

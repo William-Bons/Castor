@@ -127,4 +127,10 @@
   <data name="MonthReportHeaderString" xml:space="preserve">
     <value>&lt;p style=\"font-size: 16pt;\"&gt;Отчет за период {0} - {1} 6 женского отделения первого эпизода&lt;/p&gt;</value>
   </data>
+  <data name="MonthReportInError" xml:space="preserve">
+    <value>&lt;p&gt;ОШИБКА В ДИАГНОЗАХ ПОСТУПЛЕНИЯ&lt;/p&gt;</value>
+  </data>
+  <data name="MonthReportOutError" xml:space="preserve">
+    <value>&lt;p&gt;ОШИБКА В ДИАГНОЗАХ ВЫПИСКИ&lt;/p&gt;</value>
+  </data>
 </root>

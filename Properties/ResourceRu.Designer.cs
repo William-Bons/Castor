@@ -61,31 +61,42 @@ namespace Castor.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на  &lt;tr&gt;
-        /// &lt;td&gt;Психозы&lt;/td&gt;  
-        /// &lt;td&gt;{0}&lt;/td&gt; 
+        ///   Ищет локализованную строку, похожую на &lt;table &gt;
+        ///
+        ///&lt;tr&gt; 
+        ///    &lt;th&gt; {0}&lt;/th&gt; 
+        ///    &lt;th&gt; {1}&lt;/th&gt; 
+        ///&lt;/tr &gt;
+        ///&lt;tr&gt;
+        ///&lt;td&gt; Психозы&lt;/td &gt;
+        ///&lt;td&gt;{2}&lt;/td&gt; 
         ///&lt;/tr&gt; 
         ///&lt;tr&gt; 
         /// &lt;td&gt;Шизофрения&lt;/td&gt;  
-        /// &lt;td&gt;{1}&lt;/td&gt;
-        ///&lt;/tr&gt; 
-        ///&lt;tr&gt; 
-        /// &lt;td&gt;Умственная отсталость&lt;/td&gt;   
-        /// &lt;td&gt;{2}&lt;/td&gt;
-        ///&lt;/tr&gt; 
-        ///&lt;tr&gt; 
-        /// &lt;td&gt;Непсихотические расстройства&lt;/td&gt;
         /// &lt;td&gt;{3}&lt;/td&gt;
         ///&lt;/tr&gt; 
         ///&lt;tr&gt; 
-        /// &lt;td&gt;Наркологические&lt;/td&gt;   
+        /// &lt;td&gt;Умственная отсталость&lt;/td&gt;   
         /// &lt;td&gt;{4}&lt;/td&gt;
         ///&lt;/tr&gt; 
         ///&lt;tr&gt; 
-        /// &lt;td&gt;  - из них с алкоголизмом&lt;/td&gt;   
+        /// &lt;td&gt;Непсихотические расстройства&lt;/td&gt;
         /// &lt;td&gt;{5}&lt;/td&gt;
         ///&lt;/tr&gt; 
-        ///.
+        ///&lt;tr&gt; 
+        /// &lt;td&gt;Наркологические&lt;/td&gt;   
+        /// &lt;td&gt;{6}&lt;/td&gt;
+        ///&lt;/tr&gt; 
+        ///&lt;tr&gt; 
+        /// &lt;td&gt;  - из них с алкоголизмом&lt;/td&gt;   
+        /// &lt;td&gt;{7}&lt;/td&gt;
+        ///&lt;/tr&gt; 
+        ///&lt;tr&gt; 
+        /// &lt;td&gt;  - из них с наркоманией&lt;/td&gt;   
+        /// &lt;td&gt;{8}&lt;/td&gt;
+        ///&lt;/tr&gt; 
+        ///
+        ///&lt;/tab [остаток строки не уместился]&quot;;.
         /// </summary>
         internal static string BlockTrTd {
             get {
@@ -99,14 +110,12 @@ namespace Castor.Properties {
         ///&lt;meta http-equiv=&apos;Content-Type&apos; content=&apos;text/html;charset=UTF-8&apos;&gt;
         ///&lt;head&gt;
         ///    &lt;style&gt;
-        ///    /* This CSS rule makes the table use 100% of its parent container&apos;s width */
         ///    p {{
         ///        font-size: 16pt;
         ///    }}
-        ///
-        ///    table {{
+        ///    table {{                        /* This CSS rule makes the table use 100% of its parent container&apos;s width */
         ///        width: 100%;
-        ///        border-collapse: collapse; /* Optional: Makes borders look nicer */
+        ///        border-collapse: collapse;  /* Optional: Makes borders look nicer */
         ///        font-size: 14pt;
         ///    }}
         ///
@@ -114,9 +123,7 @@ namespace Castor.Properties {
         ///        border: 1px solid black;
         ///        padding: 2px;
         ///        text-align: left;
-        ///    }}
-        ///
-        ///    th, td [остаток строки не уместился]&quot;;.
+        ///    [остаток строки не уместился]&quot;;.
         /// </summary>
         internal static string MonthReport {
             get {
@@ -130,6 +137,24 @@ namespace Castor.Properties {
         internal static string MonthReportHeaderString {
             get {
                 return ResourceManager.GetString("MonthReportHeaderString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на &lt;p&gt;ОШИБКА В ДИАГНОЗАХ ПОСТУПЛЕНИЯ&lt;/p&gt;.
+        /// </summary>
+        internal static string MonthReportInError {
+            get {
+                return ResourceManager.GetString("MonthReportInError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на &lt;p&gt;ОШИБКА В ДИАГНОЗАХ ВЫПИСКИ&lt;/p&gt;.
+        /// </summary>
+        internal static string MonthReportOutError {
+            get {
+                return ResourceManager.GetString("MonthReportOutError", resourceCulture);
             }
         }
     }

@@ -23,8 +23,26 @@ namespace Castor.gui.movebook
                 ICollection<Movebook> disorders = context.Movebooks.Where(b => b.Dateout >= DateOnly.FromDateTime(datePeriod.Start) && b.Dateout <= DateOnly.FromDateTime(datePeriod.End)).ToList();
 
 
-                // create header of report
+                // create error check
+                if(movebooks.Where(x => x.InControl==false).Count() > 0)
+                {
+                    _MainStringBuilding.AppendFormat($"{Properties.ResourceRu.MonthReportInError}");
 
+                    foreach (var item in movebooks.Where(x => x.InControl == false).ToList())
+                    {
+                        _MainStringBuilding.AppendFormat($"<p>{{0}} {{1}}</p>", item.Fio, item.Dsin);
+                    }
+                }
+                if (disorders.Where(x => x.OutControl == false).Count() > 0)
+                {
+                    _MainStringBuilding.AppendFormat($"{Properties.ResourceRu.MonthReportOutError}");
+                    foreach (var item in disorders.Where(x => x.OutControl == false).ToList())
+                    {
+                        _MainStringBuilding.AppendFormat($"<p>{{0}} {{1}}</p>", item.Fio, item.Dsout);
+                    }
+                }
+
+                // create header of report
                 _MainStringBuilding.AppendFormat(Properties.ResourceRu.MonthReport,
                     string.Format(Properties.ResourceRu.MonthReportHeaderString, DateOnly.FromDateTime(datePeriod.Start), DateOnly.FromDateTime(datePeriod.End)),
                     create1(movebooks, "Поступило всего"),
@@ -33,6 +51,7 @@ namespace Castor.gui.movebook
                     create2(disorders, "Выбыло всего")
                     );
 
+                // save report html into database
                 _CreatedReport.Id = 0;
                 _CreatedReport.Created = DateTime.Now;
                 _CreatedReport.DateStart = DateOnly.FromDateTime(datePeriod.Start);
@@ -90,12 +109,13 @@ namespace Castor.gui.movebook
             sb.AppendFormat(Properties.ResourceRu.BlockTrTd,
                 blockHeader,
                 movebooks.Count(),
-                movebooks.Where(x => x.Ai == 1).Count(),
-                movebooks.Where(x => x.Bi == 1).Count(),
-                movebooks.Where(x => x.Ci == 1).Count(),
-                movebooks.Where(x => x.Di == 1).Count(),
-                movebooks.Where(x => x.Ei == 1).Count(),
-                movebooks.Where(x => x.Fi == 1).Count());
+                movebooks.Where(x => x.calc0(x.Dsin)[0]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsin)[1]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsin)[2]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsin)[3]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsin)[4]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsin)[5]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsin)[6]).Count());
 
             return sb.ToString();
         }
@@ -114,12 +134,13 @@ namespace Castor.gui.movebook
             sb.AppendFormat(Properties.ResourceRu.BlockTrTd,
                 blockHeader,
                 movebooks.Count(),
-                movebooks.Where(x => x.Ao == 1).Count(),
-                movebooks.Where(x => x.Bo == 1).Count(),
-                movebooks.Where(x => x.Co == 1).Count(),
-                movebooks.Where(x => x.Do == 1).Count(),
-                movebooks.Where(x => x.Eo == 1).Count(),
-                movebooks.Where(x => x.Fo == 1).Count());
+                movebooks.Where(x => x.calc0(x.Dsout)[0]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsout)[1]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsout)[2]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsout)[3]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsout)[4]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsout)[5]).Count(),
+                movebooks.Where(x => x.calc0(x.Dsout)[6]).Count());
 
             return sb.ToString();
         }

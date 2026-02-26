@@ -66,11 +66,11 @@ namespace Castor.gui.movebook
         {
             /*  create block All In */
             DataBlock a = new DataBlock();
-            a.ValueA = set.Where(x => x.Ai == 1).Count();
-            a.ValueB = set.Where(x => x.Bi == 1).Count();
-            a.ValueC = set.Where(x => x.Ci == 1).Count();
-            a.ValueD = set.Where(x => x.Di == 1).Count();
-            a.ValueE = set.Where(x => x.Ei == 1).Count();
+            //a.ValueA = set.Where(x => x.Ai == 1).Count();
+            //a.ValueB = set.Where(x => x.Bi == 1).Count();
+            //a.ValueC = set.Where(x => x.Ci == 1).Count();
+            //a.ValueD = set.Where(x => x.Di == 1).Count();
+            //a.ValueE = set.Where(x => x.Ei == 1).Count();
             return a;
             
         }

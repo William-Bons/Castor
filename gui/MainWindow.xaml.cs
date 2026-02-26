@@ -82,7 +82,7 @@ namespace Castor
             MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = className, Parameter = param });
         }
 
-
+       
 
 
     }

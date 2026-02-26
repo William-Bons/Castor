@@ -21,7 +21,7 @@
 
         <Menu Grid.Row="0" Background="Transparent" x:Name="CentralMenu"/>
 
-        <Grid Grid.Row="2" x:Name="CentralStack">
+        <Grid Grid.Row="2" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
@@ -29,7 +29,11 @@
             </Grid.ColumnDefinitions>
 
             <Frame Grid.Column="0" x:Name="CentralFrame" Visibility="Visible" NavigationUIVisibility="Hidden"/>
-            <pages:Weekmove Grid.Column="1" />
+            <StackPanel Orientation="Vertical" Grid.Column="1" x:Name="CentralStack">
+                <pages:Weekmove  />
+                <pages:FssControl />
+            </StackPanel>
+            
         </Grid>
         
 

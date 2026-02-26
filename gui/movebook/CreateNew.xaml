@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Castor.gui.movebook"
         mc:Ignorable="d" 
-        Title="Поступление" Height="534" Width="632" WindowStartupLocation="CenterScreen" Topmost="True"
+        Title="Поступление" Height="616" Width="632" WindowStartupLocation="CenterScreen" Topmost="True"
         FontFamily="Courier New" FontSize="16">
-    
+
     <Window.Resources>
         <local:DateOnlyConverter x:Key="DateOnlyConverter"/>
     </Window.Resources>
@@ -31,6 +31,8 @@
             <TextBlock FontFamily="Arial" FontSize="25" Text="Проверьте правильность заполнения всех полей" Foreground="OrangeRed" TextAlignment="Center" Padding="5"/>
             <Grid Grid.Row="1" Margin="20">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -89,6 +91,11 @@
                 <DatePicker Grid.Row="10" Grid.Column="1" Margin="3" SelectedDate="{Binding Movebook.Date_lastout, Converter={StaticResource DateOnlyConverter}}"/>
                 <Rectangle Grid.Row="9" Grid.RowSpan="2" Grid.ColumnSpan="2" Stroke="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" />
 
+                <TextBlock Grid.Row="11" Grid.Column="0" Text="Нужен ЭЛН" Padding="5" />
+                <CheckBox x:Name="FssEnable"  Grid.Row="11" Grid.Column="1" IsChecked="{Binding Movebook.Early}" Margin="5" FontSize="11" />
+                <TextBlock  Grid.Row="12" Grid.Column="0" Text="Дата начала нетрудоспособности" Padding="5"/>
+                <DatePicker Grid.Row="12" Grid.Column="1" Margin="3" SelectedDate="{Binding Movebook.Fss, Converter={StaticResource DateOnlyConverter}}" IsEnabled="{Binding IsChecked, ElementName=FssEnable}"/>
+                <Rectangle Grid.Row="11" Grid.RowSpan="2" Grid.ColumnSpan="2" Stroke="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" />
 
             </Grid>
         </Grid>

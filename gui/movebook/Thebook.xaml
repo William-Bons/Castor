@@ -45,7 +45,27 @@
                     <MenuItem Click="DeleteRow" Header="Удалить запись"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
-            
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <!--подсветка зеленым история сдана-->
+                        <DataTrigger Binding="{Binding Closed}" Value="True">
+                            <Setter Property="Background" Value="#FFEAFFE2"/>
+                        </DataTrigger>
+                        <!-- Пример: Подсветка строки, если ошибка диагноза поступления -->
+                        <DataTrigger Binding="{Binding InControl}" Value="False">
+                            <Setter Property="Background" Value="#FFFFC8C8"/>
+                        </DataTrigger>
+                        <!-- Пример: Подсветка строки, если ошибка диагноза выбытия -->
+                        <DataTrigger Binding="{Binding OutControl}" Value="False">
+                            <Setter Property="Background" Value="#FFBED1FF"/>
+                        </DataTrigger>
+                        
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+
             <DataGrid.Columns>
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
