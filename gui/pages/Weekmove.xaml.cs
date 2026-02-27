@@ -1,4 +1,5 @@
 ﻿using Castor.database;
+using Castor.gui.common;
 using System.ComponentModel;
 using System.Windows.Controls;
 
@@ -7,7 +8,7 @@ namespace Castor.gui.pages
     /// <summary>
     /// Логика взаимодействия для Weekmove.xaml
     /// </summary>
-    public partial class Weekmove : UserControl, INotifyPropertyChanged
+    public partial class Weekmove : UserControl, INotifyPropertyChanged, IRefresh
     {
         public Weekmove()
         {
@@ -31,6 +32,12 @@ namespace Castor.gui.pages
         public DateTime End { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event common.RefreshEventHandler RefreshNotify;
+
+        public void Refresh()
+        {
+            Task.Run(() => Calculate(null, null));
+        }
 
         private async void Calculate(object s, EventArgs a)
         {

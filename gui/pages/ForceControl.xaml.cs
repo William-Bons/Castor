@@ -6,12 +6,9 @@ using System.Windows.Controls;
 
 namespace Castor.gui.pages
 {
-    /// <summary>
-    /// Логика взаимодействия для FssControl.xaml
-    /// </summary>
-    public partial class FssControl : UserControl, INotifyPropertyChanged, IRefresh
+    public partial class ForceControl : UserControl, INotifyPropertyChanged, IRefresh
     {
-        public FssControl()
+        public ForceControl()
         {
             InitializeComponent();
             DataContext = this;
@@ -39,7 +36,7 @@ namespace Castor.gui.pages
             {
                 using (CastorContext castor = new CastorContext())
                 {
-                    FssList = castor.Movebooks.AsEnumerable().Where(x => x.FssDay>1).ToList();
+                    FssList = castor.Movebooks.AsEnumerable().Where(x => x.ForcedMonth>=6).ToList();
                 }
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FssList)));
             }

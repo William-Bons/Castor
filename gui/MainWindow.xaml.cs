@@ -63,6 +63,18 @@ namespace Castor
                 if (activeCreatedObject is Page) CentralFrame.Content = activeCreatedObject;
                 if (activeCreatedObject is ISwithPage swp) swp.SwitchPage += SwitchFramePage;
                 if (activeCreatedObject is IMainStatusBar msb) msb.PrintStatusMessage += PrintStatusMessage;
+                if (activeCreatedObject is IRefresh refh) refh.RefreshNotify += Refh_RefreshNotify;
+            }
+        }
+
+        private void Refh_RefreshNotify(params string[] classes)
+        {
+            foreach (var item in CentralStack.Children)
+            {
+                if(item is IRefresh irf && classes.Where(c => c==item.GetType().FullName).Count()>0)
+                {
+                    irf.Refresh();
+                }
             }
         }
 

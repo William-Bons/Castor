@@ -42,9 +42,15 @@ namespace Castor.gui.movebook
 
                         Movebook.Dateout = DateOnly.FromDateTime(visit.dat1.Value);
                         Movebook.Dsout = RD.code;
-                        Movebook.Outto = 0;
+                    }
+                    else
+                    {
+                        Movebook.Dateout = DateOnly.FromDateTime(DateTime.Today);
+                        Movebook.Dsout = Movebook.Dsin;
                     }
                 }
+
+                Movebook.Outto = 0;
             }
             catch (Exception ex)
             {
@@ -65,10 +71,11 @@ namespace Castor.gui.movebook
             }
             using (CastorContext castor = new CastorContext())
             {
-                Movebook.Dateout = DateOnly.FromDateTime(DateInControl.SelectedDate.Value);
-                FormattableString fstr = $@"UPDATE Movebooks set dsout={Movebook.Dsout}, dateout={Movebook.Dateout}, city={Movebook.City}, early={Movebook.Early}, unvoluntary={Movebook.Unvoluntary}, first={Movebook.First}, second={Movebook.Second}, closed={Movebook.Closed}, outto={Movebook.Outto}, deceased={Movebook.Deceased}
-                  where Id={Movebook.Id}";
-                castor.Database.ExecuteSql(fstr);
+                //Movebook.Dateout = DateOnly.FromDateTime(DateInControl.SelectedDate.Value);
+                //FormattableString fstr = $@"UPDATE Movebooks set dsout={Movebook.Dsout}, dateout={Movebook.Dateout}, city={Movebook.City}, early={Movebook.Early}, unvoluntary={Movebook.Unvoluntary}, first={Movebook.First}, second={Movebook.Second}, closed={Movebook.Closed}, outto={Movebook.Outto}, deceased={Movebook.Deceased}
+                //  where Id={Movebook.Id}";
+                //castor.Database.ExecuteSql(fstr);
+                castor.Update(Movebook);
                 castor.SaveChanges();
             }
             DialogOK?.Invoke();

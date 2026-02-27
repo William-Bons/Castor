@@ -31,7 +31,10 @@
             <Frame Grid.Column="0" x:Name="CentralFrame" Visibility="Visible" NavigationUIVisibility="Hidden"/>
             <StackPanel Orientation="Vertical" Grid.Column="1" x:Name="CentralStack">
                 <pages:Weekmove  />
+                <Separator/>
                 <pages:FssControl />
+                <Separator/>
+                <pages:ForceControl/>
             </StackPanel>
             
         </Grid>

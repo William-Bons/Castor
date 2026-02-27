@@ -41,6 +41,15 @@ namespace Castor.gui.movebook
             {
                 try
                 {
+                    //checking 
+                    if(castor.Movebooks
+                        .Where(m => m.Visitid==Movebook.Visitid).Count() > 0)
+                    {
+                        MessageBox.Show("История уже загружена в книгу движения","Ошибка", MessageBoxButton.OK,MessageBoxImage.Error);
+                        return;
+                    }
+
+                    // saving
                     castor.Movebooks.Update(Movebook);
                     castor.SaveChanges();
                 }
@@ -87,6 +96,8 @@ namespace Castor.gui.movebook
                     {
                         popup.IsOpen = false;
                         Visit = (visit)sel;
+
+
 
                         using (MedisContext medisContext = new MedisContext())
                         {

@@ -39,10 +39,11 @@
             </StackPanel>
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="True" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" CurrentCellChanged="PatientsTable_CellEditEnding" MouseDoubleClick="DisorderPatient" FontFamily="Courier New" FontSize="16" >
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="True" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" CurrentCellChanged="PatientsTable_CellEditEnding" FontFamily="Courier New" FontSize="16" >
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Click="DeleteRow" Header="Удалить запись"/>
+                    <MenuItem Click="ShowStatGroup" Header="Показатели" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
 

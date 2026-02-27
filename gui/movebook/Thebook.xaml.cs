@@ -1,7 +1,9 @@
 ﻿using Castor.database;
 using Castor.database.tables;
+using Castor.gui.common;
 using Castor.gui.dialogs;
 using System.ComponentModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,7 +13,7 @@ namespace Castor.gui.movebook
     /// <summary>
     /// Логика взаимодействия для Thebook.xaml
     /// </summary>
-    public partial class Thebook : Page, INotifyPropertyChanged
+    public partial class Thebook : Page, INotifyPropertyChanged, IRefresh
     {
         private CastorContext context;
         private bool need_save = false;
@@ -27,6 +29,7 @@ namespace Castor.gui.movebook
         public Visibility SaveButtonVisible => need_save ? Visibility.Visible : Visibility.Collapsed;
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event common.RefreshEventHandler RefreshNotify;
 
         private void PatientsTable_CellEditEnding(object sender, EventArgs e)
         {
@@ -36,7 +39,7 @@ namespace Castor.gui.movebook
 
         private async Task Load(DatePeriod Period)
         {
-            if (context != null) context.Dispose();
+            if (context != null)  context.Dispose();
             context = new CastorContext();
 
             if (Period.Set)
@@ -52,15 +55,22 @@ namespace Castor.gui.movebook
                 ;
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
+            
 
         }
 
         private async void NeedRefreshTable(object sender, System.Windows.RoutedEventArgs e)
         {
             need_save = false;
+
+            LoadedData.Where(x => x.Dateout == DateOnly.MinValue).ToList().ForEach(x => x.Dateout = null);
+            LoadedData.Where(x => x.Fss == DateOnly.MinValue).ToList().ForEach(x => x.Fss = null);
+            LoadedData.Where(x => x.Forced == DateOnly.MinValue).ToList().ForEach(x => x.Forced = null);
+
             context.SaveChanges(true);
             
             await Task.Run(()=> Load(new DatePeriod()));
+            RefreshNotify?.Invoke("Castor.gui.pages.FssControl", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceControl");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
         }
 
@@ -71,6 +81,7 @@ namespace Castor.gui.movebook
                 Disorder disorder = new Disorder(mvb);
                 disorder.ShowDialog();
                 await Task.Run(() => Load(new DatePeriod()));
+                RefreshNotify?.Invoke("Castor.gui.pages.FssControl", "Castor.gui.pages.Weekmove");
             }
         }
 
@@ -92,14 +103,14 @@ namespace Castor.gui.movebook
             NeedRefreshTable(sender, e);
         }
 
-        private async void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             Cursor = Cursors.Wait;
             DatePeriod dp = new DatePeriod();
             dp.Start = dpStart.SelectedDate.HasValue ? dpStart.SelectedDate.Value : dp.Start;
             dp.End = dpEnd.SelectedDate.HasValue ? dpEnd.SelectedDate.Value : dp.End;
             dp.Set = dp.Start > DateTime.MinValue && dp.End > DateTime.MinValue && dp.End>dp.Start;
-            await Task.Run(()=> Load(dp));
+            Task.Run(()=> Load(dp));
             Cursor = Cursors.Arrow;
         }
 
@@ -109,10 +120,53 @@ namespace Castor.gui.movebook
             importMedisPeriod.ShowDialog();
         }
 
-        private void DeleteRow(object sender, RoutedEventArgs e)
+        private async void DeleteRow(object sender, RoutedEventArgs e)
         {
-            LoadedData.Remove(PatientsTable.SelectedItem as Movebook); //todo DO NOT WORK!
-            NeedRefreshTable(sender, e);
+            if (MessageBox.Show("Удалить строку из базы данных?", "Удаление", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                context.Movebooks.Remove(PatientsTable.SelectedItem as Movebook);
+                context.SaveChanges();
+                await Task.Run(() => Load(new DatePeriod()));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
+                RefreshNotify?.Invoke("Castor.gui.pages.FssControl", "Castor.gui.pages.Weekmove");
+            }
         }
+
+        private void ShowStatGroup(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var mb = PatientsTable.SelectedItem as Movebook;
+                bool[] mass0 = mb.calc0(mb.Dsin);
+                bool[] mass1 = mb.calc0(mb.Dsout);
+
+                StringBuilder strOUT = new StringBuilder();
+                strOUT.AppendLine("A B C D E F");
+                foreach (var item in mass0)
+                {
+                    strOUT.AppendFormat("{0} ", item? 1:0);
+                }
+                strOUT.AppendLine();
+                foreach (var item in mass1)
+                {
+                    strOUT.AppendFormat("{0} ", item? 1:0);
+                }
+
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = strOUT.ToString();
+                Window window = new Window() { MaxHeight = 120, MaxWidth = 150 };
+                window.Content = textBlock;
+                window.Show();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+         }
+
+        public void Refresh()
+        {
+        }
+
     }
 }

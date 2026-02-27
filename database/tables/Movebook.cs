@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -34,12 +35,14 @@ public class Movebook
     public bool Closed { get; set; }
     public bool Deceased { get; set; }
     public DateOnly? Fss { get; set; }
-    public virtual int? Agein => Datein.HasValue ? Datein.Value.Year - Birthdate.Value.Year - (Datein.Value.Month < Birthdate.Value.Month && Datein.Value.Day < Birthdate.Value.Day ? 1 : 0) : null;//todo WRONG!
-    public virtual int? Ageout => Dateout.HasValue ? Dateout.Value.Year - Birthdate.Value.Year - (Dateout.Value.Month < Birthdate.Value.Month && Dateout.Value.Day < Birthdate.Value.Day ? 1 : 0) : null;
+    public DateOnly? Forced { get; set; }
+    public virtual int? Agein => CalculateAge(Datein);
+    public virtual int? Ageout => CalculateAge(Dateout);
     public int? Days => (Datein.HasValue && Dateout.HasValue) ? (Dateout.Value.ToDateTime(TimeOnly.MinValue) - Datein.Value.ToDateTime(TimeOnly.MinValue)).Days : null;
     public bool? InControl => string.IsNullOrWhiteSpace(Dsin) ? null : calc0(Dsin).Count(x => x) == 1;
     public bool? OutControl => string.IsNullOrWhiteSpace(Dsout) ? null : calc0(Dsout).Count(x => x) == 1;
-    public int? FssDay => Fss.HasValue ? (DateTime.Today-Fss?.ToDateTime(TimeOnly.MinValue)).Value.Days+1 : null;
+    public int FssDay => Fss.HasValue ? (DateTime.Today-Fss?.ToDateTime(TimeOnly.MinValue)).Value.Days+1 : 0;
+    public int ForcedMonth => Forced.HasValue ? (DateTime.Today.Month - Forced.Value.Month) + 12 * (DateTime.Today.Year - Forced.Value.Year) : 0;
 
     /// <summary>
     /// Create array checking diagnisis in input line; 
@@ -54,11 +57,23 @@ public class Movebook
          /*B*/   Regex.IsMatch(input, @"^F(20)"),
          /*C*/   Regex.IsMatch(input, @"^F(70|71|72|72)"),
          /*D*/   Regex.IsMatch(input, @"^F(02|03|04|05|06|07|50|60|61|62|90|91|40|41|42|43|45|48)"),
-         /*E*/   Regex.IsMatch(input, @"^F(1)"),
+         /*E*/   Regex.IsMatch(input, @"^F1\d"),
          /*F*/   Regex.IsMatch(input, @"^F10"),
          /*G*/   Regex.IsMatch(input, @"^F1[1-9]"),
         ];
         return result;
+    }
+
+    private int? CalculateAge(DateOnly? today)
+    {
+        if (today == null || Birthdate==null) return null;
+        var age = today.Value.Year - Birthdate.Value.Year;
+        // Go back to the year in which the person was born in the current date's month and day
+        if (Birthdate.Value > today.Value.AddYears(-age))
+        {
+            age--;
+        }
+        return age;
     }
 }
 
