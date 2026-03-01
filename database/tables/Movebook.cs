@@ -39,8 +39,8 @@ public class Movebook
     public virtual int? Agein => CalculateAge(Datein);
     public virtual int? Ageout => CalculateAge(Dateout);
     public int? Days => (Datein.HasValue && Dateout.HasValue) ? (Dateout.Value.ToDateTime(TimeOnly.MinValue) - Datein.Value.ToDateTime(TimeOnly.MinValue)).Days : null;
-    public bool? InControl => string.IsNullOrWhiteSpace(Dsin) ? null : calc0(Dsin).Count(x => x) == 1;
-    public bool? OutControl => string.IsNullOrWhiteSpace(Dsout) ? null : calc0(Dsout).Count(x => x) == 1;
+    public bool? InControl => string.IsNullOrWhiteSpace(Dsin) ? null : calc0(Dsin).Take(5).Count(x => x) == 1;
+    public bool? OutControl => string.IsNullOrWhiteSpace(Dsout) ? null : calc0(Dsout).Take(5).Count(x => x) == 1;
     public int FssDay => Fss.HasValue ? (DateTime.Today-Fss?.ToDateTime(TimeOnly.MinValue)).Value.Days+1 : 0;
     public int ForcedMonth => Forced.HasValue ? (DateTime.Today.Month - Forced.Value.Month) + 12 * (DateTime.Today.Year - Forced.Value.Year) : 0;
 
@@ -75,5 +75,6 @@ public class Movebook
         }
         return age;
     }
+
 }
 

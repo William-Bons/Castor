@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Castor.gui.movebook"
+        xmlns:local="clr-namespace:Castor.gui.common"
         mc:Ignorable="d" Language="RU" FontSize="16" FontFamily="Courier New"
         Title="Выписка" Height="543" Width="700" WindowStartupLocation="CenterScreen" Topmost="True">
     <Window.Resources>

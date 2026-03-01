@@ -1,5 +1,6 @@
 ﻿using Castor.database;
 using Castor.database.tables;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 
@@ -18,13 +19,15 @@ namespace Castor.gui.movebook
             {
                 // select movelines from Movebook in Date Period ORDERED
                 ICollection<Movebook> movebooks = context.Movebooks.Where(b => b.Datein >= DateOnly.FromDateTime(datePeriod.Start) && b.Datein <= DateOnly.FromDateTime(datePeriod.End)).ToList();
+                //ICollection<Movebook> moveChild = context.Movebooks.Where(b => b.Datein >= DateOnly.FromDateTime(datePeriod.Start) && b.Datein <= DateOnly.FromDateTime(datePeriod.End) && b.Agein < 18).ToList();
 
                 //select DISORDERED
                 ICollection<Movebook> disorders = context.Movebooks.Where(b => b.Dateout >= DateOnly.FromDateTime(datePeriod.Start) && b.Dateout <= DateOnly.FromDateTime(datePeriod.End)).ToList();
+                //ICollection<Movebook> disoChild = context.Movebooks.Where(b => b.Dateout >= DateOnly.FromDateTime(datePeriod.Start) && b.Dateout <= DateOnly.FromDateTime(datePeriod.End) && b.Ageout<18).ToList();
 
 
                 // create error check
-                if(movebooks.Where(x => x.InControl==false).Count() > 0)
+                if (movebooks.Where(x => x.InControl==false).Count() > 0)
                 {
                     _MainStringBuilding.AppendFormat($"{Properties.ResourceRu.MonthReportInError}");
 
@@ -45,10 +48,10 @@ namespace Castor.gui.movebook
                 // create header of report
                 _MainStringBuilding.AppendFormat(Properties.ResourceRu.MonthReport,
                     string.Format(Properties.ResourceRu.MonthReportHeaderString, DateOnly.FromDateTime(datePeriod.Start), DateOnly.FromDateTime(datePeriod.End)),
-                    create1(movebooks, "Поступило всего"),
-                    create1(movebooks.Where(x => x.First == true).ToList(), "Поступило впервые в жизни"),
-                    create1(movebooks.Where(x => x.Second == true).ToList(), "Поступило повторно в году"),
-                    create2(disorders, "Выбыло всего")
+                    create1(movebooks,movebooks.Where(m => m.Agein<18).ToList(), "Поступило всего"),
+                    create1(movebooks.Where(x => x.First == true).ToList(), movebooks.Where(x => x.First && x.Agein<18).ToList(), "Поступило впервые в жизни"),
+                    create1(movebooks.Where(x => x.Second == true).ToList(), movebooks.Where(x => x.Second && x.Agein<18).ToList(), "Поступило повторно в году"),
+                    create2(disorders, disorders.Where(d => d.Ageout<18).ToList(), "Выбыло всего")
                     );
 
                 // save report html into database
@@ -101,7 +104,7 @@ namespace Castor.gui.movebook
         /// <param name="movebooks"></param>
         /// <param name="blockHeader"></param>
         /// <returns></returns>
-        private string create1(ICollection<Movebook> movebooks, string blockHeader)
+        private string create1(ICollection<Movebook> movebooks, ICollection<Movebook> children, string blockHeader)
         {
             var sb = new StringBuilder();
 
@@ -115,7 +118,16 @@ namespace Castor.gui.movebook
                 movebooks.Where(x => x.calc0(x.Dsin)[3]).Count(),
                 movebooks.Where(x => x.calc0(x.Dsin)[4]).Count(),
                 movebooks.Where(x => x.calc0(x.Dsin)[5]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsin)[6]).Count());
+                movebooks.Where(x => x.calc0(x.Dsin)[6]).Count(),
+
+                children.Count(),
+                children.Where(x => x.calc0(x.Dsin)[0]).Count(),
+                children.Where(x => x.calc0(x.Dsin)[1]).Count(),
+                children.Where(x => x.calc0(x.Dsin)[2]).Count(),
+                children.Where(x => x.calc0(x.Dsin)[3]).Count(),
+                children.Where(x => x.calc0(x.Dsin)[4]).Count(),
+                children.Where(x => x.calc0(x.Dsin)[5]).Count(),
+                children.Where(x => x.calc0(x.Dsin)[6]).Count());
 
             return sb.ToString();
         }
@@ -126,7 +138,7 @@ namespace Castor.gui.movebook
         /// <param name="movebooks"></param>
         /// <param name="blockHeader"></param>
         /// <returns></returns>
-        private string create2(ICollection<Movebook> movebooks, string blockHeader)
+        private string create2(ICollection<Movebook> movebooks, ICollection<Movebook> children, string blockHeader)
         {
             var sb = new StringBuilder();
 
@@ -140,7 +152,16 @@ namespace Castor.gui.movebook
                 movebooks.Where(x => x.calc0(x.Dsout)[3]).Count(),
                 movebooks.Where(x => x.calc0(x.Dsout)[4]).Count(),
                 movebooks.Where(x => x.calc0(x.Dsout)[5]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsout)[6]).Count());
+                movebooks.Where(x => x.calc0(x.Dsout)[6]).Count(),
+
+                children.Count(),
+                children.Where(x => x.calc0(x.Dsout)[0]).Count(),
+                children.Where(x => x.calc0(x.Dsout)[1]).Count(),
+                children.Where(x => x.calc0(x.Dsout)[2]).Count(),
+                children.Where(x => x.calc0(x.Dsout)[3]).Count(),
+                children.Where(x => x.calc0(x.Dsout)[4]).Count(),
+                children.Where(x => x.calc0(x.Dsout)[5]).Count(),
+                children.Where(x => x.calc0(x.Dsout)[6]).Count());
 
             return sb.ToString();
         }

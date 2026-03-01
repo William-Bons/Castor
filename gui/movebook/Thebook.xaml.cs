@@ -168,5 +168,9 @@ namespace Castor.gui.movebook
         {
         }
 
+        private void HideAutoColumns(object sender, RoutedEventArgs e)
+        {
+            PatientsTable.AutoGenerateColumns = (sender as MenuItem).IsChecked;
+        }
     }
 }

@@ -1,22 +1,24 @@
-﻿<UserControl x:Class="Castor.gui.pages.ForceControl"
+﻿<UserControl
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Castor.gui.pages"
+             xmlns:common="clr-namespace:Castor.gui.common" x:Class="Castor.gui.pages.ForceControl"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <common:FullnameConverter x:Key="FullnameConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock FontFamily="Courier New" FontSize="20" Margin="10">
-            <Run Text="Сегодня Принуд Мера" />
-        </TextBlock>
+        <TextBlock FontFamily="Courier New" FontSize="20" Margin="10"><Run Text="Принуд Меры" /></TextBlock>
 
-        <DataGrid Grid.Row="1" HeadersVisibility="None" ItemsSource="{Binding FssList}" AutoGenerateColumns="False" FontFamily="Courier New" FontSize="20" BorderThickness="0" GridLinesVisibility="None"
+        <DataGrid Grid.Row="1" HeadersVisibility="None" ItemsSource="{Binding FssList}" AutoGenerateColumns="False" FontFamily="Courier New" FontSize="25" BorderThickness="0" GridLinesVisibility="None"
                   Margin="10">
             <!--<DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
@@ -24,8 +26,8 @@
                 </Style>
             </DataGrid.CellStyle>-->
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Fio}" MaxWidth="200" />
-                <DataGridTextColumn Binding="{Binding ForcedMonth}" />
+                <DataGridTextColumn Binding="{Binding Fio, Converter={StaticResource FullnameConverter}}" />
+                <DataGridTextColumn Binding="{Binding ForcedMonth}" TextBlock.TextAlignment="Right" />
             </DataGrid.Columns>
         </DataGrid>
 

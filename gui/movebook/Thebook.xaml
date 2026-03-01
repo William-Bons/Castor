@@ -39,11 +39,12 @@
             </StackPanel>
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="True" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" CurrentCellChanged="PatientsTable_CellEditEnding" FontFamily="Courier New" FontSize="16" >
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="False" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" CurrentCellChanged="PatientsTable_CellEditEnding" FontFamily="Courier New" FontSize="16" >
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Click="DeleteRow" Header="Удалить запись"/>
                     <MenuItem Click="ShowStatGroup" Header="Показатели" />
+                    <MenuItem Click="HideAutoColumns" Header="Показывать все колонки" IsCheckable="True"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
 
@@ -60,7 +61,7 @@
                         </DataTrigger>
                         <!-- Пример: Подсветка строки, если ошибка диагноза выбытия -->
                         <DataTrigger Binding="{Binding OutControl}" Value="False">
-                            <Setter Property="Background" Value="#FFBED1FF"/>
+                            <Setter Property="Background" Value="#FFFFC8C8"/>
                         </DataTrigger>
                         
                     </Style.Triggers>
@@ -82,6 +83,8 @@
                 <DataGridTextColumn Header="Дата выб" Binding="{Binding Dateout}" />
                 <DataGridTextColumn Header="Дз пост" Binding="{Binding Dsin}" />
                 <DataGridTextColumn Header="Дз выб" Binding="{Binding Dsout}" />
+                <DataGridTextColumn Header="ЭЛН" Binding="{Binding Fss}" />
+                <DataGridTextColumn Header="Принуд" Binding="{Binding Forced}" />
                 <DataGridCheckBoxColumn Header="Первично" Binding="{Binding First}" />
                 <DataGridCheckBoxColumn Header="Повт в году" Binding="{Binding Second}" />
                 <DataGridCheckBoxColumn Header="Возврат" Binding="{Binding Early}" />
