@@ -75,6 +75,7 @@
 
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Диагноз поступления" Padding="5"/>
                 <TextBox   Grid.Row="4" Grid.Column="1" Text="{Binding Movebook.Dsin}"  Margin="3" Padding="2"/>
+                <Button    Grid.Row="4" Grid.Column="1" Click="SelectDiagnosFromList" Content=".." MaxWidth="23" MaxHeight="23" HorizontalAlignment="Right"/>
 
                 <TextBlock Grid.Row="5" Grid.Column="0" Text="Городской" Padding="5"/>
                 <CheckBox  Grid.Row="5" Grid.Column="1" IsChecked="{Binding Movebook.City}" Margin="5" ToolTip="отметьте поле, если пациент прописан в городе, в ином случае оставте поле неотмеченым" FontSize="11"/>

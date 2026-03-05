@@ -82,32 +82,21 @@ namespace Castor.gui.movebook
                         .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime( )- v.dat1).Value.Days < 8 ))
                         .ThenInclude(v => v.Patient)
                         .ThenInclude(p => p.Diagnoses)
+                        .ThenInclude(d => d.Diagnos)
                         .ToList();
 
-                    var a = new SelectPatientInVisits(depList.First().Visits);
-
-                    Popup popup = new Popup();
-                    popup.Child = a;
-                    popup.StaysOpen = false;
-                    popup.Placement = PlacementMode.MousePoint;
-                    popup.IsOpen = true;
-
+                    var a = new SelectObjectFromEnumerable(depList.First().Visits, "Patient.birthdate", "Patient.fullname");
+                    
                     a.Selected += (object sel) =>
                     {
-                        popup.IsOpen = false;
                         Visit = (visit)sel;
-
-
 
                         using (MedisContext medisContext = new MedisContext())
                         {
                             var DS = medisContext.diagnos
-                                .Where(d => d.keyid == Visit.Patient.CurrentDs.diagid)?.First();
+                                .Where(d => d.keyid == Visit.Patient.CurrentDs.Diagnos.rootid)?.First();
 
-                            var RD = medisContext.diagnos
-                                .Where(d => d.keyid == DS.rootid)?.First();
-
-                            Movebook.Dsin = RD.code;
+                            Movebook.Dsin = DS.code;
                         }
 
                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Visit)));
@@ -134,6 +123,26 @@ namespace Castor.gui.movebook
         private bool Validate()
         {
             return (Movebook.Card_Id > 0 && Movebook.Datein > DateOnly.MinValue && !string.IsNullOrWhiteSpace(Movebook.Dsin));
+        }
+
+        private void SelectDiagnosFromList(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var a = new SelectObjectFromEnumerable(Visit.Patient.Diagnoses.TakeLast(10), "dat","Diagnos.code","Diagnos.text");
+                a.Selected += (sel) =>
+                {
+                    using (MedisContext medisContext = new MedisContext())
+                    {
+                        var DS = medisContext.diagnos
+                            .Where(d => d.keyid == (sel as patdiag).Diagnos.rootid)?.First();
+
+                        Movebook.Dsin = DS.code;
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Movebook)));
+                    }
+                };
+            }
+            catch { }
         }
     }
 }

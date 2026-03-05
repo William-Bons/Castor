@@ -28,7 +28,7 @@ namespace Castor
                     MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.gui.dialogs.SelectUser" });
                 }
 
-                // load page according Settings.Default.StartLoadedPage
+                // load page according SettingsCheet.Default.StartLoadedPage
                 if (!Settings.Default.StartLoadingPage.IsNullOrEmpty())
                     MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = Settings.Default.StartLoadingPage });
 

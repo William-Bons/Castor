@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
@@ -49,5 +50,6 @@ namespace Castor.database.tab_medis
         public int? not_main_status {get; set; }
         public DateTime? bgndat {get; set; }
         public DateTime? enddat {get; set; }
+
     }
 }

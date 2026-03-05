@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Castor.database.tab_medis;
 
@@ -190,4 +191,7 @@ public partial class patdiag
     public long? organ_id { get; set; }
 
     public virtual visit? Visits { get; set; }
+
+    [ForeignKey(nameof(diagid))]
+    public virtual diagnos? Diagnos { get; set; }
 }

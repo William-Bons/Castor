@@ -24,12 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Remove="assets\Style.xaml" />
     <Page Remove="gui\pages\MakeNewPlanning.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="assets\Style.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -100,6 +95,12 @@
     <None Update="sqlite\movebook_create.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="assets\Style.xaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Page>
   </ItemGroup>
 
 </Project>
