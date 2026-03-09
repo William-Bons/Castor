@@ -1,7 +1,10 @@
 ﻿using Castor.database;
+using Castor.database.tab_medis;
 using Castor.database.tables;
 using Castor.gui.common;
 using Castor.gui.dialogs;
+using Castor.Properties;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.Text;
 using System.Windows;
@@ -59,7 +62,7 @@ namespace Castor.gui.movebook
 
         }
 
-        private async void NeedRefreshTable(object sender, System.Windows.RoutedEventArgs e)
+        private async void NeedRefreshTable(object sender, EventArgs e)
         {
             need_save = false;
 
@@ -96,9 +99,9 @@ namespace Castor.gui.movebook
             Cursor = Cursors.Arrow;
         }
 
-        private void LoadPatient(object sender, RoutedEventArgs e)
+        private void LoadPatient(object sender, EventArgs e)
         {
-            CreateNew createNew = new CreateNew();
+            CreateNew createNew = new CreateNew(sender is Button ? null : PatientsTable.SelectedItem);
             createNew.ShowDialog();
             NeedRefreshTable(sender, e);
         }
@@ -114,10 +117,54 @@ namespace Castor.gui.movebook
             Cursor = Cursors.Arrow;
         }
 
-        private void ImportList(object sender, RoutedEventArgs e)
+        private async void ImportList(object sender, RoutedEventArgs e)
         {
-            ImportMedisPeriod importMedisPeriod = new ImportMedisPeriod();
-            importMedisPeriod.ShowDialog();
+            //ImportMedisPeriod importMedisPeriod = new ImportMedisPeriod();
+            //importMedisPeriod.ShowDialog();
+
+            List<long?> visitIds;
+            List<visit> visits = new List<visit>();
+
+            Func<Task> __check = async () =>
+            {
+                try
+                {
+
+
+                    using (CastorContext castorContext = new CastorContext())
+                    {
+                        visitIds = castorContext.Movebooks.Select(m => m.Visitid).ToList();
+                    }
+
+                    using (MedisContext medisContext = new MedisContext())
+                    {
+                        /* Запрос к Медис*/
+                        ICollection<dep>? depList = medisContext.dep // отделения
+                            .Where(d => d.keyid == Settings.Default.LastSelectedDep) // где номер отделения = сохраненному в Settings
+                            .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days < 8))
+                            .ThenInclude(v => v.Patient)  // привязка пациента
+                            .ThenInclude(p => p.Diagnoses) // привязка диагнозов пациента
+                            .ThenInclude(d => d.Diagnos)  // привязка к диагнозам пациента дианоза из мкб
+                            .ToList();
+
+                        visits = depList.Select(d => d.Visits).First().ExceptBy(visitIds, v => v.keyid).ToList();
+                    }
+
+                    SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", visits, "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");
+                    soe.Selected += (a) =>
+                    {
+                        CreateNew createNew = new CreateNew(a);
+                        createNew.ShowDialog();
+                        NeedRefreshTable(sender, e);
+                    };
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            };
+            await __check();
         }
 
         private async void DeleteRow(object sender, RoutedEventArgs e)
@@ -172,5 +219,6 @@ namespace Castor.gui.movebook
         {
             PatientsTable.AutoGenerateColumns = (sender as MenuItem).IsChecked;
         }
+
     }
 }

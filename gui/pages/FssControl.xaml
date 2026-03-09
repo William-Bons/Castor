@@ -18,7 +18,7 @@
 
         <TextBlock FontFamily="Courier New" FontSize="20" Margin="10"><Run Text="Сегодня ЭЛН" /></TextBlock>
 
-        <DataGrid Grid.Row="1" HeadersVisibility="None" ItemsSource="{Binding FssList}" AutoGenerateColumns="False" FontFamily="Courier New" FontSize="20" BorderThickness="0" GridLinesVisibility="None" Margin="10">
+        <DataGrid Grid.Row="1" HeadersVisibility="None" ItemsSource="{Binding FssList}" AutoGenerateColumns="False" FontFamily="Courier New" FontSize="20" BorderThickness="0" GridLinesVisibility="None" Margin="10" IsReadOnly="True" MouseDoubleClick="DataGrid_MouseDoubleClick" x:Name="FssGrid">
             <!--<DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Setter Property="BorderThickness" Value="0" />

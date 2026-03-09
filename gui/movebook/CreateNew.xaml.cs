@@ -21,8 +21,15 @@ namespace Castor.gui.movebook
         public event PropertyChangedEventHandler? PropertyChanged;
         public event ConsoleMessageHandler? ConsoleMessage;
 
-        public CreateNew()
+        public CreateNew(object sender)
         {
+            if(sender is Movebook) Movebook= (Movebook)sender;
+
+            if(sender is visit v)
+            {
+                MoveVisitToBook(v);
+            }
+
             InitializeComponent();
             DataContext = this;
         }
@@ -74,41 +81,22 @@ namespace Castor.gui.movebook
             {
                 try
                 {
-
-                    ICollection<dep>? depList = medisContext.dep
-                        .Where(d => d.keyid == Settings.Default.LastSelectedDep)
-                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days < 8 ))
-                        .ThenInclude(v => v.Doctor)
+                    /* Запрос к Медис*/
+                    ICollection<dep>? depList = medisContext.dep // отделения
+                        .Where(d => d.keyid == Settings.Default.LastSelectedDep) // где номер отделения = сохраненному в Settings
+                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days < 8 )) // все невыписанные (!v.dat1.HasValue) и выписанные менее 8 дней назад
+                        .ThenInclude(v => v.Doctor)  // привязка доктора
                         .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime( )- v.dat1).Value.Days < 8 ))
-                        .ThenInclude(v => v.Patient)
-                        .ThenInclude(p => p.Diagnoses)
-                        .ThenInclude(d => d.Diagnos)
+                        .ThenInclude(v => v.Patient)  // привязка пациента
+                        .ThenInclude(p => p.Diagnoses) // привязка диагнозов пациента
+                        .ThenInclude(d => d.Diagnos)  // привязка к диагнозам пациента дианоза из мкб
                         .ToList();
 
-                    var a = new SelectObjectFromEnumerable(depList.First().Visits, "Patient.birthdate", "Patient.fullname");
-                    
-                    a.Selected += (object sel) =>
+                    var a = new SelectObjectFromEnumerable(depList.First().Visits, "dat", "Patient.fullname", "dat1");
+
+                    a.Selected += (a) =>
                     {
-                        Visit = (visit)sel;
-
-                        using (MedisContext medisContext = new MedisContext())
-                        {
-                            var DS = medisContext.diagnos
-                                .Where(d => d.keyid == Visit.Patient.CurrentDs.Diagnos.rootid)?.First();
-
-                            Movebook.Dsin = DS.code;
-                        }
-
-                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Visit)));
-                        Movebook.Ordered = 0;
-                        Movebook.Card_Id = Visit.num;
-                        Movebook.Patientid = Visit?.Patient?.num;
-                        Movebook.Fio = Visit?.Patient?.fullname;
-                        Movebook.Birthdate = DateOnly.FromDateTime(Visit.Patient.birthdate.Value);
-                        Movebook.Datein = DateOnly.FromDateTime(Visit.dat.Value);
-                        Movebook.Visitid = Visit?.keyid;
-                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Movebook)));
-
+                        MoveVisitToBook((visit)a);
                     };
 
                     
@@ -117,6 +105,36 @@ namespace Castor.gui.movebook
                 {
                     ConsoleMessage?.Invoke(ex.Message);
                 }
+            }
+        }
+
+        private void MoveVisitToBook(visit visit)
+        {
+            try
+            {
+                Visit = visit;
+
+                using (MedisContext medisContext = new MedisContext())
+                {
+                    /* выборка из Медис: выбор диагноза верхнего уровня группы */
+                    var DS = medisContext.diagnos
+                        .Where(d => d.keyid == Visit.Patient.CurrentDs.Diagnos.rootid)?.First();
+
+                    Movebook.Dsin = DS.code;
+                }
+
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Visit)));
+                Movebook.Ordered = 0;
+                Movebook.Card_Id = Visit.num;
+                Movebook.Patientid = Visit?.Patient?.num;
+                Movebook.Fio = Visit?.Patient?.fullname;
+                Movebook.Birthdate = DateOnly.FromDateTime(Visit.Patient.birthdate.Value);
+                Movebook.Datein = DateOnly.FromDateTime(Visit.dat.Value);
+                Movebook.Visitid = Visit?.keyid;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Movebook)));
+            }
+            catch (Exception ex)
+            {
             }
         }
 

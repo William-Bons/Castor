@@ -1,7 +1,9 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Castor.gui.movebook
 {
@@ -12,19 +14,45 @@ namespace Castor.gui.movebook
         public delegate void SelectPatientInVisitsEventHandler(object selected);
         public event SelectPatientInVisitsEventHandler Selected;
         private Popup _canvas;
+
+
+        public SelectObjectFromEnumerable(string Title, IEnumerable<object> _RowSourceObject, params string[] columns)
+            :this(columns)
+        {
+            ItemsSource = _RowSourceObject;
+            Grid gr = CreateGrid();
+            TextBlock textBlock = new TextBlock() { Text = Title, Padding=new Thickness(5), FontFamily= new System.Windows.Media.FontFamily("Courier New"), FontSize=15, Foreground=Brushes.White};
+            gr.Children.Add(textBlock);
+            gr.Children.Add(this);
+            _canvas.Child = gr;
+            _canvas.IsOpen = true;
+        }
+
         public SelectObjectFromEnumerable(IEnumerable<object> _RowSourceObject, params string[] columns)
-            : base()
+            : this(columns)
+        {
+
+            ItemsSource = _RowSourceObject;
+            _canvas.Child = this;
+            _canvas.IsOpen = true;
+        }
+
+        private SelectObjectFromEnumerable(params string[] columns)
+            :base()
         {
             /* Create columns */
             foreach (var column in columns)
             {
                 DataGridTextColumn newColumn = new DataGridTextColumn();
+                Binding bnd = new Binding(column);
+                bnd.StringFormat = "{0:d}";
+
                 newColumn.Header = column;
-                newColumn.Binding = new Binding(column);
+                newColumn.Binding = bnd;
+
                 Columns.Add(newColumn);
             }
-
-            ItemsSource = _RowSourceObject;
+            
             MouseDoubleClick += DataGrid_MouseDoubleClick;
             AutoGenerateColumns = false;
             IsReadOnly = true;
@@ -33,16 +61,23 @@ namespace Castor.gui.movebook
             FontSize = 15.0;
 
             _canvas = new Popup();
-            _canvas.Child = this;
             _canvas.StaysOpen = false;
             _canvas.Placement = PlacementMode.MousePoint;
-            _canvas.IsOpen = true;
         }
 
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             _canvas.IsOpen = false;
             Selected?.Invoke(SelectedItem);
+        }
+
+        private Grid CreateGrid()
+        {
+            Grid grid = new Grid();
+            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition());
+            Grid.SetRow(this, 1);
+            return grid;
         }
     }
 }

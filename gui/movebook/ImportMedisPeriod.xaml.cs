@@ -1,4 +1,5 @@
-﻿using Castor.database.tab_medis;
+﻿using Castor.database;
+using Castor.database.tab_medis;
 using Castor.database.tables;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
@@ -31,18 +32,60 @@ namespace Castor.gui.movebook
         {
             InitializeComponent();
             DataContext = this;
+
+            CheckNewby();
         }
 
-        public ObservableCollection<Movebook> DataRowSource { get; private set; }
+        public object DataRowSource { get; private set; }
         public DatePeriod DatePeriod { get; set; } = new DatePeriod() { End = DateTime.Now, Start = DateTime.Now.AddDays(-30) };
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        private async void CheckNewby()
+        {
+            List<long?> visitIds;
+            List<visit> visits= new List<visit>();
+
+            Func<Task> __check = async () =>
+            {
+                try
+                {
+                    
+
+                    using(CastorContext castorContext = new CastorContext())
+                    {
+                        visitIds = castorContext.Movebooks.Select(m => m.Visitid).ToList();
+                    }
+
+                    using (MedisContext medisContext = new MedisContext())
+                    {
+                        /* Запрос к Медис*/
+                        ICollection<dep>? depList = medisContext.dep // отделения
+                            .Where(d => d.keyid == Settings.Default.LastSelectedDep) // где номер отделения = сохраненному в Settings
+                            .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days < 8))
+                            .ThenInclude(v => v.Patient)  // привязка пациента
+                            .ToList();
+
+                        visits = depList.Select(d => d.Visits).First().ExceptBy(visitIds, v => v.keyid).ToList();
+                    }
+
+                    SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", visits, "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            };
+            await __check();
+            
+        }
 
         private async void LoadRecords(object sender, RoutedEventArgs e)
         {
             DatePeriod = new DatePeriod() { Start=DP0.SelectedDate.Value, End=DP1.SelectedDate.Value };
             
-            DataRowSource = new ObservableCollection<Movebook>();
+            List<Movebook> _drs = new List<Movebook>();
 
             Func<Task> Foo = async () =>
             {
@@ -85,9 +128,10 @@ namespace Castor.gui.movebook
                                 movebook.Dsout = dsOut?.code;
                             }
 
-                            DataRowSource.Add(movebook);
+                            _drs.Add(movebook);
                         }
 
+                        DataRowSource = _drs;
                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DataRowSource)));
                     }
                 }

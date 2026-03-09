@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Castor.gui.common"
         mc:Ignorable="d" 
-        Title="Поступление" Height="616" Width="632" WindowStartupLocation="CenterScreen" Topmost="True"
+        Title="Поступление" Height="616" Width="800" WindowStartupLocation="CenterScreen" Topmost="True"
         FontFamily="Courier New" FontSize="16">
 
     <Window.Resources>
@@ -56,10 +56,10 @@
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Dep.text}" DataContext="{Binding Visit}" Padding="5"/>
 
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Пациент" Padding="5"/>
-                <TextBlock Grid.Row="1" Grid.Column="1"  Padding="5">
-                    <Run Text="{Binding Patient.fullname, Mode=OneWay}" DataContext="{Binding Visit}" />
+                <TextBlock Grid.Row="1" Grid.Column="1"  Padding="5" Language="RU">
+                    <Run Text="{Binding Movebook.Fio, Mode=OneWay}" />
                     <LineBreak/>
-                    <Run Text="{Binding CurrentDs.text, Mode=OneWay}" DataContext="{Binding Visit.Patient}"/>
+                    <Run Text="{Binding Movebook.Birthdate, Mode=OneWay}"/>
                 </TextBlock>
                 <Button    Grid.Row="1" Grid.Column="1" Content="..." Width="23" Height="23" HorizontalAlignment="Right" Click="SelectPatientFromMedis"/>
 
