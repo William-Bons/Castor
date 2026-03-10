@@ -20,24 +20,29 @@ namespace Castor
 
             ContentRendered += async (o, e) =>
             {
-                Cursor = Cursors.Wait;
-
-                // select current user
-                if (Settings.Default.AskUserBeforeStart && Settings.Default.LastConnectedUserId <= 0 && Settings.Default.LastSelectedDep <= 0)
+                try
                 {
-                    MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.gui.dialogs.SelectUser" });
+                    Cursor = Cursors.Wait;
+
+                    // select current user
+                    if (Settings.Default.AskUserBeforeStart && Settings.Default.LastConnectedUserId <= 0 && Settings.Default.LastSelectedDep <= 0)
+                    {
+                        MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = "Castor.gui.dialogs.SelectUser" });
+                    }
+
+                    // load page according SettingsCheet.Default.StartLoadedPage
+                    if (!Settings.Default.StartLoadingPage.IsNullOrEmpty())
+                        MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = Settings.Default.StartLoadingPage });
+
+                    Cursor = Cursors.Arrow;
                 }
-
-                // load page according SettingsCheet.Default.StartLoadedPage
-                if (!Settings.Default.StartLoadingPage.IsNullOrEmpty())
-                    MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = Settings.Default.StartLoadingPage });
-
-                Cursor = Cursors.Arrow;
+                catch { }
             };
 
             Closed += (a, b) =>
             {
-                if (!string.IsNullOrWhiteSpace(CentralFrame?.Content?.GetType().ToString()))
+                if (!string.IsNullOrWhiteSpace(CentralFrame?.Content?.GetType().ToString())
+                    && CentralFrame?.Content is IStartablePage)
                 {
                     Settings.Default.StartLoadingPage = CentralFrame.Content?.GetType().ToString();
                     Settings.Default.Save();

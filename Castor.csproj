@@ -13,14 +13,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="gui\movebook\kurwa.jpg" />
     <None Remove="img\acroread.png" />
     <None Remove="img\add-icon.png" />
     <None Remove="img\ariadna-logo.png" />
+    <None Remove="img\business_table_order_report_history_2332.ico" />
     <None Remove="img\edit.png" />
     <None Remove="img\filter.png" />
+    <None Remove="img\fire_exit_emergency_door_icon_196783.ico" />
     <None Remove="img\floppy_mount.png" />
     <None Remove="img\kurwa.jpg" />
+    <None Remove="img\log_logout_door_1563.ico" />
     <None Remove="img\registrator.png" />
+    <None Remove="img\restart_back_left_arrow_6022.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,15 +49,19 @@
     <Resource Include="img\acroread.png" />
     <Resource Include="img\add-icon.png" />
     <Resource Include="img\ariadna-logo.png" />
+    <Resource Include="img\business_table_order_report_history_2332.ico" />
     <Resource Include="img\edit.png" />
     <Resource Include="img\filter.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="img\fire_exit_emergency_door_icon_196783.ico" />
     <Resource Include="img\floppy_mount.png" />
     <Resource Include="img\kurwa.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="img\log_logout_door_1563.ico" />
     <Resource Include="img\registrator.png" />
+    <Resource Include="img\restart_back_left_arrow_6022.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,6 +88,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="assets\BlockTrLine.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="assets\BlockTrTd.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

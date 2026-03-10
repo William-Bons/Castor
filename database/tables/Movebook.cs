@@ -35,14 +35,17 @@ public class Movebook
     public bool Closed { get; set; }
     public bool Deceased { get; set; }
     public DateOnly? Fss { get; set; }
-    public DateOnly? Forced { get; set; }
+    public long? Forced { get; set; }
     public virtual int? Agein => CalculateAge(Datein);
     public virtual int? Ageout => CalculateAge(Dateout);
     public int? Days => (Datein.HasValue && Dateout.HasValue) ? (Dateout.Value.ToDateTime(TimeOnly.MinValue) - Datein.Value.ToDateTime(TimeOnly.MinValue)).Days : null;
+    public int? DaysToday => Datein.HasValue && !Dateout.HasValue ? (DateTime.Today - Datein.Value.ToDateTime(TimeOnly.MinValue)).Days : null;
     public bool? InControl => string.IsNullOrWhiteSpace(Dsin) ? null : calc0(Dsin).Take(5).Count(x => x) == 1;
     public bool? OutControl => string.IsNullOrWhiteSpace(Dsout) ? null : calc0(Dsout).Take(5).Count(x => x) == 1;
     public int FssDay => Fss.HasValue ? (DateTime.Today-Fss?.ToDateTime(TimeOnly.MinValue)).Value.Days+1 : 0;
-    public int ForcedMonth => Forced.HasValue ? (DateTime.Today.Month - Forced.Value.Month) + 12 * (DateTime.Today.Year - Forced.Value.Year) : 0;
+
+    public virtual Forced? ForceControl {  get; set; }
+    //public int ForcedMonth => Forced.HasValue ? (DateTime.Today.Month - Forced.Value.Month) + 12 * (DateTime.Today.Year - Forced.Value.Year) : 0;
 
     /// <summary>
     /// Create array checking diagnisis in input line; 

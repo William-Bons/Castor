@@ -8,6 +8,14 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Thebook">
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/assets/Style.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -16,20 +24,35 @@
         </Grid.RowDefinitions>
 
         <ToolBar Grid.Row="0" Background="Transparent">
-            <Button ToolTip="Фильтровать" Click="NeedRefreshTable"  Width="32" Height="32">
-                <Image Source="/img/filter.png" />
+            <Button ToolTip="Импортировать из Медис" Click="ImportList" Style="{DynamicResource Castor.Toolbarbutton}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/log_logout_door_1563.ico" />
+                    <TextBlock Text="Поступление" FontSize="16" VerticalAlignment="Center"/>
+                </StackPanel>
             </Button>
-            <Button ToolTip="Импортировать из Медис" Click="ImportList"  Width="32" Height="32">
-                <Image Source="/img/ariadna-logo.png" />
+            <Button ToolTip="Добавить пациента в книгу движения" Click="LoadPatient" Style="{DynamicResource Castor.Toolbarbutton}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/add-icon.png" />
+                    <TextBlock Text="Добавить" FontSize="16" VerticalAlignment="Center"/>
+                </StackPanel>
             </Button>
-            <Button ToolTip="Отчет" Click="LoadPatient"  Width="32" Height="32">
-                <Image Source="/img/add-icon.png" />
+            <Button ToolTip="Выписать пациента" Click="DisorderPatient" Style="{DynamicResource Castor.Toolbarbutton}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/fire_exit_emergency_door_icon_196783.ico" />
+                    <TextBlock Text="Выписать" FontSize="16" VerticalAlignment="Center"/>
+                </StackPanel>
             </Button>
-            <Button ToolTip="Отчет" Click="DisorderPatient"  Width="32" Height="32">
-                <Image Source="/img/registrator.png" />
+            <Button ToolTip="Отчет ДВИЖЕНИЕ" Click="SaveInXml"  Style="{DynamicResource Castor.Toolbarbutton}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/business_table_order_report_history_2332.ico" />
+                    <TextBlock Text="Отчет Движение" FontSize="14" VerticalAlignment="Center"/>
+                </StackPanel>
             </Button>
-            <Button ToolTip="Отчет" Click="SaveInXml"  Width="32" Height="32">
-                <Image Source="/img/edit.png" />
+            <Button Visibility="{Binding SaveButtonVisible}" Click="NeedRefreshTable" Style="{DynamicResource Castor.Toolbarbutton}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/floppy_mount.png"/>
+                    <TextBlock Text="Сохранить" FontSize="16" VerticalAlignment="Center"/>
+                </StackPanel>
             </Button>
 
             <StackPanel Orientation="Horizontal" DataContext="{Binding Period}">
@@ -95,7 +118,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Button Grid.Row="1" Content="СОХРАНИТЬ" Height="20" Width="100" Margin="30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Visibility="{Binding SaveButtonVisible}" Click="NeedRefreshTable"  />
+        
 
     </Grid>
 

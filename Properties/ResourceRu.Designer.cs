@@ -61,42 +61,55 @@ namespace Castor.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на &lt;table &gt;
+        ///   Ищет локализованную строку, похожую на 
         ///
+        ///&lt;tr&gt;
+        ///    &lt;td&gt;{0}&lt;/td &gt;
+        ///    &lt;td&gt;{1}&lt;/td&gt; 
+        ///    &lt;td&gt;{2}&lt;/td&gt; 
+        ///&lt;/tr&gt; 
+        ///.
+        /// </summary>
+        internal static string BlockTrLine {
+            get {
+                return ResourceManager.GetString("BlockTrLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на 
         ///&lt;tr&gt; 
         ///    &lt;th&gt; {0}&lt;/th&gt; 
         ///    &lt;th&gt; {1}&lt;/th&gt; 
+        ///    &lt;th&gt; {9}&lt;/th&gt; 
         ///&lt;/tr &gt;
         ///&lt;tr&gt;
         ///&lt;td&gt; Психозы&lt;/td &gt;
-        ///&lt;td&gt;{2}&lt;/td&gt; 
+        ///    &lt;td&gt;{2}&lt;/td&gt; 
+        ///    &lt;td&gt;{10}&lt;/td&gt; 
         ///&lt;/tr&gt; 
         ///&lt;tr&gt; 
         /// &lt;td&gt;Шизофрения&lt;/td&gt;  
-        /// &lt;td&gt;{3}&lt;/td&gt;
+        ///    &lt;td&gt;{3}&lt;/td&gt;
+        ///    &lt;td&gt;{11}&lt;/td&gt;
         ///&lt;/tr&gt; 
         ///&lt;tr&gt; 
         /// &lt;td&gt;Умственная отсталость&lt;/td&gt;   
-        /// &lt;td&gt;{4}&lt;/td&gt;
+        ///    &lt;td&gt;{4}&lt;/td&gt;
+        ///    &lt;td&gt;{12}&lt;/td&gt;
         ///&lt;/tr&gt; 
         ///&lt;tr&gt; 
         /// &lt;td&gt;Непсихотические расстройства&lt;/td&gt;
-        /// &lt;td&gt;{5}&lt;/td&gt;
+        ///    &lt;td&gt;{5}&lt;/td&gt;
+        ///    &lt;td&gt;{13}&lt;/td&gt;
         ///&lt;/tr&gt; 
         ///&lt;tr&gt; 
         /// &lt;td&gt;Наркологические&lt;/td&gt;   
-        /// &lt;td&gt;{6}&lt;/td&gt;
+        ///    &lt;td&gt;{6}&lt;/td&gt;
+        ///    &lt;td&gt;{14}&lt;/td&gt;
         ///&lt;/tr&gt; 
         ///&lt;tr&gt; 
-        /// &lt;td&gt;  - из них с алкоголизмом&lt;/td&gt;   
-        /// &lt;td&gt;{7}&lt;/td&gt;
-        ///&lt;/tr&gt; 
-        ///&lt;tr&gt; 
-        /// &lt;td&gt;  - из них с наркоманией&lt;/td&gt;   
-        /// &lt;td&gt;{8}&lt;/td&gt;
-        ///&lt;/tr&gt; 
-        ///
-        ///&lt;/tab [остаток строки не уместился]&quot;;.
+        /// &lt;td&gt;  - из них с [остаток строки не уместился]&quot;;.
         /// </summary>
         internal static string BlockTrTd {
             get {

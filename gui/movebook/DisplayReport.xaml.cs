@@ -1,26 +1,29 @@
-﻿using SelectPdf;
+﻿using Castor.database.tables;
+using Castor.gui.common;
+using Castor.gui.dialogs;
+using SelectPdf;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
+
 namespace Castor.gui.movebook
 {
     /// <summary>
     /// Логика взаимодействия для DisplayReport.xaml
     /// </summary>
-    public partial class DisplayReport : Window
+    public partial class DisplayReport : Page
     {
         private PdfDocument pdfDocument;
-        public DisplayReport(StringBuilder monthReportHtml)
+        public DisplayReport(ICastorHtmlReport _report)
         {
             InitializeComponent();
 
-
             // show report 
             //webBrowser.Language = System.Windows.Markup.XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag);
-            Browser.NavigateToString(monthReportHtml.ToString());
+            Browser.NavigateToString(_report.HtmlReport);
 
             HtmlToPdf converter = new HtmlToPdf();
             converter.Options.PdfPageSize = PdfPageSize.A4;
@@ -28,7 +31,8 @@ namespace Castor.gui.movebook
             converter.Options.MarginLeft = 25;
             converter.Options.MarginRight = 25;
             converter.Options.MarginTop = 25;
-            pdfDocument = converter.ConvertHtmlString(monthReportHtml.ToString());
+            pdfDocument = converter.ConvertHtmlString(_report.HtmlReport);
+            
         }
 
         private void SaveToDisk(object sender, RoutedEventArgs e)
@@ -48,6 +52,18 @@ namespace Castor.gui.movebook
         private void Print(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void BrowseBack(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
+        }
+
+        private void ReselectPeriod(object sender, RoutedEventArgs e)
+        {
+            DatePeriod datePeriod = SelectDatePeriod.Show();
+            MonthReportHtml monthReportHtml = new MonthReportHtml(datePeriod);
+            Browser.NavigateToString(monthReportHtml.HtmlReport);
         }
     }
 }

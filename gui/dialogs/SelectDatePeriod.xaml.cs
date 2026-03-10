@@ -27,6 +27,15 @@ namespace Castor.gui.dialogs
             return datePeriod;
         }
 
+        public static DatePeriod GetStandard()
+        {
+            SelectDatePeriod selectDatePeriod = new SelectDatePeriod();
+            DatePeriod datePeriod = new DatePeriod();
+            datePeriod.Start = selectDatePeriod.SelectedStart;
+            datePeriod.End = selectDatePeriod.SelectedEnd;
+            return datePeriod;
+        }
+
         public DateTime SelectedStart { get; set; } = DateTime.Parse($"{21}.{(DateTime.Today.Month > 1 ? DateTime.Today.Month - 1 : 12)}.{DateTime.Today.Year}");
         public DateTime SelectedEnd { get; set; } = DateTime.Parse($"{20}.{DateTime.Today.Month}.{DateTime.Today.Year}");
     }

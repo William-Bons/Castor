@@ -1,8 +1,5 @@
 ﻿using Castor.database.tables;
-using Castor.gui;
 using Microsoft.EntityFrameworkCore;
-using System.IO;
-using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace Castor.database
@@ -21,7 +18,7 @@ namespace Castor.database
         /// Tables in database
         /// </summary>
         public DbSet<Movebook> Movebooks => Set<Movebook>();
-        public DbSet<Reports>  Reports => Set<Reports>();
+        public DbSet<Reports> Reports => Set<Reports>();
         #endregion
 
         /// <summary>
@@ -32,7 +29,7 @@ namespace Castor.database
             _contextVariant = (ContextVariant)Properties.Settings.Default.contextValiant;
             if (!Database.CanConnect())
             {
-                CreateNewDatabase();
+                Database.EnsureCreated();
             }
         }
 
@@ -65,16 +62,17 @@ namespace Castor.database
             ;
         }
 
+        [Obsolete]
         private void CreateNewDatabase()
         {
-            FormattableString sqlLine;
-            using(FileStream file = new FileStream("sqlite/movebook_create.sql", FileMode.Open))
-            {
-                using(TextReader reader = new StreamReader(file))
-                {
-                    sqlLine = FormattableStringFactory.Create(reader.ReadToEnd());
-                }
-            }
+            //FormattableString sqlLine;
+            //using(FileStream file = new FileStream("sqlite/movebook_create.sql", FileMode.Open))
+            //{
+            //    using(TextReader reader = new StreamReader(file))
+            //    {
+            //        sqlLine = FormattableStringFactory.Create(reader.ReadToEnd());
+            //    }
+            //}
 
             try
             {
@@ -84,8 +82,8 @@ namespace Castor.database
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            } 
-                
+            }
+
         }
 
     }

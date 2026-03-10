@@ -13,7 +13,7 @@ namespace Castor.gui.pages
     /// <summary>
     /// Логика взаимодействия для LoadPatientsFromMedis.xaml
     /// </summary>
-    public partial class LoadPatientsFromMedis : Page, INotifyPropertyChanged, ISwithPage, IMainStatusBar
+    public partial class LoadPatientsFromMedis : Page, INotifyPropertyChanged, ISwithPage, IMainStatusBar, IStartablePage
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         public event SwitchPageHandler? SwitchPage;
@@ -42,18 +42,22 @@ namespace Castor.gui.pages
 
         private void LoadFromMedis()
         {
-            using (MedisContext cc = new MedisContext())
+            try
             {
-                depList = cc.dep
-                    .Where(d => d.keyid == Settings.Default.LastSelectedDep)
-                    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
-                    .ThenInclude(v => v.Doctor)
-                    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
-                    .ThenInclude(v => v.Patient)
-                    .ThenInclude(p => p.Diagnoses)
-                    .ToList();
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
+                using (MedisContext cc = new MedisContext())
+                {
+                    depList = cc.dep
+                        .Where(d => d.keyid == Settings.Default.LastSelectedDep)
+                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
+                        .ThenInclude(v => v.Doctor)
+                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
+                        .ThenInclude(v => v.Patient)
+                        .ThenInclude(p => p.Diagnoses)
+                        .ToList();
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
+                }
             }
+            catch { }
         }
 
         /// <summary>

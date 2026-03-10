@@ -16,7 +16,7 @@ namespace Castor.gui.movebook
     /// <summary>
     /// Логика взаимодействия для Thebook.xaml
     /// </summary>
-    public partial class Thebook : Page, INotifyPropertyChanged, IRefresh
+    public partial class Thebook : Page, INotifyPropertyChanged, IRefresh, IStartablePage
     {
         private CastorContext context;
         private bool need_save = false;
@@ -68,7 +68,7 @@ namespace Castor.gui.movebook
 
             LoadedData.Where(x => x.Dateout == DateOnly.MinValue).ToList().ForEach(x => x.Dateout = null);
             LoadedData.Where(x => x.Fss == DateOnly.MinValue).ToList().ForEach(x => x.Fss = null);
-            LoadedData.Where(x => x.Forced == DateOnly.MinValue).ToList().ForEach(x => x.Forced = null);
+            //LoadedData.Where(x => x.Forced == DateOnly.MinValue).ToList().ForEach(x => x.Forced = null);
 
             context.SaveChanges(true);
             
@@ -90,12 +90,9 @@ namespace Castor.gui.movebook
 
         private void SaveInXml(object sender, RoutedEventArgs e)
         {
-            
-            DatePeriod datePeriod = SelectDatePeriod.Show();
-
             Cursor = Cursors.Wait;
-            MonthReportHtml monthReportHtml = new MonthReportHtml(datePeriod);
-            monthReportHtml.DisplayReportAsHTML();
+            MonthReportHtml monthReportHtml = new MonthReportHtml(SelectDatePeriod.GetStandard());
+            NavigationService.Navigate(monthReportHtml.DisplayReportAsHTML());
             Cursor = Cursors.Arrow;
         }
 

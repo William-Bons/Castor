@@ -4,12 +4,12 @@
 <head>
     <style>
     p {{
-        font-size: 16pt;
+        font-size: 14pt;
     }}
     table {{                        /* This CSS rule makes the table use 100% of its parent container's width */
         width: 100%;
         border-collapse: collapse;  /* Optional: Makes borders look nicer */
-        font-size: 14pt;
+        font-size: 12pt;
     }}
 
     th, td {{
@@ -37,6 +37,15 @@
     {2} 
     {3} 
     {4}
+    {5}
+    {6}
+    {7}
+    {8}
+    {9}
+    {10}
+    {11}
+    {12}
+    {13}
     </table >
 </body >
 </html >

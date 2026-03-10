@@ -1,6 +1,7 @@
 ﻿using Castor.database;
 using Castor.database.tables;
 using Castor.gui.common;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.Windows.Controls;
 
@@ -36,7 +37,10 @@ namespace Castor.gui.pages
             {
                 using (CastorContext castor = new CastorContext())
                 {
-                    FssList = castor.Movebooks.AsEnumerable().Where(x => x.ForcedMonth>=6).ToList();
+                    FssList = castor.Movebooks.Where(m => m.Forced.HasValue)
+                        .Include(m => m.ForceControl)
+                        .ToList();
+                        
                 }
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FssList)));
             }

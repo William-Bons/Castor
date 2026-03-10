@@ -90,13 +90,13 @@
                 <CheckBox  Grid.Row="9" Grid.Column="1" IsChecked="{Binding Movebook.Early}" Margin="5" ToolTip="отметьте поле, если пациент поступил менее чем через 2 недели после выписки" FontSize="11" />
                 <TextBlock  Grid.Row="10" Grid.Column="0" Text="Дата пред выписки" Padding="5"/>
                 <DatePicker Grid.Row="10" Grid.Column="1" Margin="3" SelectedDate="{Binding Movebook.Date_lastout, Converter={StaticResource DateOnlyConverter}}"/>
-                <Rectangle Grid.Row="9" Grid.RowSpan="2" Grid.ColumnSpan="2" Stroke="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" />
+                <Rectangle Grid.Row="9" Grid.RowSpan="2" Grid.ColumnSpan="2" Stroke="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" Margin="1"/>
 
                 <TextBlock Grid.Row="11" Grid.Column="0" Text="Нужен ЭЛН" Padding="5" />
                 <CheckBox x:Name="FssEnable"  Grid.Row="11" Grid.Column="1" IsChecked="{Binding Movebook.Early}" Margin="5" FontSize="11" />
                 <TextBlock  Grid.Row="12" Grid.Column="0" Text="Дата начала нетрудоспособности" Padding="5"/>
                 <DatePicker Grid.Row="12" Grid.Column="1" Margin="3" SelectedDate="{Binding Movebook.Fss, Converter={StaticResource DateOnlyConverter}}" IsEnabled="{Binding IsChecked, ElementName=FssEnable}"/>
-                <Rectangle Grid.Row="11" Grid.RowSpan="2" Grid.ColumnSpan="2" Stroke="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" />
+                <Rectangle Grid.Row="11" Grid.RowSpan="2" Grid.ColumnSpan="2" Stroke="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" Margin="1"/>
 
             </Grid>
         </Grid>
