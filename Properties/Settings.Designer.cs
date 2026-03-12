@@ -25,7 +25,7 @@ namespace Castor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=departments.db")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string sqliteConnection {
             get {
                 return ((string)(this["sqliteConnection"]));
@@ -115,6 +115,18 @@ namespace Castor.Properties {
             }
             set {
                 this["AskUserBeforeStart"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1482")]
+        public long RootDepartmentId {
+            get {
+                return ((long)(this["RootDepartmentId"]));
+            }
+            set {
+                this["RootDepartmentId"] = value;
             }
         }
     }

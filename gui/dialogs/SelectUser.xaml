@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Castor.gui.dialogs"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="SelectUser" Width ="500" x:Name="wnd">
+        Title="Выбор отделения" Width ="500" Height="250" x:Name="wnd">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -36,10 +36,9 @@
             <StackPanel Grid.Row="1" >
                 <TextBlock Text="Отделение" Padding="3"  />
                 <ComboBox  IsEditable="True" ItemsSource="{Binding Departments}" DisplayMemberPath="text" SelectedItem="{Binding SelectedDepartment}" />
-                <TextBlock Text="Имя пользователя" Padding="3"  />
-                <ComboBox  IsEditable="True" ItemsSource="{Binding Users}" DisplayMemberPath="text" SelectedItem="{Binding LastConnectedUser}" />
-                <TextBlock Text="Пароль" VerticalAlignment="Bottom" Padding="3"/>
-                <PasswordBox x:Name="PasswdBox0"  MinHeight="23" TabIndex="1" />
+              
+                <TextBlock Text="Имя базы данных отделения" Padding="3"  />
+                <TextBox Text="{Binding DbFilename}"  />
             </StackPanel>
 
             <Separator Grid.Row="3" VerticalAlignment="Bottom"/>

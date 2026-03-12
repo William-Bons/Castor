@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="sqliteConnection" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data Source=departments.db</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="sqlserverConnection" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
@@ -30,6 +30,9 @@
     </Setting>
     <Setting Name="AskUserBeforeStart" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="RootDepartmentId" Type="System.Int64" Scope="User">
+      <Value Profile="(Default)">1482</Value>
     </Setting>
   </Settings>
 </SettingsFile>

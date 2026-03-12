@@ -62,7 +62,7 @@
             </StackPanel>
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="False" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" CurrentCellChanged="PatientsTable_CellEditEnding" FontFamily="Courier New" FontSize="16" SelectionMode="Single" >
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="False" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" CurrentCellChanged="PatientsTable_CellEditEnding" FontFamily="Courier New" FontSize="16" SelectionMode="Single" MouseDoubleClick="PatientsTable_MouseDoubleClick">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Click="LoadPatient" Header="Редактировать" />
@@ -107,7 +107,7 @@
                 <DataGridTextColumn Header="Дата выб" Binding="{Binding Dateout}" />
                 <DataGridTextColumn Header="Дз пост" Binding="{Binding Dsin}" />
                 <DataGridTextColumn Header="Дз выб" Binding="{Binding Dsout}" />
-                <DataGridTextColumn Header="ЭЛН" Binding="{Binding Fss}" />
+                <DataGridTextColumn Header="ЭЛН" Binding="{Binding Fssid}" />
                 <DataGridTextColumn Header="Принуд" Binding="{Binding Forced}" />
                 <DataGridCheckBoxColumn Header="Первично" Binding="{Binding First}" />
                 <DataGridCheckBoxColumn Header="Повт в году" Binding="{Binding Second}" />

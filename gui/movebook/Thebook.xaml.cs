@@ -16,7 +16,7 @@ namespace Castor.gui.movebook
     /// <summary>
     /// Логика взаимодействия для Thebook.xaml
     /// </summary>
-    public partial class Thebook : Page, INotifyPropertyChanged, IRefresh, IStartablePage
+    public partial class Thebook : Page, INotifyPropertyChanged, IRefresh, IStartablePage, IConsoleMessage
     {
         private CastorContext context;
         private bool need_save = false;
@@ -26,6 +26,7 @@ namespace Castor.gui.movebook
             InitializeComponent();
             DataContext = this;
             Task.Run(() => Load(new DatePeriod()));
+            ConsoleMessage?.Invoke($" Всего: {LoadedData?.Count()}"); //todo this is not works
         }
 
         public ICollection<Movebook> LoadedData { get; private set; }
@@ -33,6 +34,7 @@ namespace Castor.gui.movebook
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event common.RefreshEventHandler RefreshNotify;
+        public event ConsoleMessageHandler ConsoleMessage;
 
         private void PatientsTable_CellEditEnding(object sender, EventArgs e)
         {
@@ -57,24 +59,22 @@ namespace Castor.gui.movebook
                 LoadedData = context.Movebooks.ToList();
                 ;
             }
+            
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
             
-
         }
 
         private async void NeedRefreshTable(object sender, EventArgs e)
         {
             need_save = false;
-
             LoadedData.Where(x => x.Dateout == DateOnly.MinValue).ToList().ForEach(x => x.Dateout = null);
-            LoadedData.Where(x => x.Fss == DateOnly.MinValue).ToList().ForEach(x => x.Fss = null);
-            //LoadedData.Where(x => x.Forced == DateOnly.MinValue).ToList().ForEach(x => x.Forced = null);
-
             context.SaveChanges(true);
             
             await Task.Run(()=> Load(new DatePeriod()));
-            RefreshNotify?.Invoke("Castor.gui.pages.FssControl", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceControl");
+            RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceControl");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
+
+            ConsoleMessage?.Invoke($" Всего: {LoadedData?.Count()}");
         }
 
         private async void DisorderPatient(object sender, EventArgs e)
@@ -84,7 +84,7 @@ namespace Castor.gui.movebook
                 Disorder disorder = new Disorder(mvb);
                 disorder.ShowDialog();
                 await Task.Run(() => Load(new DatePeriod()));
-                RefreshNotify?.Invoke("Castor.gui.pages.FssControl", "Castor.gui.pages.Weekmove");
+                RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove");
             }
         }
 
@@ -116,9 +116,6 @@ namespace Castor.gui.movebook
 
         private async void ImportList(object sender, RoutedEventArgs e)
         {
-            //ImportMedisPeriod importMedisPeriod = new ImportMedisPeriod();
-            //importMedisPeriod.ShowDialog();
-
             List<long?> visitIds;
             List<visit> visits = new List<visit>();
 
@@ -126,25 +123,24 @@ namespace Castor.gui.movebook
             {
                 try
                 {
-
-
+                    // получение списка VisitsIds загруженных в книгу
                     using (CastorContext castorContext = new CastorContext())
                     {
                         visitIds = castorContext.Movebooks.Select(m => m.Visitid).ToList();
                     }
 
+                    // получение списка Visits за исключением загруженных в книгу
                     using (MedisContext medisContext = new MedisContext())
                     {
                         /* Запрос к Медис*/
-                        ICollection<dep>? depList = medisContext.dep // отделения
+                        IEnumerable<dep>? depList = medisContext.dep // отделения
                             .Where(d => d.keyid == Settings.Default.LastSelectedDep) // где номер отделения = сохраненному в Settings
                             .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days < 8))
                             .ThenInclude(v => v.Patient)  // привязка пациента
                             .ThenInclude(p => p.Diagnoses) // привязка диагнозов пациента
-                            .ThenInclude(d => d.Diagnos)  // привязка к диагнозам пациента дианоза из мкб
-                            .ToList();
+                            .ThenInclude(d => d.Diagnos);  // привязка к диагнозам пациента дианоза из мкб
 
-                        visits = depList.Select(d => d.Visits).First().ExceptBy(visitIds, v => v.keyid).ToList();
+                        visits = depList?.Select(d => d.Visits)?.First()?.ExceptBy(visitIds, v => v.keyid)?.ToList();
                     }
 
                     SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", visits, "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");
@@ -172,7 +168,7 @@ namespace Castor.gui.movebook
                 context.SaveChanges();
                 await Task.Run(() => Load(new DatePeriod()));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
-                RefreshNotify?.Invoke("Castor.gui.pages.FssControl", "Castor.gui.pages.Weekmove");
+                RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove");
             }
         }
 
@@ -217,5 +213,26 @@ namespace Castor.gui.movebook
             PatientsTable.AutoGenerateColumns = (sender as MenuItem).IsChecked;
         }
 
+        private void PatientsTable_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if(PatientsTable.CurrentColumn.DisplayIndex==7) // select FSS column
+            {
+                using (CastorContext context = new CastorContext())
+                {
+                    Movebook mb = (PatientsTable.SelectedItem as Movebook);
+
+                    long? id = mb?.Fssid;
+                    Fss _fss = id.HasValue ? context.Fss.Where(f => f.Id ==id.Value).First() : null;
+                    FssControl fssControl = new FssControl(_fss);
+                    fssControl.ShowDialog();
+
+                    mb.Fssid = fssControl.FssItem.Id;
+                    context.Update(mb);
+                    context.SaveChanges();
+                    NeedRefreshTable(sender, e);
+                }
+                
+            }
+        }
     }
 }

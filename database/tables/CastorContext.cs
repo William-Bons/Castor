@@ -1,4 +1,5 @@
 ﻿using Castor.database.tables;
+using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using System.Windows;
 
@@ -19,6 +20,8 @@ namespace Castor.database
         /// </summary>
         public DbSet<Movebook> Movebooks => Set<Movebook>();
         public DbSet<Reports> Reports => Set<Reports>();
+        public DbSet<Forced> Forced => Set<Forced>();
+        public DbSet<Fss> Fss => Set<Fss>();
         #endregion
 
         /// <summary>
@@ -26,7 +29,7 @@ namespace Castor.database
         /// </summary>
         public CastorContext()
         {
-            _contextVariant = (ContextVariant)Properties.Settings.Default.contextValiant;
+            _contextVariant = (ContextVariant)Settings.Default.contextValiant;
             if (!Database.CanConnect())
             {
                 Database.EnsureCreated();
@@ -50,11 +53,10 @@ namespace Castor.database
             switch (_contextVariant)
             {
                 case ContextVariant.SQLITE:
-                    //todo: Check file .db exists !!!!
-                    optionsBuilder.UseSqlite(Properties.Settings.Default.sqliteConnection);
+                    optionsBuilder.UseSqlite($"Data Source={Settings.Default.sqliteConnection}");
                     break;
                 case ContextVariant.SQLSERVER:
-                    optionsBuilder.UseSqlServer(Properties.Settings.Default.sqlserverConnection);
+                    optionsBuilder.UseSqlServer(Settings.Default.sqlserverConnection);
                     break;
                 default:
                     throw new ArgumentException("Propertie `contextValiant` not set correctly");

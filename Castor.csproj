@@ -16,7 +16,6 @@
     <None Remove="gui\movebook\kurwa.jpg" />
     <None Remove="img\acroread.png" />
     <None Remove="img\add-icon.png" />
-    <None Remove="img\ariadna-logo.png" />
     <None Remove="img\business_table_order_report_history_2332.ico" />
     <None Remove="img\edit.png" />
     <None Remove="img\filter.png" />
@@ -48,7 +47,6 @@
   <ItemGroup>
     <Resource Include="img\acroread.png" />
     <Resource Include="img\add-icon.png" />
-    <Resource Include="img\ariadna-logo.png" />
     <Resource Include="img\business_table_order_report_history_2332.ico" />
     <Resource Include="img\edit.png" />
     <Resource Include="img\filter.png">

@@ -123,7 +123,6 @@ namespace Castor.gui.movebook
                     Movebook.Dsin = DS.code;
                 }
 
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Visit)));
                 Movebook.Ordered = 0;
                 Movebook.Card_Id = Visit.num;
                 Movebook.Patientid = Visit?.Patient?.num;
@@ -131,7 +130,12 @@ namespace Castor.gui.movebook
                 Movebook.Birthdate = DateOnly.FromDateTime(Visit.Patient.birthdate.Value);
                 Movebook.Datein = DateOnly.FromDateTime(Visit.dat.Value);
                 Movebook.Visitid = Visit?.keyid;
+                Movebook.Dateout = DateOnly.FromDateTime(Visit.dat1.Value);
+                Movebook.Outto = Visit.dat1.HasValue ? 0 : null;
+                Movebook.Dsout = Visit.dat1.HasValue ? Movebook.Dsin : null;
+
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Movebook)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Visit)));
             }
             catch (Exception ex)
             {
