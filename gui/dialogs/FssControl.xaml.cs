@@ -1,19 +1,7 @@
 ﻿using Castor.database;
 using Castor.database.tables;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Castor.gui.dialogs
 {
@@ -22,9 +10,13 @@ namespace Castor.gui.dialogs
     /// </summary>
     public partial class FssControl : Window, INotifyPropertyChanged
     {
-        public FssControl(Fss? _fss)
+        public FssControl(object _fss)
         {
-            FssItem = _fss ?? new Fss() { Start = DateOnly.FromDateTime(DateTime.Today) };
+            if (_fss is Movebook mb)
+                FssItem = new Fss() { Start = mb.Datein.Value };
+            else
+                FssItem = (Fss?)_fss;
+
             InitializeComponent();
             DataContext = this;
         }
@@ -48,10 +40,11 @@ namespace Castor.gui.dialogs
 
         private void Write(object sender, RoutedEventArgs e)
         {
-            using(CastorContext castor=new CastorContext())
+            using (CastorContext castor = new CastorContext())
             {
                 castor.Update(FssItem);
                 castor.SaveChanges();
+                DialogResult = true;
                 Close();
             }
         }

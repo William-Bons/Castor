@@ -7,9 +7,9 @@ using System.Windows.Controls;
 
 namespace Castor.gui.pages
 {
-    public partial class ForceControl : UserControl, INotifyPropertyChanged, IRefresh
+    public partial class ForceWidget : UserControl, INotifyPropertyChanged, IRefresh
     {
-        public ForceControl()
+        public ForceWidget()
         {
             InitializeComponent();
             DataContext = this;
@@ -21,7 +21,7 @@ namespace Castor.gui.pages
             };
         }
 
-        public ICollection<Movebook> FssList { get; set; }
+        public ICollection<Movebook> ForceList { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event common.RefreshEventHandler RefreshNotify;
@@ -37,12 +37,14 @@ namespace Castor.gui.pages
             {
                 using (CastorContext castor = new CastorContext())
                 {
-                    FssList = castor.Movebooks.Where(m => m.Forced.HasValue)
+                    ForceList = castor.Movebooks
+                        .Where(m => m.Forcedid.HasValue)
                         .Include(m => m.ForceControl)
+                        .Where(f => f.ForceControl.Nextvk.Value.Month <= DateOnly.FromDateTime(DateTime.Today).Month)
                         .ToList();
                         
                 }
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FssList)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ForceList)));
             }
             catch (Exception ex)
             {

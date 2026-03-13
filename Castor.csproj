@@ -63,7 +63,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="gui\pages\ForceControl.xaml.cs">
+    <Compile Update="gui\pages\ForceWidget.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Properties\ResourceRu.Designer.cs">

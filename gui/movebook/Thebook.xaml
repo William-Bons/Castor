@@ -108,7 +108,7 @@
                 <DataGridTextColumn Header="Дз пост" Binding="{Binding Dsin}" />
                 <DataGridTextColumn Header="Дз выб" Binding="{Binding Dsout}" />
                 <DataGridTextColumn Header="ЭЛН" Binding="{Binding Fssid}" />
-                <DataGridTextColumn Header="Принуд" Binding="{Binding Forced}" />
+                <DataGridTextColumn Header="Принуд" Binding="{Binding Forcedid}" />
                 <DataGridCheckBoxColumn Header="Первично" Binding="{Binding First}" />
                 <DataGridCheckBoxColumn Header="Повт в году" Binding="{Binding Second}" />
                 <DataGridCheckBoxColumn Header="Возврат" Binding="{Binding Early}" />

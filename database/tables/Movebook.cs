@@ -35,7 +35,7 @@ public class Movebook
     public bool Closed { get; set; }
     public bool Deceased { get; set; }
     public long? Fssid { get; set; }
-    public long? Forced { get; set; }
+    public long? Forcedid { get; set; }
     public virtual int? Agein => CalculateAge(Datein);
     public virtual int? Ageout => CalculateAge(Dateout);
     public int? Days => (Datein.HasValue && Dateout.HasValue) ? (Dateout.Value.ToDateTime(TimeOnly.MinValue) - Datein.Value.ToDateTime(TimeOnly.MinValue)).Days : null;

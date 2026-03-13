@@ -71,7 +71,7 @@ namespace Castor.gui.movebook
             context.SaveChanges(true);
             
             await Task.Run(()=> Load(new DatePeriod()));
-            RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceControl");
+            RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceWidget");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
 
             ConsoleMessage?.Invoke($" Всего: {LoadedData?.Count()}");
@@ -223,15 +223,35 @@ namespace Castor.gui.movebook
 
                     long? id = mb?.Fssid;
                     Fss _fss = id.HasValue ? context.Fss.Where(f => f.Id ==id.Value).First() : null;
-                    FssControl fssControl = new FssControl(_fss);
-                    fssControl.ShowDialog();
-
-                    mb.Fssid = fssControl.FssItem.Id;
-                    context.Update(mb);
-                    context.SaveChanges();
-                    NeedRefreshTable(sender, e);
+                    FssControl fssControl = new FssControl((object)_fss ?? (object)mb);
+                    if (fssControl.ShowDialog().Value)
+                    {
+                        mb.Fssid = fssControl.FssItem.Id;
+                        context.Update(mb);
+                        context.SaveChanges();
+                        NeedRefreshTable(sender, e);
+                    }
                 }
                 
+            }
+            else if (PatientsTable.CurrentColumn.DisplayIndex == 8) // select FORCE column
+            {
+                using (CastorContext context = new CastorContext())
+                {
+                    Movebook mb = (PatientsTable.SelectedItem as Movebook);
+
+                    long? id = mb?.Forcedid;
+                    Forced forced = id.HasValue ? context.Forced.Where(f => f.Id==id.Value).First() : null;
+
+                    ForceControl forceControl = new ForceControl((object)forced ?? mb);
+                    if(forceControl.ShowDialog().Value == true)
+                    {
+                        mb.Forcedid = forceControl.ForcedItem.Id;  
+                        context.Update(mb);
+                        context.SaveChanges();
+                        NeedRefreshTable(sender, e);
+                    }
+                }
             }
         }
     }

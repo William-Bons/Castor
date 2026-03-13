@@ -90,15 +90,16 @@ namespace Castor
             MainFrameGrid.Children.Add(_ExtraStack);
 
             // if ShowWeek
-            Weekmove weekmove = new Weekmove();
-            _ExtraStack.Children.Add(weekmove);
+            _ExtraStack.Children.Add(new Weekmove());
             _ExtraStack.Children.Add(new Separator());
 
             // if FSS
-            FssWidget fssWidget = new FssWidget();
-            _ExtraStack.Children.Add(fssWidget);
+            _ExtraStack.Children.Add(new FssWidget());
             _ExtraStack.Children.Add(new Separator());
 
+            // if FORCED
+            _ExtraStack.Children.Add(new ForceWidget());
+            _ExtraStack.Children.Add(new Separator());
         }
 
         private void MainWindow_MenuItemRise(CastorMenuItem _castorMenuItem)
