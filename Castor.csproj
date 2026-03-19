@@ -21,8 +21,11 @@
     <None Remove="img\filter.png" />
     <None Remove="img\fire_exit_emergency_door_icon_196783.ico" />
     <None Remove="img\floppy_mount.png" />
+    <None Remove="img\fsslogo.png" />
+    <None Remove="img\jail-icon.png" />
     <None Remove="img\kurwa.jpg" />
     <None Remove="img\log_logout_door_1563.ico" />
+    <None Remove="img\policeman-icon.png" />
     <None Remove="img\registrator.png" />
     <None Remove="img\restart_back_left_arrow_6022.ico" />
   </ItemGroup>
@@ -54,15 +57,24 @@
     </Resource>
     <Resource Include="img\fire_exit_emergency_door_icon_196783.ico" />
     <Resource Include="img\floppy_mount.png" />
+    <Resource Include="img\fsslogo.png" />
+    <Resource Include="img\jail-icon.png" />
     <Resource Include="img\kurwa.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="img\log_logout_door_1563.ico" />
+    <Resource Include="img\policeman-icon.png" />
     <Resource Include="img\registrator.png" />
     <Resource Include="img\restart_back_left_arrow_6022.ico" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="gui\dialogs\UnvoluntaryControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="gui\pages\UnvlWidget.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="gui\pages\ForceWidget.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

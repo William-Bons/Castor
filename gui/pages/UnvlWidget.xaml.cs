@@ -8,9 +8,9 @@ using System.Windows.Controls;
 
 namespace Castor.gui.pages
 {
-    public partial class ForceWidget : UserControl, INotifyPropertyChanged, IRefresh
+    public partial class UnvlWidget : UserControl, INotifyPropertyChanged, IRefresh
     {
-        public ForceWidget()
+        public UnvlWidget()
         {
             InitializeComponent();
             DataContext = this;
@@ -22,7 +22,7 @@ namespace Castor.gui.pages
             };
         }
 
-        public ICollection<Movebook> ForceList { get; set; }
+        public ICollection<Movebook> UnvlList { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event common.RefreshEventHandler RefreshNotify;
@@ -38,14 +38,14 @@ namespace Castor.gui.pages
             {
                 using (CastorContext castor = new CastorContext())
                 {
-                    ForceList = castor.Movebooks
-                        .Where(m => m.Forcedid.HasValue)
-                        .Include(m => m.ForceControl)
-                        .Where(f => f.ForceControl.Nextvk.Value.Month <= DateOnly.FromDateTime(DateTime.Today).Month)
+                    UnvlList = castor.Movebooks
+                        .Where(m => m.Unvoluntaryid.HasValue)
+                        .Include(m => m.UnvoluntaryControl)
+                        .Where(f => f.UnvoluntaryControl.Nextvk.Value <= DateOnly.FromDateTime(DateTime.Today))
                         .ToList();
                         
                 }
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ForceList)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UnvlList)));
             }
             catch (Exception ex)
             {
@@ -58,13 +58,13 @@ namespace Castor.gui.pages
             try
             {
                 Movebook? movebook = (sender as DataGrid)?.SelectedItem as Movebook;
-                Forced? forced = movebook?.ForceControl;
-                ForceControl control = new ForceControl(forced);
+                Unvoluntary? unvl = movebook?.UnvoluntaryControl;
+                UnvoluntaryControl control = new UnvoluntaryControl(unvl);
                 if (control.ShowDialog().Value)
                 {
                     using (CastorContext castor = new CastorContext())
                     {
-                        castor.Forced.Update(forced);
+                        castor.Unvoluntaries.Update(unvl);
                         castor.SaveChanges();
                     }
                 }

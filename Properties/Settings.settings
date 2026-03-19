@@ -34,5 +34,8 @@
     <Setting Name="RootDepartmentId" Type="System.Int64" Scope="User">
       <Value Profile="(Default)">1482</Value>
     </Setting>
+    <Setting Name="dbPrefix" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\Laurent\hp p500</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

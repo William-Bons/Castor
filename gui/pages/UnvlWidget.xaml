@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Castor.gui.pages"
-             xmlns:common="clr-namespace:Castor.gui.common" x:Class="Castor.gui.pages.ForceWidget"
+             xmlns:common="clr-namespace:Castor.gui.common" x:Class="Castor.gui.pages.UnvlWidget"
              mc:Ignorable="d"  Language="RU"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -16,9 +16,9 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock FontFamily="Courier New" FontSize="20" Margin="10"><Run Text="Принуд Меры" /></TextBlock>
+        <TextBlock FontFamily="Courier New" FontSize="20" Margin="10"><Run Text="Недобровольная госп." /></TextBlock>
 
-        <DataGrid Grid.Row="1" HeadersVisibility="None" ItemsSource="{Binding ForceList}" AutoGenerateColumns="False" FontFamily="Courier New" FontSize="20" BorderThickness="0" GridLinesVisibility="None"
+        <DataGrid Grid.Row="1" HeadersVisibility="None" ItemsSource="{Binding UnvlList}" AutoGenerateColumns="False" FontFamily="Courier New" FontSize="20" BorderThickness="0" GridLinesVisibility="None"
                   Margin="10" IsReadOnly="True" MouseDoubleClick="DataGrid_MouseDoubleClick" >
             <!--<DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
@@ -27,7 +27,7 @@
             </DataGrid.CellStyle>-->
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Fio, Converter={StaticResource FullnameConverter}}" />
-                <DataGridTextColumn Binding="{Binding ForceControl.Nextvk}" TextBlock.TextAlignment="Right" />
+                <DataGridTextColumn Binding="{Binding UnvoluntaryControl.Nextvk}" TextBlock.TextAlignment="Right" />
             </DataGrid.Columns>
         </DataGrid>
 

@@ -1,5 +1,6 @@
 ﻿using Castor.database.tables;
 using Castor.Properties;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System.Windows;
 
@@ -22,6 +23,8 @@ namespace Castor.database
         public DbSet<Reports> Reports => Set<Reports>();
         public DbSet<Forced> Forced => Set<Forced>();
         public DbSet<Fss> Fss => Set<Fss>();
+        public DbSet<Unvoluntary> Unvoluntaries => Set<Unvoluntary>();
+        public DbSet<Bandbook> Bandbooks => Set<Bandbook>();
         #endregion
 
         /// <summary>
@@ -41,7 +44,29 @@ namespace Castor.database
         /// </summary>
         public string Variant => $"{VariantNames[(int)_contextVariant]}: {Database.GetDbConnection().DataSource} @ {Database.GetDbConnection().Database}";
 
+        public void Backup()
+        {
+            // создает ДБ backup in User Home directory
+            try
+            {
+                using (CastorContext context = new CastorContext())
+                {
+                    // Access the underlying connection from your DbContext
+                    var connection = (SqliteConnection)context.Database.GetDbConnection();
 
+                    // Create a connection to the destination backup file
+                    using (var backupConnection = new SqliteConnection($"Data Source={Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\\{Settings.Default.LastSelectedDep}_backup.db"))
+                    {
+                        connection.Open();
+                        backupConnection.Open();
+
+                        // Perform the backup
+                        connection.BackupDatabase(backupConnection);
+                    }
+                }
+            }
+            catch { }
+        }
 
         /// <summary>
         /// Real connecting to database, according Parameter contextVariant

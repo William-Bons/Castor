@@ -7,7 +7,7 @@
         xmlns:common="clr-namespace:Castor.gui.common" x:Class="Castor.gui.dialogs.FssControl"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen" Topmost="True"
         Language="RU" FontFamily="Courier New" FontSize="15"
-        Title="FssControl" Height="242" Width="727">
+        Title="ЭЛН" Height="242" Width="727">
     <Window.Resources>
         <common:DateOnlyConverter x:Key="DateOnlyConverter"/>
     </Window.Resources>

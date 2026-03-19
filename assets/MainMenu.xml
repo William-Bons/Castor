@@ -14,7 +14,7 @@
 		<MenuItem Header="Движение пациентов"  ClassName="Castor.gui.movebook.Thebook" />
 		<MenuItem Header="Список пациентов в отделении" ClassName="Castor.gui.pages.LoadPatientsFromMedis"/>
 		<MenuItem Header="Properties" ClassName="Castor.gui.dialogs.SettingsCheet"/>
-		<MenuItem Header="User" ClassName="Castor.gui.dialogs.SelectUser"/>
+		<MenuItem Header="Сменить отделение" ClassName="Castor.gui.dialogs.SelectUser"/>
 		<Separator/>
 		<MenuItem Header="Console"   />
 	</MenuItem>

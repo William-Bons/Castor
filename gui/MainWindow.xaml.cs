@@ -1,4 +1,5 @@
-﻿using Castor.database.tab_medis;
+﻿using Castor.database;
+using Castor.database.tab_medis;
 using Castor.gui;
 using Castor.gui.common;
 using Castor.gui.dialogs;
@@ -32,6 +33,9 @@ namespace Castor
                 // если file не существует, запрос отделения и пользователя
                 new SelectUser().ShowDialog();
             }
+
+            // BACKUP
+            new CastorContext().Backup();
 
             ContentRendered += async (o, e) =>
             {
@@ -100,6 +104,9 @@ namespace Castor
             // if FORCED
             _ExtraStack.Children.Add(new ForceWidget());
             _ExtraStack.Children.Add(new Separator());
+
+            _ExtraStack.Children.Add(new UnvlWidget());
+            _ExtraStack.Children.Add(new Separator());
         }
 
         private void MainWindow_MenuItemRise(CastorMenuItem _castorMenuItem)
@@ -132,6 +139,11 @@ namespace Castor
                 {
                     irf.Refresh();
                 }
+            }
+
+            if(CentralFrame.Content is IRefresh rf && classes.Where(c => c == rf.GetType().FullName).Count() > 0)
+            {
+                rf.Refresh();
             }
         }
 

@@ -11,10 +11,11 @@ namespace Castor.gui.dialogs
     /// <summary>
     /// Логика взаимодействия для SelectUser.xaml
     /// </summary>
-    public partial class SelectUser : Window, INotifyPropertyChanged, IDialog
+    public partial class SelectUser : Window, INotifyPropertyChanged, IDialog, IRefresh
     {
         private static dep _selectedDepartment;
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event common.RefreshEventHandler RefreshNotify;
 
         public SelectUser()
         {
@@ -59,7 +60,7 @@ namespace Castor.gui.dialogs
             {
                 _selectedDepartment= value;
                 Settings.Default.LastSelectedDep = _selectedDepartment.keyid;
-                DbFilename = $"dep{_selectedDepartment.keyid}.db";
+                DbFilename = $"{Settings.Default.dbPrefix}\\dep{_selectedDepartment.keyid}.db";
                 Settings.Default.sqliteConnection = DbFilename;
                 Settings.Default.Save();
 
@@ -76,7 +77,12 @@ namespace Castor.gui.dialogs
                 context.Database.EnsureCreated();
             }
             Close();
+            RefreshNotify?.Invoke("Castor.gui.movebook.Thebook");
         }
 
+        public void Refresh()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

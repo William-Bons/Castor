@@ -71,7 +71,7 @@ namespace Castor.gui.movebook
             context.SaveChanges(true);
             
             await Task.Run(()=> Load(new DatePeriod()));
-            RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceWidget");
+            RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceWidget", "Castor.gui.pages.UnvlWidget");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
 
             ConsoleMessage?.Invoke($" Всего: {LoadedData?.Count()}");
@@ -204,8 +204,11 @@ namespace Castor.gui.movebook
             }
          }
 
-        public void Refresh()
+        public async  void Refresh()
         {
+            await Task.Run(() => Load(new DatePeriod()));
+            RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceWidget");
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
         }
 
         private void HideAutoColumns(object sender, RoutedEventArgs e)
@@ -215,7 +218,30 @@ namespace Castor.gui.movebook
 
         private void PatientsTable_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if(PatientsTable.CurrentColumn.DisplayIndex==7) // select FSS column
+            if(PatientsTable.CurrentColumn.DisplayIndex==1 || PatientsTable.CurrentColumn.DisplayIndex ==2 ) // select name or cardno
+            {
+                LoadPatient(sender,e);
+            }
+            else if (PatientsTable.CurrentColumn.DisplayIndex == 12) // select UNVOLUNTARY
+            {
+                using (CastorContext context = new CastorContext())
+                {
+                    Movebook mb = (PatientsTable.SelectedItem as Movebook);
+
+                    long? id = mb?.Unvoluntaryid;
+                    Unvoluntary _unvl = id.HasValue ? context.Unvoluntaries.Where(f => f.Id == id.Value).First() : null;
+                    UnvoluntaryControl unvlControl = new UnvoluntaryControl((object)_unvl ?? (object)mb);
+                    if (unvlControl.ShowDialog().Value)
+                    {
+                        mb.Unvoluntaryid = unvlControl.UnlItem.Id;
+                        context.Update(mb);
+                        context.SaveChanges();
+                        NeedRefreshTable(sender, e);
+                    }
+                }
+
+            }
+            else if(PatientsTable.CurrentColumn.DisplayIndex==13) // select FSS column
             {
                 using (CastorContext context = new CastorContext())
                 {
@@ -234,7 +260,7 @@ namespace Castor.gui.movebook
                 }
                 
             }
-            else if (PatientsTable.CurrentColumn.DisplayIndex == 8) // select FORCE column
+            else if (PatientsTable.CurrentColumn.DisplayIndex == 14) // select FORCE column
             {
                 using (CastorContext context = new CastorContext())
                 {
