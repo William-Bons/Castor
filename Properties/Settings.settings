@@ -26,7 +26,7 @@
       <Value Profile="(Default)">Host=172.23.1.220;Port=5432;Database=med;Username=SOLUTION_MED;Password=elsoft</Value>
     </Setting>
     <Setting Name="StartLoadingPage" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">Castor.gui.movebook.Thebook</Value>
     </Setting>
     <Setting Name="AskUserBeforeStart" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -35,7 +35,7 @@
       <Value Profile="(Default)">1482</Value>
     </Setting>
     <Setting Name="dbPrefix" Type="System.String" Scope="User">
-      <Value Profile="(Default)">\\Laurent\hp p500</Value>
+      <Value Profile="(Default)">\\Server-mis\общая папка\6 отделение</Value>
     </Setting>
   </Settings>
 </SettingsFile>
