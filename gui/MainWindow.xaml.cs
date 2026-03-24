@@ -49,7 +49,7 @@ namespace Castor
 
                     ExtraInitialize();
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentDbName)));
-                    
+
                 }
                 catch { }
             };
@@ -72,19 +72,18 @@ namespace Castor
             {
                 try
                 {
-                    using (MedisContext medis = new MedisContext())
+                    using (MedisContext mc = new MedisContext())
                     {
-                        return
-                            medis.dep.Where(d => d.keyid == Settings.Default.LastSelectedDep)?.First().text;
+                        return mc.dep.Where(d => d.keyid == Settings.Default.LastSelectedDep)?.First().text;
                     }
                 }
-                catch
+                catch 
                 {
                     return string.Empty;
                 }
             }
         }
-
+            
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void ExtraInitialize()

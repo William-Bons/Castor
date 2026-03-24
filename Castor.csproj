@@ -59,9 +59,9 @@
     <Resource Include="img\floppy_mount.png" />
     <Resource Include="img\fsslogo.png" />
     <Resource Include="img\jail-icon.png" />
-    <Resource Include="img\kurwa.jpg">
+    <SplashScreen Include="img\kurwa.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
+    </SplashScreen>
     <Resource Include="img\log_logout_door_1563.ico" />
     <Resource Include="img\policeman-icon.png" />
     <Resource Include="img\registrator.png" />
@@ -123,6 +123,10 @@
     <Page Update="assets\Style.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="gui\bandbook\" />
   </ItemGroup>
 
 </Project>

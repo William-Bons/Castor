@@ -13,7 +13,7 @@ namespace Castor.gui.dialogs
     /// </summary>
     public partial class SelectUser : Window, INotifyPropertyChanged, IDialog, IRefresh
     {
-        private static dep _selectedDepartment;
+        private dep _selectedDepartment;
         public event PropertyChangedEventHandler? PropertyChanged;
         public event common.RefreshEventHandler RefreshNotify;
 
@@ -83,6 +83,25 @@ namespace Castor.gui.dialogs
         public void Refresh()
         {
             throw new NotImplementedException();
+        }
+
+        private void SelectDbDirectory(object sender, RoutedEventArgs e)
+        {
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                dialog.Description = "Select a folder for your project";
+                dialog.ShowNewFolderButton = true;
+                dialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    string folderPath = dialog.SelectedPath;
+                    Settings.Default.dbPrefix = folderPath;
+                    Settings.Default.Save();
+
+                    SelectedDepartment = _selectedDepartment;
+                }
+            }
         }
     }
 }
