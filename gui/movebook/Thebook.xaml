@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Castor.gui.pages"
       xmlns:common="clr-namespace:Castor.gui.common" x:Class="Castor.gui.movebook.Thebook"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="1191.778"
       Title="Thebook">
 
     <Page.Resources>
@@ -14,6 +14,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/assets/Style.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <common:FssLogoConverter x:Key="FssLogoConverter"/>
             <common:ObjectToVisibleConverter x:Key="ObjectToVisibleConverter"/>
         </ResourceDictionary>
     </Page.Resources>
@@ -48,6 +49,18 @@
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/img/business_table_order_report_history_2332.ico" />
                     <TextBlock Text="Отчет Движение" FontSize="14" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button ToolTip="Фильтр"  Style="{DynamicResource Castor.Toolbarbutton}" Click="OpenHideContextMenu">
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Скрыть сданные истории" IsCheckable="True" Click="HideShowClosedCards"  x:Name="Hideclosed"/>
+                        <MenuItem Header="Скрыть выписанные истории" IsCheckable="True" Click="HideShowDisordered" x:Name="Hidedisordered"/>
+                    </ContextMenu>
+                </Button.ContextMenu>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/filter.png" />
+                    <TextBlock Text="Фильтр" FontSize="14" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
             <Button Visibility="{Binding SaveButtonVisible}" Click="NeedRefreshTable" Style="{DynamicResource Castor.Toolbarbutton}">
@@ -124,7 +137,7 @@
                 <DataGridTemplateColumn Header="ЭЛН">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="/img/fsslogo.png" Width="25" Height="25" Visibility="{Binding Fssid, Converter={StaticResource ObjectToVisibleConverter}}"/>
+                            <Image Source="{Binding FssControl, Converter={StaticResource FssLogoConverter}}" Width="25" Height="25" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

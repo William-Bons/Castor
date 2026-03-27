@@ -12,7 +12,7 @@ namespace Castor.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "18.4.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.14.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -139,6 +139,44 @@ namespace Castor.Properties {
             }
             set {
                 this["dbPrefix"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HideClosedCards {
+            get {
+                return ((bool)(this["HideClosedCards"]));
+            }
+            set {
+                this["HideClosedCards"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HideDisordered {
+            get {
+                return ((bool)(this["HideDisordered"]));
+            }
+            set {
+                this["HideDisordered"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+  <string>Castor.gui.pages.Weekmove</string>
+  <string>Castor.gui.pages.FssWidget</string>
+  <string>Castor.gui.pages.UnvlWidget</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection ExtraWidgets {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ExtraWidgets"]));
             }
         }
     }

@@ -24,11 +24,17 @@ namespace Castor.gui.movebook
         public Thebook()
         {
             InitializeComponent();
-            DataContext = this;
+            
             Task.Run(() => Load(new DatePeriod()));
             ConsoleMessage?.Invoke($" Всего: {LoadedData?.Count()}"); //todo this is not works
+
+            Hideclosed.IsChecked = IsHideClosedCards;
+            Hidedisordered.IsChecked = IsHideDisordered;
+            DataContext = this;
         }
 
+        public bool IsHideDisordered { get; set; } = Settings.Default.HideDisordered;
+        public bool IsHideClosedCards { get; set; } = Settings.Default.HideClosedCards;
         public ICollection<Movebook> LoadedData { get; private set; }
         public Visibility SaveButtonVisible => need_save ? Visibility.Visible : Visibility.Collapsed;
 
@@ -52,12 +58,27 @@ namespace Castor.gui.movebook
                 LoadedData = context.Movebooks
                     .Where(x => (x.Datein >= DateOnly.FromDateTime(Period.Start) && x.Datein <= DateOnly.FromDateTime(Period.End)) ||
                     (x.Dateout >= DateOnly.FromDateTime(Period.Start) && x.Dateout <= DateOnly.FromDateTime(Period.End)))
+                    .Include(f => f.FssControl)
                     .ToList();
             }
             else
             {
-                LoadedData = context.Movebooks.ToList();
+                LoadedData = context.Movebooks
+                    .Include(f => f.FssControl)
+                    .ToList();
                 ;
+            }
+
+            // hide closed cards!
+            if(IsHideClosedCards)
+            {
+                LoadedData = LoadedData.Where(l => !l.Closed).ToList();
+            }
+
+            // hide disordered cards
+            if(IsHideDisordered)
+            {
+                LoadedData = LoadedData.Where(l => !l.Dateout.HasValue).ToList();
             }
             
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
@@ -279,6 +300,30 @@ namespace Castor.gui.movebook
                     }
                 }
             }
+        }
+
+        private async void HideShowClosedCards(object sender, RoutedEventArgs e)
+        {
+            IsHideClosedCards = !IsHideClosedCards;
+            Settings.Default.HideClosedCards = IsHideClosedCards;
+            Settings.Default.Save();
+            await Task.Run(() => Load(new DatePeriod()));
+        }
+
+        private void OpenHideContextMenu(object sender, RoutedEventArgs e)
+        {
+            if(sender is Button btn)
+            {
+                btn.ContextMenu.IsOpen = true;
+            }
+        }
+
+        private async void HideShowDisordered(object sender, RoutedEventArgs e)
+        {
+            IsHideDisordered = !IsHideDisordered;
+            Settings.Default.HideDisordered = IsHideDisordered;
+            Settings.Default.Save();
+            await Task.Run(() => Load(new DatePeriod()));
         }
     }
 }

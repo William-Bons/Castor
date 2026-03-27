@@ -92,20 +92,13 @@ namespace Castor
             Grid.SetColumn(_ExtraStack, 1);
             MainFrameGrid.Children.Add(_ExtraStack);
 
-            // if ShowWeek
-            _ExtraStack.Children.Add(new Weekmove());
-            _ExtraStack.Children.Add(new Separator());
-
-            // if FSS
-            _ExtraStack.Children.Add(new FssWidget());
-            _ExtraStack.Children.Add(new Separator());
-
-            // if FORCED
-            _ExtraStack.Children.Add(new ForceWidget());
-            _ExtraStack.Children.Add(new Separator());
-
-            _ExtraStack.Children.Add(new UnvlWidget());
-            _ExtraStack.Children.Add(new Separator());
+            // create objects Wodgets from Parameter ExtraWidgets and add they into _ExtraStack
+            foreach (var _widget in Settings.Default.ExtraWidgets)
+            {
+                object WidgetObject = Activator.CreateInstance(Type.GetType(_widget));
+                _ExtraStack.Children.Add(WidgetObject as UIElement);
+                _ExtraStack.Children.Add(new Separator());
+            }
         }
 
         private void MainWindow_MenuItemRise(CastorMenuItem _castorMenuItem)

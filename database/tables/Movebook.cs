@@ -54,9 +54,11 @@ public class Movebook
     /// <returns>checked array if true only one anotherway returns null</returns>
     public bool[] calc0(string input)
     {
-        bool[] result =
-        [
-         /*A*/   Regex.IsMatch(input, @"^F(21|22|23|25|30|31|32|33|00|01)"),
+        try
+        {
+            bool[] result =
+            [
+             /*A*/   Regex.IsMatch(input, @"^F(21|22|23|25|30|31|32|33|00|01)"),
          /*B*/   Regex.IsMatch(input, @"^F(20)"),
          /*C*/   Regex.IsMatch(input, @"^F(70|71|72|72)"),
          /*D*/   Regex.IsMatch(input, @"^F(02|03|04|05|06|07|50|60|61|62|90|91|40|41|42|43|45|48)"),
@@ -64,7 +66,12 @@ public class Movebook
          /*F*/   Regex.IsMatch(input, @"^F10"),
          /*G*/   Regex.IsMatch(input, @"^F1[1-9]"),
         ];
-        return result;
+            return result;
+        }
+        catch
+        {
+            return new bool[7];
+        }
     }
 
     private int? CalculateAge(DateOnly? today)

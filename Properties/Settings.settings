@@ -37,5 +37,19 @@
     <Setting Name="dbPrefix" Type="System.String" Scope="User">
       <Value Profile="(Default)">\\Server-mis\общая папка\6 отделение</Value>
     </Setting>
+    <Setting Name="HideClosedCards" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="HideDisordered" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ExtraWidgets" Type="System.Collections.Specialized.StringCollection" Scope="Application">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;string&gt;Castor.gui.pages.Weekmove&lt;/string&gt;
+  &lt;string&gt;Castor.gui.pages.FssWidget&lt;/string&gt;
+  &lt;string&gt;Castor.gui.pages.UnvlWidget&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
