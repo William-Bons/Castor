@@ -77,7 +77,7 @@ namespace Castor.gui.dialogs
                 context.Database.EnsureCreated();
             }
             Close();
-            RefreshNotify?.Invoke("Castor.gui.movebook.Thebook");
+            RefreshNotify?.Invoke("Castor.gui.movebook.Theband");
         }
 
         public void Refresh()

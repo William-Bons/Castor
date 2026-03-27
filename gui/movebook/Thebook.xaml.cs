@@ -14,14 +14,14 @@ using System.Windows.Input;
 namespace Castor.gui.movebook
 {
     /// <summary>
-    /// Логика взаимодействия для Thebook.xaml
+    /// Логика взаимодействия для Theband.xaml
     /// </summary>
-    public partial class Thebook : Page, INotifyPropertyChanged, IRefresh, IStartablePage, IConsoleMessage
+    public partial class Theband : Page, INotifyPropertyChanged, IRefresh, IStartablePage, IConsoleMessage
     {
         private CastorContext context;
         private bool need_save = false;
 
-        public Thebook()
+        public Theband()
         {
             InitializeComponent();
             

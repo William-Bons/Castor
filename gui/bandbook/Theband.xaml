@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Castor.gui.pages"
-      xmlns:common="clr-namespace:Castor.gui.common" x:Class="Castor.gui.movebook.Theband"
+      xmlns:common="clr-namespace:Castor.gui.common" x:Class="Castor.gui.bandbook.Theband"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="1191.778"
       Title="Thebook">
@@ -27,63 +27,18 @@
         </Grid.RowDefinitions>
 
         <ToolBar Grid.Row="0" Background="Transparent">
-            <Button ToolTip="Импортировать из Медис" Click="ImportList" Style="{DynamicResource Castor.Toolbarbutton}">
+            <Button Click="LoadQuartal">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/log_logout_door_1563.ico" />
-                    <TextBlock Text="Поступление" FontSize="16" VerticalAlignment="Center"/>
+                    <Image Source="/img/acroread.png" Style="{DynamicResource RegImageStyle}"/>
+                    <TextBlock Text="Загрузить квартал" Style="{DynamicResource TextBlockStyle0}" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
-            <Button ToolTip="Добавить пациента в книгу движения" Click="LoadPatient" Style="{DynamicResource Castor.Toolbarbutton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/add-icon.png" />
-                    <TextBlock Text="Добавить" FontSize="16" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button ToolTip="Выписать пациента" Click="DisorderPatient" Style="{DynamicResource Castor.Toolbarbutton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/fire_exit_emergency_door_icon_196783.ico" />
-                    <TextBlock Text="Выписать" FontSize="16" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button ToolTip="Отчет ДВИЖЕНИЕ" Click="SaveInXml"  Style="{DynamicResource Castor.Toolbarbutton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/business_table_order_report_history_2332.ico" />
-                    <TextBlock Text="Отчет Движение" FontSize="14" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button ToolTip="Фильтр"  Style="{DynamicResource Castor.Toolbarbutton}" Click="OpenHideContextMenu">
-                <Button.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Скрыть сданные истории" IsCheckable="True" Click="HideShowClosedCards"  x:Name="Hideclosed"/>
-                        <MenuItem Header="Скрыть выписанные истории" IsCheckable="True" Click="HideShowDisordered" x:Name="Hidedisordered"/>
-                    </ContextMenu>
-                </Button.ContextMenu>
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/filter.png" />
-                    <TextBlock Text="Фильтр" FontSize="14" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button Visibility="{Binding SaveButtonVisible}" Click="NeedRefreshTable" Style="{DynamicResource Castor.Toolbarbutton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/floppy_mount.png"/>
-                    <TextBlock Text="Сохранить" FontSize="16" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-
-            <StackPanel Orientation="Horizontal" DataContext="{Binding Period}">
-                <DatePicker Grid.Column="0" Margin="3" SelectedDateChanged="DatePicker_SelectedDateChanged" x:Name="dpStart"/>
-                <Separator Width="10"/>
-                <DatePicker Grid.Column="1" Margin="3" SelectedDateChanged="DatePicker_SelectedDateChanged" x:Name="dpEnd"/>
-            </StackPanel>
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="False" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" CurrentCellChanged="PatientsTable_CellEditEnding" FontFamily="Courier New" FontSize="16" SelectionMode="Single" MouseDoubleClick="PatientsTable_MouseDoubleClick" CanUserAddRows="False">
+        <DataGrid Grid.Row="1" ItemsSource="{Binding QuartalData, Mode=OneWay}" AutoGenerateColumns="True" Language="RU" FontFamily="Courier New" FontSize="16" SelectionMode="Single" CanUserAddRows="False">
             <DataGrid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Click="LoadPatient" Header="Редактировать" />
-                    <MenuItem Click="DeleteRow" Header="Удалить запись"/>
-                    <MenuItem Click="ShowStatGroup" Header="Показатели" />
-                    <MenuItem Click="HideAutoColumns" Header="Показывать все колонки" IsCheckable="True"/>
+                    
                 </ContextMenu>
             </DataGrid.ContextMenu>
 
@@ -107,15 +62,7 @@
                 </Style>
             </DataGrid.RowStyle>
 
-            <DataGrid.Columns>
-                <DataGridTemplateColumn>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button BorderThickness="0" Margin="2" Click="DisorderPatient" Content="Выписать"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
+            <!--<DataGrid.Columns>
                 <DataGridTextColumn Header="№ карты" Binding="{Binding Card_Id}"/>
                 <DataGridTextColumn Header="Пациент" Binding="{Binding Fio}"/>
                 <DataGridTextColumn Header="Дата пост" Binding="{Binding Datein}" />
@@ -148,7 +95,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-            </DataGrid.Columns>
+            </DataGrid.Columns>-->
         </DataGrid>
 
 

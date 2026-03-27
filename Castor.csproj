@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>img\beaver.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +15,7 @@
 
   <ItemGroup>
     <None Remove="gui\movebook\kurwa.jpg" />
+    <None Remove="img\1749682654838.jpeg" />
     <None Remove="img\acroread.png" />
     <None Remove="img\add-icon.png" />
     <None Remove="img\business_table_order_report_history_2332.ico" />
@@ -24,16 +26,18 @@
     <None Remove="img\fsslogo-2.png" />
     <None Remove="img\fsslogo.png" />
     <None Remove="img\jail-icon.png" />
-    <None Remove="img\kurwa.jpg" />
     <None Remove="img\log_logout_door_1563.ico" />
     <None Remove="img\policeman-icon-2.png" />
     <None Remove="img\policeman-icon.png" />
-    <None Remove="img\registrator.png" />
     <None Remove="img\restart_back_left_arrow_6022.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <Page Remove="gui\pages\MakeNewPlanning.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="img\beaver.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -63,12 +67,9 @@
     <Resource Include="img\fsslogo.png" />
     <Resource Include="img\jail-icon.png" />
     <Resource Include="img\policeman-icon-2.png" />
-    <SplashScreen Include="img\kurwa.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </SplashScreen>
+    <SplashScreen Include="img\1749682654838.jpeg" />
     <Resource Include="img\log_logout_door_1563.ico" />
     <Resource Include="img\policeman-icon.png" />
-    <Resource Include="img\registrator.png" />
     <Resource Include="img\restart_back_left_arrow_6022.ico" />
   </ItemGroup>
 
@@ -114,6 +115,9 @@
     <None Update="assets\MonthReport.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="img\kurwa.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -127,10 +131,6 @@
     <Page Update="assets\Style.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="gui\bandbook\" />
   </ItemGroup>
 
 </Project>

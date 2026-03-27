@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace Castor.database.tables
 {
+
+    public struct Quartal
+    {
+        public DateTime start;
+        public DateTime end;
+    }
     public class Bandbook
     {
         public long Id { get; set; }
