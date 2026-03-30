@@ -32,10 +32,10 @@ namespace Castor.gui.movebook
 
             Loaded += async (a, b) =>
             {
-                MainWindow.Instance.Cursor = Cursors.Wait;
+                MainWindow.Wait(true);
                 await Task.Run(() => Load());
                 ConsoleMessage?.Invoke($"    Загружено строк: {LoadedData?.Count()}");
-                MainWindow.Instance.Cursor = Cursors.Arrow;
+                MainWindow.Wait();
             };
         }
 
@@ -157,7 +157,7 @@ namespace Castor.gui.movebook
                     // получение списка Visits за исключением загруженных в книгу
                     using (MedisContext medisContext = new MedisContext())
                     {
-                        MainWindow.Instance.Cursor = Cursors.Wait;  
+                        MainWindow.Wait(true);  
                         /* Запрос к Медис*/
                         IEnumerable<dep>? depList = medisContext.dep // отделения
                             .Where(d => d.keyid == Settings.Default.LastSelectedDep) // где номер отделения = сохраненному в Settings
@@ -167,7 +167,7 @@ namespace Castor.gui.movebook
                             .ThenInclude(d => d.Diagnos);  // привязка к диагнозам пациента дианоза из мкб
 
                         visits = depList?.Select(d => d.Visits)?.First()?.ExceptBy(visitIds, v => v.keyid)?.ToList();
-                        MainWindow.Instance.Cursor = Cursors.Arrow;
+                        MainWindow.Wait();
                     }
 
                     SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", visits, PlacementMode.Center,  "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");

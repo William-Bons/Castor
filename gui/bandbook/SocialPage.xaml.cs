@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castor.database.tables;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,13 @@ namespace Castor.gui.bandbook
     /// </summary>
     public partial class SocialPage : UserControl
     {
-        public SocialPage()
+        public SocialPage(Bandbook bandbookSelected)
         {
+            Bandline = bandbookSelected;
             InitializeComponent();
+            DataContext = this;
         }
+
+        public Bandbook Bandline { get; set; }
     }
 }

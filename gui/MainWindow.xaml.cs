@@ -163,6 +163,11 @@ namespace Castor
             MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = className, Parameter = param });
         }
 
+        public static void Wait(bool wait=false)
+        {
+            if (wait) Instance.Cursor = Cursors.Wait;
+            else Instance.Cursor = Cursors.Arrow;
+        }
        
 
 

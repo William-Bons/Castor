@@ -41,9 +41,9 @@
             </Button>
         </ToolBar>
 
-        <Grid Grid.Row="1" x:Name="Framer">
-            <DataGrid Grid.Row="1" ItemsSource="{Binding QuartalData, Mode=OneWay}" AutoGenerateColumns="True" Language="RU" FontFamily="Courier New" FontSize="16" SelectionMode="Single" CanUserAddRows="False">
-                <!--<DataGrid.ContextMenu>
+        <Frame Grid.Row="1" x:Name="Framer">
+            <!--<DataGrid Grid.Row="1" ItemsSource="{Binding QuartalData, Mode=OneWay}" AutoGenerateColumns="True" Language="RU" FontFamily="Courier New" FontSize="16" SelectionMode="Single" CanUserAddRows="False">
+                --><!--<DataGrid.ContextMenu>
                 <ContextMenu>
                     
                 </ContextMenu>
@@ -108,9 +108,9 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-            </DataGrid.Columns>-->
-            </DataGrid>
-        </Grid>
+            </DataGrid.Columns>--><!--
+            </DataGrid>-->
+        </Frame>
 
 
     </Grid>

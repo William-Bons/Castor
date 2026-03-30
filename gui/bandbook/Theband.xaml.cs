@@ -5,6 +5,7 @@ using Castor.gui.common;
 using Castor.gui.dialogs;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel;
 using System.Text;
 using System.Windows;
@@ -30,6 +31,7 @@ namespace Castor.gui.bandbook
         public ICollection<Bandbook> QuartalData { get; private set; } = new List<Bandbook>();
         public Quartal Quartal { get; private set; } = new Quartal() { start = DateTime.Parse("2026-01-01"), end = DateTime.Now };
         public double Persentage { get; private set; } = 0.69;
+        public Bandbook BandbookSelected { get; private set; }
         
         public event PropertyChangedEventHandler? PropertyChanged;
         public event common.RefreshEventHandler RefreshNotify;
@@ -56,34 +58,36 @@ namespace Castor.gui.bandbook
         {
             try
             {
-                using (MedisContext castor = new MedisContext())
+                if (QuartalData.IsNullOrEmpty())
                 {
-                    var moving = castor.dep
-                            .Where(d => d.keyid == Settings.Default.LastSelectedDep)
-                            .Include(d => d.Visits.Where(v => v.dat >= Quartal.start.ToUniversalTime() && v.dat <= Quartal.end.ToUniversalTime()))
-                            .ThenInclude(v => v.Patient)
-                            .ThenInclude(p => p.Diagnoses)
-                            .First().Visits.ToList();
-
-                    double comma = moving.Count() / ((double)moving.Count() * Persentage);
-                    double teck = 0;
-
-                    List<int> indexes = new List<int>();
-                    for (int idx = 0; idx < moving.Count(); idx += (int)Math.Round(comma))
+                    using (MedisContext castor = new MedisContext())
                     {
-                        indexes.Add(idx);
-                        teck += comma;
-                        idx = (int)Math.Round(teck);
-                    }
+                        var moving = castor.dep
+                                .Where(d => d.keyid == Settings.Default.LastSelectedDep)
+                                .Include(d => d.Visits.Where(v => v.dat >= Quartal.start.ToUniversalTime() && v.dat <= Quartal.end.ToUniversalTime()))
+                                .ThenInclude(v => v.Patient)
+                                .ThenInclude(p => p.Diagnoses)
+                                .First().Visits.ToList();
 
-                    QuartalData.Clear();
-                    foreach (var index in indexes)
-                    {
-                        Bandbook bandbook = new Bandbook();
-                        bandbook.Movebookid = moving.ElementAt(index).keyid;
-                        bandbook.point01 = moving.ElementAt(index).Patient.fullname;
-                        bandbook.point02 = moving.ElementAt(index).Patient.birthdate.ToString();
-                        QuartalData.Add(bandbook);
+                        double comma = moving.Count() / ((double)moving.Count() * Persentage);
+                        double teck = 0;
+
+                        List<int> indexes = new List<int>();
+                        for (int idx = 0; idx < moving.Count(); idx += (int)Math.Round(comma))
+                        {
+                            indexes.Add(idx);
+                            teck += comma;
+                            idx = (int)Math.Round(teck);
+                        }
+
+                        foreach (var index in indexes)
+                        {
+                            Bandbook bandbook = new Bandbook();
+                            bandbook.Movebookid = moving.ElementAt(index).keyid;
+                            bandbook.point01 = moving.ElementAt(index).Patient.fullname;
+                            bandbook.point02 = moving.ElementAt(index).Patient.birthdate.ToString();
+                            QuartalData.Add(bandbook);
+                        }
                     }
                 }
             }
@@ -92,13 +96,18 @@ namespace Castor.gui.bandbook
                 MessageBox.Show(ex.Message.ToString());
             }
 
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(QuartalData)));
+            var q = new QuartalPage(QuartalData);
+            q.BandbookItemSelected += (bandbook) =>
+            {
+                BandbookSelected = bandbook;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BandbookSelected)));
+            };
+            Framer.Navigate(q);
         }
 
         private void ShowSocial(object sender, RoutedEventArgs e)
         {
-            Framer.Children.Clear();
-            Framer.Children.Add(new SocialPage());
+            Framer.Navigate(new SocialPage(BandbookSelected));
         }
     }
 }

@@ -70,7 +70,9 @@ namespace Castor.test
                     }
                 }
             };
+            MainWindow.Wait(true);
             await asyncLambda();
+            MainWindow.Wait();
         }
 
         public async Task TTestSelectTable2()
