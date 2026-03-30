@@ -1,7 +1,9 @@
 ﻿using Castor.database;
 using Castor.database.tab_medis;
+using Castor.database.tables;
 using Castor.gui.common;
 using Castor.gui.dialogs;
+using Castor.Properties;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -31,18 +33,41 @@ namespace Castor.test
 
         public async Task TTestSelectTable1()
         {
-            ConsoleMessage?.Invoke("running Test selectTable");
             Func<Task> asyncLambda = async () =>
             {
-                //var plann = await Db.DictPlannings.ToListAsync();
-                //ConsoleMessage?.Invoke($"Gets {plann.Count} plannings");
-                //foreach (var user in plann)
-                //    ConsoleMessage?.Invoke($"{user.keyid}\t\t => {user.description}");
+                IEnumerable<Movebook> movebooks;
+                IEnumerable<visit> visits;
+                IEnumerable<string> fios;
 
-                using (MedisContext medis = new MedisContext())
+                using (CastorContext castor = new CastorContext())
                 {
-                    var a = medis.diagnos.First();
-                    ;
+                    // select Fio only from movebooks
+                    movebooks = castor.Movebooks
+                        .Where(m => m.Visitid == null);
+
+                    fios = movebooks.Select(m => m.Fio);
+
+                    using (MedisContext medis = new MedisContext())
+                    {
+                        // select all visits in DEPARTMENT (dep)
+                        visits = medis.dep
+                            .Where(d => d.keyid == Settings.Default.LastSelectedDep)
+                            .Include(d => d.Visits)
+                            .ThenInclude(v => v.Patient)
+                            .Select(d => d.Visits).First();
+
+                        // select those visits where fio match movebook and date out empty
+                        IEnumerable<visit> vv = visits
+                            .Where(m => fios.Contains(m.Patient?.fullname) && m.dat1==null);
+
+                        foreach (var mb in movebooks)
+                        {
+                            var q = vv.Where(v => v.Patient.fullname == mb.Fio);
+                            mb.Visitid = vv.Where(v => v.Patient.fullname == mb.Fio).First().keyid;
+                        }
+
+                        int t = 0;
+                    }
                 }
             };
             await asyncLambda();
