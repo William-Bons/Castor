@@ -92,7 +92,7 @@ namespace Castor.gui.movebook
                         .ThenInclude(d => d.Diagnos)  // привязка к диагнозам пациента дианоза из мкб
                         .ToList();
 
-                    var a = new SelectObjectFromEnumerable(depList.First().Visits, "dat", "Patient.fullname", "dat1");
+                    var a = new SelectObjectFromEnumerable(depList.First().Visits, PlacementMode.Center ,"dat", "Patient.fullname", "dat1");
 
                     a.Selected += (a) =>
                     {
@@ -133,13 +133,11 @@ namespace Castor.gui.movebook
                 Movebook.Dateout = DateOnly.FromDateTime(Visit.dat1.Value);
                 Movebook.Outto = Visit.dat1.HasValue ? 0 : null;
                 Movebook.Dsout = Visit.dat1.HasValue ? Movebook.Dsin : null;
+            }
+            catch { }
 
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Movebook)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Visit)));
-            }
-            catch (Exception ex)
-            {
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Movebook)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Visit)));
         }
 
         private bool Validate()
@@ -151,7 +149,7 @@ namespace Castor.gui.movebook
         {
             try
             {
-                var a = new SelectObjectFromEnumerable(Visit.Patient.Diagnoses.TakeLast(10), "dat","Diagnos.code","Diagnos.text");
+                var a = new SelectObjectFromEnumerable(Visit.Patient.Diagnoses.TakeLast(10),PlacementMode.MousePoint,"dat","Diagnos.code","Diagnos.text");
                 a.Selected += (sel) =>
                 {
                     using (MedisContext medisContext = new MedisContext())

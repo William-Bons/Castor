@@ -4,10 +4,10 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Castor.gui.pages"
-      xmlns:common="clr-namespace:Castor.gui.common" x:Class="Castor.gui.movebook.Theband"
+      xmlns:common="clr-namespace:Castor.gui.common" xmlns:local1="clr-namespace:Castor.gui.movebook" x:Class="Castor.gui.movebook.Thebook"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="1191.778"
-      Title="Thebook">
+      x:Name="ThebookElement">
 
     <Page.Resources>
         <ResourceDictionary>
@@ -56,6 +56,7 @@
                     <ContextMenu>
                         <MenuItem Header="Скрыть сданные истории" IsCheckable="True" Click="HideShowClosedCards"  x:Name="Hideclosed"/>
                         <MenuItem Header="Скрыть выписанные истории" IsCheckable="True" Click="HideShowDisordered" x:Name="Hidedisordered"/>
+                        <MenuItem Header="Фильтр дат" IsCheckable="True" Click="FilterByDatePeriod" />
                     </ContextMenu>
                 </Button.ContextMenu>
                 <StackPanel Orientation="Horizontal">
@@ -70,11 +71,6 @@
                 </StackPanel>
             </Button>
 
-            <StackPanel Orientation="Horizontal" DataContext="{Binding Period}">
-                <DatePicker Grid.Column="0" Margin="3" SelectedDateChanged="DatePicker_SelectedDateChanged" x:Name="dpStart"/>
-                <Separator Width="10"/>
-                <DatePicker Grid.Column="1" Margin="3" SelectedDateChanged="DatePicker_SelectedDateChanged" x:Name="dpEnd"/>
-            </StackPanel>
         </ToolBar>
 
         <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="False" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" CurrentCellChanged="PatientsTable_CellEditEnding" FontFamily="Courier New" FontSize="16" SelectionMode="Single" MouseDoubleClick="PatientsTable_MouseDoubleClick" CanUserAddRows="False">

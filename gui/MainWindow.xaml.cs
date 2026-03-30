@@ -5,8 +5,10 @@ using Castor.gui.common;
 using Castor.gui.dialogs;
 using Castor.gui.pages;
 using Castor.Properties;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,8 +22,12 @@ namespace Castor
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private StackPanel _ExtraStack = null;
+        private string _DepartmentName = string.Empty;
+        private static MainWindow _static_instance;
+
         public MainWindow()
         {
+            _static_instance = this;
             InitializeComponent();
             new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
             DataContext = this;
@@ -65,26 +71,28 @@ namespace Castor
             };
         }
 
+        public static MainWindow Instance => _static_instance;
+        public event PropertyChangedEventHandler? PropertyChanged;
         public string CurrentDbName => $"Data Source={Settings.Default.sqliteConnection}";
         public string Depname
         {
             get
             {
+                if(!_DepartmentName.IsNullOrEmpty()) { return _DepartmentName; }
                 try
                 {
                     using (MedisContext mc = new MedisContext())
                     {
-                        return mc.dep.Where(d => d.keyid == Settings.Default.LastSelectedDep)?.First().text;
+                        _DepartmentName = mc.dep.Where(d => d.keyid == Settings.Default.LastSelectedDep)?.First().text;
                     }
+
                 }
-                catch 
-                {
-                    return string.Empty;
-                }
+                catch { }
+                return _DepartmentName;
             }
         }
             
-        public event PropertyChangedEventHandler? PropertyChanged;
+        
 
         private void ExtraInitialize()
         {

@@ -24,6 +24,7 @@ namespace Castor.gui.dialogs
             DatePeriod datePeriod = new DatePeriod();
             datePeriod.Start = selectDatePeriod.SelectedStart;
             datePeriod.End = selectDatePeriod.SelectedEnd;
+            datePeriod.Set = true;
             return datePeriod;
         }
 

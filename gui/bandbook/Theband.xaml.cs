@@ -54,37 +54,51 @@ namespace Castor.gui.bandbook
 
         private void LoadQuartal(object sender, RoutedEventArgs e)
         {
-            using (MedisContext castor = new MedisContext())
+            try
             {
-                var moving = castor.dep
-                        .Where(d => d.keyid == Settings.Default.LastSelectedDep)
-                        .Include(d => d.Visits.Where(v => v.dat>=Quartal.start.ToUniversalTime() && v.dat<=Quartal.end.ToUniversalTime()))
-                        .ThenInclude(v => v.Patient)
-                        .ThenInclude(p => p.Diagnoses)
-                        .First().Visits.ToList();
-
-                double comma = moving.Count() / ((double)moving.Count() * Persentage);
-                double teck = 0;
-
-                List<int> indexes = new List<int>();
-                for(int idx=0; idx<moving.Count();idx += (int)Math.Round(comma))
+                using (MedisContext castor = new MedisContext())
                 {
-                    indexes.Add(idx);
-                    teck += comma;
-                    idx = (int)Math.Round(teck);
-                }
+                    var moving = castor.dep
+                            .Where(d => d.keyid == Settings.Default.LastSelectedDep)
+                            .Include(d => d.Visits.Where(v => v.dat >= Quartal.start.ToUniversalTime() && v.dat <= Quartal.end.ToUniversalTime()))
+                            .ThenInclude(v => v.Patient)
+                            .ThenInclude(p => p.Diagnoses)
+                            .First().Visits.ToList();
 
-                QuartalData.Clear();
-                foreach (var index in indexes)
-                {
-                    Bandbook bandbook = new Bandbook();
-                    bandbook.Movebookid = moving.ElementAt(index).keyid;
-                    bandbook.point01 = moving.ElementAt(index).Patient.fullname;
-                    bandbook.point02 = moving.ElementAt(index).Patient.birthdate.ToString();
-                    QuartalData.Add(bandbook);
+                    double comma = moving.Count() / ((double)moving.Count() * Persentage);
+                    double teck = 0;
+
+                    List<int> indexes = new List<int>();
+                    for (int idx = 0; idx < moving.Count(); idx += (int)Math.Round(comma))
+                    {
+                        indexes.Add(idx);
+                        teck += comma;
+                        idx = (int)Math.Round(teck);
+                    }
+
+                    QuartalData.Clear();
+                    foreach (var index in indexes)
+                    {
+                        Bandbook bandbook = new Bandbook();
+                        bandbook.Movebookid = moving.ElementAt(index).keyid;
+                        bandbook.point01 = moving.ElementAt(index).Patient.fullname;
+                        bandbook.point02 = moving.ElementAt(index).Patient.birthdate.ToString();
+                        QuartalData.Add(bandbook);
+                    }
                 }
             }
+            catch (Exception ex) 
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(QuartalData)));
+        }
+
+        private void ShowSocial(object sender, RoutedEventArgs e)
+        {
+            Framer.Children.Clear();
+            Framer.Children.Add(new SocialPage());
         }
     }
 }

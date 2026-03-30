@@ -12,7 +12,7 @@ namespace Castor.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.14.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "18.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -84,7 +84,7 @@ namespace Castor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Host=172.23.1.220;Port=5432;Database=med;Username=SOLUTION_MED;Password=elsoft")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Host=172.23.1.220;Port=5432;Database=med;Username=SOLUTION_MED;Password=elsoft;")]
         public string postgreeConnection {
             get {
                 return ((string)(this["postgreeConnection"]));
@@ -96,7 +96,7 @@ namespace Castor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Castor.gui.movebook.Theband")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Castor.gui.movebook.Thebook")]
         public string StartLoadingPage {
             get {
                 return ((string)(this["StartLoadingPage"]));

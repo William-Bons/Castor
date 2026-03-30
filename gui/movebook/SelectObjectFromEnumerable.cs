@@ -16,8 +16,8 @@ namespace Castor.gui.movebook
         private Popup _canvas;
 
 
-        public SelectObjectFromEnumerable(string Title, IEnumerable<object> _RowSourceObject, params string[] columns)
-            :this(columns)
+        public SelectObjectFromEnumerable(string Title, IEnumerable<object> _RowSourceObject, PlacementMode mode=PlacementMode.MousePoint, params string[] columns)
+            :this(mode,columns)
         {
             ItemsSource = _RowSourceObject;
             Grid gr = CreateGrid();
@@ -28,8 +28,8 @@ namespace Castor.gui.movebook
             _canvas.IsOpen = true;
         }
 
-        public SelectObjectFromEnumerable(IEnumerable<object> _RowSourceObject, params string[] columns)
-            : this(columns)
+        public SelectObjectFromEnumerable(IEnumerable<object> _RowSourceObject, PlacementMode mode=PlacementMode.MousePoint, params string[] columns)
+            : this(mode,columns)
         {
 
             ItemsSource = _RowSourceObject;
@@ -37,7 +37,7 @@ namespace Castor.gui.movebook
             _canvas.IsOpen = true;
         }
 
-        private SelectObjectFromEnumerable(params string[] columns)
+        private SelectObjectFromEnumerable(PlacementMode mode, params string[] columns)
             :base()
         {
             /* Create columns */
@@ -49,6 +49,7 @@ namespace Castor.gui.movebook
 
                 newColumn.Header = column;
                 newColumn.Binding = bnd;
+                newColumn.MaxWidth = 500;
 
                 Columns.Add(newColumn);
             }
@@ -62,7 +63,8 @@ namespace Castor.gui.movebook
 
             _canvas = new Popup();
             _canvas.StaysOpen = false;
-            _canvas.Placement = PlacementMode.MousePoint;
+            _canvas.PlacementTarget = MainWindow.Instance;
+            _canvas.Placement = mode;
         }
 
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)

@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace Castor.gui.movebook
@@ -16,21 +17,24 @@ namespace Castor.gui.movebook
     /// <summary>
     /// Логика взаимодействия для Theband.xaml
     /// </summary>
-    public partial class Theband : Page, INotifyPropertyChanged, IRefresh, IStartablePage, IConsoleMessage
+    public partial class Thebook : Page, INotifyPropertyChanged, IRefresh, IStartablePage, IConsoleMessage
     {
         private CastorContext context;
         private bool need_save = false;
+        private DatePeriod _FilterDatePeriod = new DatePeriod() { Set = false };
 
-        public Theband()
+        public Thebook()
         {
             InitializeComponent();
-            
-            Task.Run(() => Load(new DatePeriod()));
-            ConsoleMessage?.Invoke($" Всего: {LoadedData?.Count()}"); //todo this is not works
-
             Hideclosed.IsChecked = IsHideClosedCards;
             Hidedisordered.IsChecked = IsHideDisordered;
             DataContext = this;
+
+            Loaded += async (a, b) =>
+            {
+                await Task.Run(() => Load());
+                ConsoleMessage?.Invoke($"    Загружено строк: {LoadedData?.Count()}"); 
+            };
         }
 
         public bool IsHideDisordered { get; set; } = Settings.Default.HideDisordered;
@@ -48,50 +52,56 @@ namespace Castor.gui.movebook
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
         }
 
-        private async Task Load(DatePeriod Period)
+        private async Task Load()
         {
             if (context != null)  context.Dispose();
             context = new CastorContext();
 
-            if (Period.Set)
+            try
             {
-                LoadedData = context.Movebooks
-                    .Where(x => (x.Datein >= DateOnly.FromDateTime(Period.Start) && x.Datein <= DateOnly.FromDateTime(Period.End)) ||
-                    (x.Dateout >= DateOnly.FromDateTime(Period.Start) && x.Dateout <= DateOnly.FromDateTime(Period.End)))
-                    .Include(f => f.FssControl)
-                    .ToList();
-            }
-            else
-            {
-                LoadedData = context.Movebooks
-                    .Include(f => f.FssControl)
-                    .ToList();
-                ;
-            }
+                if (_FilterDatePeriod.Set)
+                {
+                    LoadedData = context.Movebooks
+                        .Where(x => (x.Datein >= DateOnly.FromDateTime(_FilterDatePeriod.Start) && x.Datein <= DateOnly.FromDateTime(_FilterDatePeriod.End)) ||
+                        (x.Dateout >= DateOnly.FromDateTime(_FilterDatePeriod.Start) && x.Dateout <= DateOnly.FromDateTime(_FilterDatePeriod.End)))
+                        .Include(f => f.FssControl)
+                        .ToList();
+                }
+                else
+                {
+                    LoadedData = context.Movebooks
+                        .Include(f => f.FssControl)
+                        .ToList();
+                    ;
+                }
 
-            // hide closed cards!
-            if(IsHideClosedCards)
-            {
-                LoadedData = LoadedData.Where(l => !l.Closed).ToList();
-            }
+                // hide closed cards!
+                if (IsHideClosedCards)
+                {
+                    LoadedData = LoadedData.Where(l => !l.Closed).ToList();
+                }
 
-            // hide disordered cards
-            if(IsHideDisordered)
-            {
-                LoadedData = LoadedData.Where(l => !l.Dateout.HasValue).ToList();
+                // hide disordered cards
+                if (IsHideDisordered)
+                {
+                    LoadedData = LoadedData.Where(l => !l.Dateout.HasValue).ToList();
+                }
             }
+            catch { }
             
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
-            
         }
 
         private async void NeedRefreshTable(object sender, EventArgs e)
         {
+            // save current editing cell
             need_save = false;
+            PatientsTable.CommitEdit(DataGridEditingUnit.Row, true);
+
             LoadedData.Where(x => x.Dateout == DateOnly.MinValue).ToList().ForEach(x => x.Dateout = null);
             context.SaveChanges(true);
             
-            await Task.Run(()=> Load(new DatePeriod()));
+            await Task.Run(()=> Load());
             RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceWidget", "Castor.gui.pages.UnvlWidget");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
 
@@ -104,7 +114,7 @@ namespace Castor.gui.movebook
             {
                 Disorder disorder = new Disorder(mvb);
                 disorder.ShowDialog();
-                await Task.Run(() => Load(new DatePeriod()));
+                await Task.Run(() => Load());
                 RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove");
             }
         }
@@ -124,16 +134,7 @@ namespace Castor.gui.movebook
             NeedRefreshTable(sender, e);
         }
 
-        private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Cursor = Cursors.Wait;
-            DatePeriod dp = new DatePeriod();
-            dp.Start = dpStart.SelectedDate.HasValue ? dpStart.SelectedDate.Value : dp.Start;
-            dp.End = dpEnd.SelectedDate.HasValue ? dpEnd.SelectedDate.Value : dp.End;
-            dp.Set = dp.Start > DateTime.MinValue && dp.End > DateTime.MinValue && dp.End>dp.Start;
-            Task.Run(()=> Load(dp));
-            Cursor = Cursors.Arrow;
-        }
+       
 
         private async void ImportList(object sender, RoutedEventArgs e)
         {
@@ -164,7 +165,7 @@ namespace Castor.gui.movebook
                         visits = depList?.Select(d => d.Visits)?.First()?.ExceptBy(visitIds, v => v.keyid)?.ToList();
                     }
 
-                    SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", visits, "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");
+                    SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", visits, PlacementMode.Center,  "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");
                     soe.Selected += (a) =>
                     {
                         CreateNew createNew = new CreateNew(a);
@@ -187,7 +188,7 @@ namespace Castor.gui.movebook
             {
                 context.Movebooks.Remove(PatientsTable.SelectedItem as Movebook);
                 context.SaveChanges();
-                await Task.Run(() => Load(new DatePeriod()));
+                await Task.Run(() => Load());
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
                 RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove");
             }
@@ -227,7 +228,7 @@ namespace Castor.gui.movebook
 
         public async  void Refresh()
         {
-            await Task.Run(() => Load(new DatePeriod()));
+            await Task.Run(() => Load());
             RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceWidget");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
         }
@@ -307,7 +308,7 @@ namespace Castor.gui.movebook
             IsHideClosedCards = !IsHideClosedCards;
             Settings.Default.HideClosedCards = IsHideClosedCards;
             Settings.Default.Save();
-            await Task.Run(() => Load(new DatePeriod()));
+            await Task.Run(() => Load());
         }
 
         private void OpenHideContextMenu(object sender, RoutedEventArgs e)
@@ -323,7 +324,19 @@ namespace Castor.gui.movebook
             IsHideDisordered = !IsHideDisordered;
             Settings.Default.HideDisordered = IsHideDisordered;
             Settings.Default.Save();
-            await Task.Run(() => Load(new DatePeriod()));
+            await Task.Run(() => Load());
         }
+
+        private async void FilterByDatePeriod(object sender, RoutedEventArgs e)
+        {
+            if(_FilterDatePeriod.Set)
+                _FilterDatePeriod.Set = false;
+            else
+                _FilterDatePeriod = SelectDatePeriod.Show();
+
+            await Task.Run(() => Load());
+        }
+
+       
     }
 }

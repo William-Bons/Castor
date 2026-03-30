@@ -23,7 +23,7 @@
       <Value Profile="(Default)">2704</Value>
     </Setting>
     <Setting Name="postgreeConnection" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Host=172.23.1.220;Port=5432;Database=med;Username=SOLUTION_MED;Password=elsoft</Value>
+      <Value Profile="(Default)">Host=172.23.1.220;Port=5432;Database=med;Username=SOLUTION_MED;Password=elsoft;</Value>
     </Setting>
     <Setting Name="StartLoadingPage" Type="System.String" Scope="User">
       <Value Profile="(Default)">Castor.gui.movebook.Thebook</Value>

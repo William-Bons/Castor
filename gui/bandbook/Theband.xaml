@@ -33,36 +33,49 @@
                     <TextBlock Text="Загрузить квартал" Style="{DynamicResource TextBlockStyle0}" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
+            <Button Click="ShowSocial">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/beaver.ico" Style="{DynamicResource RegImageStyle}"/>
+                    <TextBlock Text="Соцработник" Style="{DynamicResource TextBlockStyle0}" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding QuartalData, Mode=OneWay}" AutoGenerateColumns="True" Language="RU" FontFamily="Courier New" FontSize="16" SelectionMode="Single" CanUserAddRows="False">
-            <DataGrid.ContextMenu>
+        <Grid Grid.Row="1" x:Name="Framer">
+            <DataGrid Grid.Row="1" ItemsSource="{Binding QuartalData, Mode=OneWay}" AutoGenerateColumns="True" Language="RU" FontFamily="Courier New" FontSize="16" SelectionMode="Single" CanUserAddRows="False">
+                <!--<DataGrid.ContextMenu>
                 <ContextMenu>
                     
                 </ContextMenu>
-            </DataGrid.ContextMenu>
+            </DataGrid.ContextMenu>-->
 
-            <DataGrid.RowStyle>
+                <!--<DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">
                     <Style.Triggers>
-                        <!--подсветка зеленым история сдана-->
+                        -->
+                <!--подсветка зеленым история сдана-->
+                <!--
                         <DataTrigger Binding="{Binding Closed}" Value="True">
                             <Setter Property="Background" Value="#FFEAFFE2"/>
                         </DataTrigger>
-                        <!-- Пример: Подсветка строки, если ошибка диагноза поступления -->
+                        -->
+                <!-- Пример: Подсветка строки, если ошибка диагноза поступления -->
+                <!--
                         <DataTrigger Binding="{Binding InControl}" Value="False">
                             <Setter Property="Background" Value="#FFFFC8C8"/>
                         </DataTrigger>
-                        <!-- Пример: Подсветка строки, если ошибка диагноза выбытия -->
+                        -->
+                <!-- Пример: Подсветка строки, если ошибка диагноза выбытия -->
+                <!--
                         <DataTrigger Binding="{Binding OutControl}" Value="False">
                             <Setter Property="Background" Value="#FFFFC8C8"/>
                         </DataTrigger>
 
                     </Style.Triggers>
                 </Style>
-            </DataGrid.RowStyle>
+            </DataGrid.RowStyle>-->
 
-            <!--<DataGrid.Columns>
+                <!--<DataGrid.Columns>
                 <DataGridTextColumn Header="№ карты" Binding="{Binding Card_Id}"/>
                 <DataGridTextColumn Header="Пациент" Binding="{Binding Fio}"/>
                 <DataGridTextColumn Header="Дата пост" Binding="{Binding Datein}" />
@@ -96,8 +109,8 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>-->
-        </DataGrid>
-
+            </DataGrid>
+        </Grid>
 
 
     </Grid>
