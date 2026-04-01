@@ -40,6 +40,14 @@ namespace Castor
                 new SelectUser().ShowDialog();
             }
 
+            //// check department access
+            //if(Settings.Default.LastSelectedDep != 2704 ||
+            //    Settings.Default.LastSelectedDep != 2707)
+            //{
+            //    MessageBox.Show("Ваше отделение не имеет права использовать приложение", "Контроль", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    Close();
+            //}
+
             // BACKUP
             new CastorContext().Backup();
 

@@ -87,24 +87,40 @@ namespace Castor.test
 
         public async Task TTestSelectTable3()
         {
+            // находятся в отделении но не внесены в базу
+            
             await Task.Run(() =>
             {
-                using (MedisContext cc = new MedisContext())
-                {
-                    //var req = cc.patient
-                    //    .Where(pat => pat.keyid == 2315389)
-                    //    .Include(pat => pat.Visits)
-                    //    .ThenInclude(vis => vis.Dep)
-                    //    .ToList();
-                    //;
+                IEnumerable<visit> visitsWeek = new List<visit>();
+                IEnumerable<string> fios = new List<string>();
 
-                    var qwe = cc.dep
-                        .Where(d => d.keyid == 2704)
-                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
-                        .ThenInclude(v => v.Patient)
-                        .ToList();
-                    ;
+                using (CastorContext castor = new CastorContext())
+                {
+                    using (MedisContext cc = new MedisContext())
+                    {
+                        // list of Fullnames unordered 
+                        fios = castor.Movebooks
+                            .Where(m => m.Dateout == null)
+                            .Select(m => m.Fio).ToList();
+
+                        // get visits for last 10 days
+                        visitsWeek = cc.visit
+                           .Where(v => v.depid == Settings.Default.LastSelectedDep && (DateTime.Today.ToUniversalTime() - v.dat.Value).Days < 10 && v.dat1 == null)
+                           .Include(v => v.Patient)
+                           .ToList();
+
+                        
+
+                        
+
+
+                    }
                 }
+
+                var a = visitsWeek
+                           .Where(v => !fios.Contains(v.Fullname));
+                int t = 3 + 3;
+
             });
         }
 

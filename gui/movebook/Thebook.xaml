@@ -14,6 +14,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/assets/Style.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <common:EnabledBoolConverter x:Key="EnabledBoolConverter"/>
             <common:FssLogoConverter x:Key="FssLogoConverter"/>
             <common:ObjectToVisibleConverter x:Key="ObjectToVisibleConverter"/>
         </ResourceDictionary>
@@ -27,10 +28,16 @@
         </Grid.RowDefinitions>
 
         <ToolBar Grid.Row="0" Background="Transparent">
-            <Button ToolTip="Импортировать из Медис" Click="ImportList" Style="{DynamicResource Castor.Toolbarbutton}">
+            <Button ToolTip="Импортировать из Медис" Click="ImportNewby" Style="{DynamicResource Castor.Toolbarbutton}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/img/log_logout_door_1563.ico" />
                     <TextBlock Text="Поступление" FontSize="16" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button ToolTip="Импортировать из Медис" Click="ImportList" Style="{DynamicResource Castor.Toolbarbutton}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/Patient_Female_icon-icons.com_75052.png" />
+                    <TextBlock Text="Не загр." FontSize="16" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
             <Button ToolTip="Добавить пациента в книгу движения" Click="LoadPatient" Style="{DynamicResource Castor.Toolbarbutton}">
@@ -39,7 +46,7 @@
                     <TextBlock Text="Добавить" FontSize="16" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
-            <Button ToolTip="Выписать пациента" Click="DisorderPatient" Style="{DynamicResource Castor.Toolbarbutton}">
+            <Button ToolTip="Выписать пациента" Click="DisorderPatient" Style="{DynamicResource Castor.Toolbarbutton}" IsEnabled="{Binding SelectedItem, Converter={StaticResource EnabledBoolConverter}, ElementName=PatientsTable}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/img/fire_exit_emergency_door_icon_196783.ico" />
                     <TextBlock Text="Выписать" FontSize="16" VerticalAlignment="Center"/>

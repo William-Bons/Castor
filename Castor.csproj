@@ -27,6 +27,7 @@
     <None Remove="img\fsslogo.png" />
     <None Remove="img\jail-icon.png" />
     <None Remove="img\log_logout_door_1563.ico" />
+    <None Remove="img\Patient_Female_icon-icons.com_75052.png" />
     <None Remove="img\policeman-icon-2.png" />
     <None Remove="img\policeman-icon.png" />
     <None Remove="img\restart_back_left_arrow_6022.ico" />
@@ -66,6 +67,7 @@
     <Resource Include="img\fsslogo-2.png" />
     <Resource Include="img\fsslogo.png" />
     <Resource Include="img\jail-icon.png" />
+    <Resource Include="img\Patient_Female_icon-icons.com_75052.png" />
     <Resource Include="img\policeman-icon-2.png" />
     <SplashScreen Include="img\1749682654838.jpeg" />
     <Resource Include="img\log_logout_door_1563.ico" />

@@ -137,8 +137,54 @@ namespace Castor.gui.movebook
             NeedRefreshTable(sender, e);
         }
 
-       
 
+        private async void ImportNewby(object sender, RoutedEventArgs e)
+        {
+            List<long?> visitIds;
+            List<visit> visits = new List<visit>();
+
+            Func<Task> __check = async () =>
+            {
+                try
+                {
+                    IEnumerable<visit> visitsWeek = new List<visit>();
+                    IEnumerable<string> fios = new List<string>();
+
+                    using (CastorContext castor = new CastorContext())
+                    {
+                        // list of Fullnames unordered 
+                        fios = castor.Movebooks
+                            .Where(m => m.Dateout == null)
+                            .Select(m => m.Fio).ToList();
+                    }
+                    using (MedisContext cc = new MedisContext())
+                    {
+                        // get visits for last 10 days
+                        visitsWeek = cc.visit
+                           .Where(v => v.depid == Settings.Default.LastSelectedDep && (DateTime.Today.ToUniversalTime() - v.dat.Value).Days < 10 && v.dat1 == null)
+                           .Include(v => v.Patient)
+                           .ToList();
+                    }
+
+                    var newby = visitsWeek
+                           .Where(v => !fios.Contains(v.Fullname));
+
+                    SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", newby, PlacementMode.Center, "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");
+                    soe.Selected += (a) =>
+                    {
+                        CreateNew createNew = new CreateNew(a);
+                        createNew.ShowDialog();
+                        NeedRefreshTable(sender, e);
+                    };
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            };
+            await __check();
+        }
         private async void ImportList(object sender, RoutedEventArgs e)
         {
             List<long?> visitIds;
@@ -342,6 +388,6 @@ namespace Castor.gui.movebook
             await Task.Run(() => Load());
         }
 
-       
+        
     }
 }

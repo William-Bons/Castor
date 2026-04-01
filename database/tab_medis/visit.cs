@@ -327,4 +327,5 @@ public partial class visit
     public virtual dep? Dep { get; set; }
     public virtual docdep? Doctor { get; set; }
     public virtual int DaysInDep => dat != null ? (DateTime.Now - dat).Value.Days : 0;
+    public virtual string Fullname => Patient?.fullname ?? string.Empty;
 }
