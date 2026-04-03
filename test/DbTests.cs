@@ -33,6 +33,22 @@ namespace Castor.test
 
         public async Task TTestSelectTable1()
         {
+            Func<Task> GetNosoAnalysis = async () =>
+            {
+
+                using (MedisContext medis = new MedisContext())
+                {
+                    IEnumerable<visit> visits = medis.visit
+                        .Where(v => v.depid == Settings.Default.LastSelectedDep && v.dat > (DateTime.Parse("2025-01-01").ToUniversalTime()) && v.dat <= DateTime.Parse("2025-31-12").ToUniversalTime() && v.dat1 != null)
+                        .Include(v => v.Patient)
+                        .ThenInclude(p => p.Diagnoses)
+                        .Where(p => p.Patient.age <= 18);
+
+                    int r = 3 + 4;
+                }
+
+            };
+
             Func<Task> asyncLambda = async () =>
             {
                 IEnumerable<Movebook> movebooks;
@@ -70,8 +86,11 @@ namespace Castor.test
                     }
                 }
             };
+
+
             MainWindow.Wait(true);
-            await asyncLambda();
+            //await asyncLambda();
+            await GetNosoAnalysis();
             MainWindow.Wait();
         }
 
