@@ -33,19 +33,44 @@ namespace Castor.test
 
         public async Task TTestSelectTable1()
         {
+            // Выбирает несовершеннолетних пациентов за прошлый год с окончательным дз на Ф выписанных из отд
             Func<Task> GetNosoAnalysis = async () =>
             {
 
-                using (MedisContext medis = new MedisContext())
+                try
                 {
-                    IEnumerable<visit> visits = medis.visit
-                        .Where(v => v.depid == Settings.Default.LastSelectedDep && v.dat > (DateTime.Parse("2025-01-01").ToUniversalTime()) && v.dat <= DateTime.Parse("2025-31-12").ToUniversalTime() && v.dat1 != null)
-                        .Include(v => v.Patient)
-                        .ThenInclude(p => p.Diagnoses)
-                        .Where(p => p.Patient.age <= 18);
+                    using (MedisContext medis = new MedisContext())
+                    {
+                        // select visits patients aged<18 in last year from LastSelectedDep
+                        IEnumerable<visit> visits = medis.visit
+                            .Where(v => v.depid == Settings.Default.LastSelectedDep && v.dat >= (DateTime.Parse("01.01.2025").ToUniversalTime()) && v.dat <= DateTime.Parse("31.12.2025").ToUniversalTime() /*&& v.dat1 != null*/)
+                            .Include(v => v.Patient)
+                            .ThenInclude(p => p.Diagnoses)
+                            .ThenInclude(d => d.Diagnos)
+                            .ToList()
+                            .Where(v => v.Age < 18);
 
-                    int r = 3 + 4;
+                        var re =
+                                 from v in visits
+                                 from p in v.Patient.Diagnoses
+                                 where p.Diagnos.code[0] == 'F' && p.diagform == 3
+                                 select new
+                                 {
+                                     Visitid = v.keyid,
+                                     Days = (v.dat1 - v.dat).Value.Days,
+                                     Name = v.Patient.fullname,
+                                     Ds = p.Diagnos.code,
+                                     C = p.diagform
+
+                                 };
+                                 
+
+                        re.Distinct().ToList(); // здесь точка останова для анализа и сохранения результата
+
+                        int r = 3 + 4;
+                    }
                 }
+                catch (Exception ex) { }
 
             };
 

@@ -37,7 +37,7 @@
             <Button ToolTip="Импортировать из Медис" Click="ImportList" Style="{DynamicResource Castor.Toolbarbutton}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/img/Patient_Female_icon-icons.com_75052.png" />
-                    <TextBlock Text="Не загр." FontSize="16" VerticalAlignment="Center"/>
+                    <TextBlock Text="Загрузить" FontSize="16" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
             <Button ToolTip="Добавить пациента в книгу движения" Click="LoadPatient" Style="{DynamicResource Castor.Toolbarbutton}">

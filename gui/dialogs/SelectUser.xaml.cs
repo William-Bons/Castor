@@ -21,33 +21,40 @@ namespace Castor.gui.dialogs
         {
             try
             {
+                // список разрешенных отделений, устанавливается в настройках приложения, обновление только по перестроению
+                List<long> allowed = new List<long>();
+                foreach (var d in Settings.Default.AllowedDepartments)
+                {
+                    long alldep = 0;
+                    if(long.TryParse(d, out alldep))
+                        allowed.Add(alldep);
+                }
+
                 // получение списка отделений и врачей отделений из учреждения, код учреждения указан в параметре RootDepartmentId
                 using (MedisContext medis = new MedisContext())
                 {
                     Departments = medis.dep
                         .Where(dep => dep.rootid == Settings.Default.RootDepartmentId) // ref Department Дружносельская ПБ 1482
+                        .Where(d => allowed.Contains(d.keyid))
                         .Include(dep => dep.Docdeps)
                         .ToList();
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Departments)));
                 }
+
+                // если отделение уже ранее выбрано то выбор его в списке отдлений
+                long depid = Settings.Default.LastSelectedDep;
+                if (depid > 0)
+                {
+                    SelectedDepartment = Departments?.Where(dep => dep.keyid == depid)?.First();
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedDepartment)));
+                }
+
             }
             catch { }
             
             // Стандартная инициализация диалога
             InitializeComponent();
             DataContext = this;
-
-            Loaded += (o, e) =>
-            {
-                // если отделение уже ранее выбрано то выбор его в списке отдлений
-                long depid = Settings.Default.LastSelectedDep;
-                if (depid>0)
-                {
-                    SelectedDepartment = Departments?.Where(dep => dep.keyid == depid)?.First();
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedDepartment)));
-                }
-
-            };
         }
 
         public ICollection<dep> Departments { get; set; } = new List<dep>();
@@ -69,7 +76,7 @@ namespace Castor.gui.dialogs
             }
         }
 
-        private void ConnectAndRegisterUser(object sender, RoutedEventArgs e)
+        private void CloseDialogButton(object sender, RoutedEventArgs e)
         {
             // проверка существования файла БД и его создание в случае отсутствия
             using(CastorContext context = new CastorContext())
@@ -77,7 +84,7 @@ namespace Castor.gui.dialogs
                 context.Database.EnsureCreated();
             }
             Close();
-            RefreshNotify?.Invoke("Castor.gui.movebook.Theband");
+            RefreshNotify?.Invoke("Castor.gui.movebook.Theband", "Castor.gui.movebook.Thebook");
         }
 
         public void Refresh()

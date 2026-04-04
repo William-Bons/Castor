@@ -179,5 +179,16 @@ namespace Castor.Properties {
                 return ((global::System.Collections.Specialized.StringCollection)(this["ExtraWidgets"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsd=\"http://www.w3." +
+            "org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <s" +
+            "tring>2704</string>\r\n  <string>2712</string>\r\n</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection AllowedDepartments {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["AllowedDepartments"]));
+            }
+        }
     }
 }

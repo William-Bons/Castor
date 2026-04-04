@@ -35,7 +35,7 @@
         <TextBox   Grid.Row="3" Text="{Binding DbFilename}"  />
         <Button    Grid.Row="3" Content="..." Click="SelectDbDirectory" HorizontalAlignment="Right"/>
 
-        <Button    Grid.Row="5" Content="Войти" MinWidth="120" HorizontalAlignment="Right" Margin="0,10" Click="ConnectAndRegisterUser" TabIndex="2" IsDefault="True" />
+        <Button    Grid.Row="5" Content="Войти" MinWidth="120" HorizontalAlignment="Right" Margin="0,10" Click="CloseDialogButton" TabIndex="2" IsDefault="True" />
 
         </Grid>
 

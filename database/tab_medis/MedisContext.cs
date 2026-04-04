@@ -23,6 +23,7 @@ namespace Castor.database.tab_medis
         public DbSet<visit> visit => Set<visit>();
         public DbSet<dep> dep => Set<dep>();
         public DbSet<diagnos> diagnos => Set<diagnos>();
+        public DbSet<patdiag> patdiag => Set<patdiag>();
         #endregion
 
         /// <summary>
