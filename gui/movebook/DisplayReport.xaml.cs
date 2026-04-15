@@ -16,7 +16,7 @@ namespace Castor.gui.movebook
     /// </summary>
     public partial class DisplayReport : Page
     {
-        private PdfDocument pdfDocument;
+        //private PdfDocument pdfDocument;
         public DisplayReport(ICastorHtmlReport _report)
         {
             InitializeComponent();
@@ -25,20 +25,20 @@ namespace Castor.gui.movebook
             //webBrowser.Language = System.Windows.Markup.XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag);
             Browser.NavigateToString(_report.HtmlReport);
 
-            HtmlToPdf converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = PdfPageSize.A4;
-            converter.Options.MarginBottom = 25;
-            converter.Options.MarginLeft = 25;
-            converter.Options.MarginRight = 25;
-            converter.Options.MarginTop = 25;
-            pdfDocument = converter.ConvertHtmlString(_report.HtmlReport);
+            //HtmlToPdf converter = new HtmlToPdf();
+            //converter.Options.PdfPageSize = PdfPageSize.A4;
+            //converter.Options.MarginBottom = 25;
+            //converter.Options.MarginLeft = 25;
+            //converter.Options.MarginRight = 25;
+            //converter.Options.MarginTop = 25;
+            //pdfDocument = converter.ConvertHtmlString(_report.HtmlReport);
             
         }
 
         private void SaveToDisk(object sender, RoutedEventArgs e)
         {
-            pdfDocument.Save("out/test.pdf");
-            pdfDocument.Close();
+            //pdfDocument.Save("out/test.pdf");
+            //pdfDocument.Close();
 
             // show report 
             Window w = new Window();

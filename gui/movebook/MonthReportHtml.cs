@@ -78,15 +78,15 @@ namespace Castor.gui.movebook
                     );
 
                 // save report html into database
-                _CreatedReport.Id = 0;
-                _CreatedReport.Created = DateTime.Now;
-                _CreatedReport.DateStart = DateOnly.FromDateTime(datePeriod.Start);
-                _CreatedReport.DateEnd = DateOnly.FromDateTime(datePeriod.End);
-                _CreatedReport.ReportName = this.GetType().FullName;
-                _CreatedReport.ReportData = Encoding.UTF8.GetBytes(_MainStringBuilding.ToString());
+                //_CreatedReport.Id = 0;
+                //_CreatedReport.Created = DateTime.Now;
+                //_CreatedReport.DateStart = DateOnly.FromDateTime(datePeriod.Start);
+                //_CreatedReport.DateEnd = DateOnly.FromDateTime(datePeriod.End);
+                //_CreatedReport.ReportName = this.GetType().FullName;
+                //_CreatedReport.ReportData = Encoding.UTF8.GetBytes(_MainStringBuilding.ToString());
 
-                context.Reports.Update(_CreatedReport);
-                context.SaveChanges();
+                //context.Reports.Update(_CreatedReport);
+                //context.SaveChanges();
             }
 
         }
@@ -97,12 +97,12 @@ namespace Castor.gui.movebook
         public Page DisplayReportAsHTML()
         {
             /* записывет отчет в таблицу */
-            using(CastorContext context = new CastorContext())
-            {
-                _CreatedReport.Printed = true;
-                context.Reports.Update(_CreatedReport);
-                context.SaveChanges();
-            }
+            //using(CastorContext context = new CastorContext())
+            //{
+            //    _CreatedReport.Printed = true;
+            //    context.Reports.Update(_CreatedReport);
+            //    context.SaveChanges();
+            //}
 
             DisplayReport displayReport = new DisplayReport(this);
             return displayReport;
