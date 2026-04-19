@@ -23,12 +23,12 @@
 
         <Grid Grid.Row="2" x:Name="MainFrameGrid">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Frame Grid.Column="0" x:Name="CentralFrame" Visibility="Visible" NavigationUIVisibility="Hidden"/>
+            <Frame Grid.Column="1" x:Name="CentralFrame" Visibility="Visible" NavigationUIVisibility="Hidden"/>
             <!--<StackPanel Orientation="Vertical" Grid.Column="1" x:Name="CentralStack">
                 <pages:Weekmove  />
                 <Separator/>

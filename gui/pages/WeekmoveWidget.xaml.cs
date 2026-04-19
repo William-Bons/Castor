@@ -6,11 +6,11 @@ using System.Windows.Controls;
 namespace Castor.gui.pages
 {
     /// <summary>
-    /// Логика взаимодействия для Weekmove.xaml
+    /// Логика взаимодействия для WeekmoveWidget.xaml
     /// </summary>
-    public partial class Weekmove : UserControl, INotifyPropertyChanged, IRefresh
+    public partial class WeekmoveWidget : UserControl, INotifyPropertyChanged, IRefresh
     {
-        public Weekmove()
+        public WeekmoveWidget()
         {
             InitializeComponent();
 

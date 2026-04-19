@@ -23,7 +23,7 @@ namespace Castor.gui.dialogs
             {
                 // список разрешенных отделений, устанавливается в настройках приложения, обновление только по перестроению
                 List<long> allowed = new List<long>();
-                foreach (var d in Settings.Default.AllowedDepartments)
+                foreach (var d in Settings.Default.AllowedDepartments.Split(';'))
                 {
                     long alldep = 0;
                     if(long.TryParse(d, out alldep))
@@ -36,7 +36,7 @@ namespace Castor.gui.dialogs
                     Departments = medis.dep
                         .Where(dep => dep.rootid == Settings.Default.RootDepartmentId) // ref Department Дружносельская ПБ 1482
                         .Where(d => allowed.Contains(d.keyid))
-                        .Include(dep => dep.Docdeps)
+                        //.Include(dep => dep.Docdeps)
                         .ToList();
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Departments)));
                 }

@@ -105,7 +105,7 @@ namespace Castor.gui.movebook
             context.SaveChanges(true);
             
             await Task.Run(()=> Load());
-            RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceWidget", "Castor.gui.pages.UnvlWidget");
+            RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.WeekmoveWidget", "Castor.gui.pages.ForceWidget", "Castor.gui.pages.UnvlWidget");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
 
             ConsoleMessage?.Invoke($" Всего: {LoadedData?.Count()}");
@@ -118,7 +118,7 @@ namespace Castor.gui.movebook
                 Disorder disorder = new Disorder(mvb);
                 disorder.ShowDialog();
                 await Task.Run(() => Load());
-                RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove");
+                RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.WeekmoveWidget");
             }
         }
 
@@ -194,6 +194,8 @@ namespace Castor.gui.movebook
             {
                 try
                 {
+                    var __depId=Settings.Default.LastSelectedDep;
+
                     // получение списка VisitsIds загруженных в книгу
                     using (CastorContext castorContext = new CastorContext())
                     {
@@ -203,16 +205,18 @@ namespace Castor.gui.movebook
                     // получение списка Visits за исключением загруженных в книгу
                     using (MedisContext medisContext = new MedisContext())
                     {
-                        MainWindow.Wait(true);  
-                        /* Запрос к Медис*/
-                        IEnumerable<dep>? depList = medisContext.dep // отделения
-                            .Where(d => d.keyid == Settings.Default.LastSelectedDep) // где номер отделения = сохраненному в Settings
-                            .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days < 8))
-                            .ThenInclude(v => v.Patient)  // привязка пациента
-                            .ThenInclude(p => p.Diagnoses) // привязка диагнозов пациента
-                            .ThenInclude(d => d.Diagnos);  // привязка к диагнозам пациента дианоза из мкб
+                        MainWindow.Wait(true);
 
-                        visits = depList?.Select(d => d.Visits)?.First()?.ExceptBy(visitIds, v => v.keyid)?.ToList();
+                        /* Medis выбирает тех кто находится в отделении и выписанных не более 30 дней назад */
+                        visits = medisContext.visit
+                            .Where(v => v.depid == __depId && (!v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days <= 30)) // __depId - номер отдел. из Settings
+                            .Include(f => f.Patient)  // привязка пациента
+                            .ThenInclude(p => p.Diagnoses.Where(g => g.Diagnos.code.StartsWith("F"))) // привязка диагнозов пациента
+                            .ThenInclude(d => d.Diagnos)  // привязка к диагнозам пациента дианоза из мкб
+                            .ToList()
+                            .ExceptBy(visitIds, v => v.keyid)
+                            .ToList(); 
+
                         MainWindow.Wait();
                     }
 
@@ -227,6 +231,7 @@ namespace Castor.gui.movebook
                 }
                 catch (Exception ex)
                 {
+                    MainWindow.Wait();
                     Console.WriteLine(ex.Message);
                 }
             };
@@ -241,7 +246,7 @@ namespace Castor.gui.movebook
                 context.SaveChanges();
                 await Task.Run(() => Load());
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
-                RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove");
+                RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.WeekmoveWidget");
             }
         }
 
@@ -280,7 +285,7 @@ namespace Castor.gui.movebook
         public async  void Refresh()
         {
             await Task.Run(() => Load());
-            RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.Weekmove", "Castor.gui.pages.ForceWidget");
+            RefreshNotify?.Invoke("Castor.gui.pages.FssWidget", "Castor.gui.pages.WeekmoveWidget", "Castor.gui.pages.ForceWidget");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
         }
 

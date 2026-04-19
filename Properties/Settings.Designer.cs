@@ -168,26 +168,10 @@ namespace Castor.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
-<ArrayOfString xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
-  <string>Castor.gui.pages.Weekmove</string>
-  <string>Castor.gui.pages.FssWidget</string>
-  <string>Castor.gui.pages.UnvlWidget</string>
-</ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection ExtraWidgets {
+        [global::System.Configuration.DefaultSettingValueAttribute("2704;2712;2701")]
+        public string AllowedDepartments {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["ExtraWidgets"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsd=\"http://www.w3." +
-            "org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <s" +
-            "tring>2704</string>\r\n  <string>2712</string>\r\n</ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection AllowedDepartments {
-            get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["AllowedDepartments"]));
+                return ((string)(this["AllowedDepartments"]));
             }
         }
     }

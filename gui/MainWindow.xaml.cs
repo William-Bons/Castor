@@ -60,7 +60,7 @@ namespace Castor
                         MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = Settings.Default.StartLoadingPage });
                     Cursor = Cursors.Arrow;
 
-                    ExtraInitialize();
+                    WidgetsExtraInitialize();
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentDbName)));
 
                 }
@@ -101,16 +101,22 @@ namespace Castor
             
         
 
-        private void ExtraInitialize()
+        private void WidgetsExtraInitialize()
         {
             _ExtraStack = new StackPanel() { Orientation  = Orientation.Vertical };
-            Grid.SetColumn(_ExtraStack, 1);
+            Grid.SetColumn(_ExtraStack, 0);
             MainFrameGrid.Children.Add(_ExtraStack);
 
+            // get FullName of all Types contains lexem `Widget` in name
+            var interfaces = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(a => a.GetTypes())
+                .Where(t => t.FullName.Contains("Widget") && !t.IsNested);
+            
+
             // create objects Wodgets from Parameter ExtraWidgets and add they into _ExtraStack
-            foreach (var _widget in Settings.Default.ExtraWidgets)
+            foreach (var _widget in interfaces)
             {
-                object WidgetObject = Activator.CreateInstance(Type.GetType(_widget));
+                object WidgetObject = Activator.CreateInstance(_widget);
                 _ExtraStack.Children.Add(WidgetObject as UIElement);
                 _ExtraStack.Children.Add(new Separator());
             }
