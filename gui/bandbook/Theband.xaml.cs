@@ -63,7 +63,7 @@ namespace Castor.gui.bandbook
                     using (MedisContext castor = new MedisContext())
                     {
                         var moving = castor.dep
-                                .Where(d => d.keyid == Settings.Default.LastSelectedDep)
+                                .Where(d => d.keyid == Settings.Default.LastSelectedDepId)
                                 .Include(d => d.Visits.Where(v => v.dat >= Quartal.start.ToUniversalTime() && v.dat <= Quartal.end.ToUniversalTime()))
                                 .ThenInclude(v => v.Patient)
                                 .ThenInclude(p => p.Diagnoses)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castor.gui.common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,7 +10,7 @@ namespace Castor.database.tab_medis;
 /// 
 /// Сотрудник на отделении
 /// </summary>
-public partial class docdep
+public partial class docdep : ITableView
 {
     /// <summary>
     /// Сотрудник на отделении

@@ -1,4 +1,5 @@
 ﻿using Castor.database.tab_medis;
+using Castor.gui.common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,7 @@ namespace Castor;
 ///  
 /// Услуги пациента
 /// </summary>
-public partial class patserv
+public partial class patserv : ITableView
 {
     /// <summary>
     /// Услуга, оказанная пациенту

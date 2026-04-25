@@ -55,7 +55,7 @@ namespace Castor.database
                     var connection = (SqliteConnection)context.Database.GetDbConnection();
 
                     // Create a connection to the destination backup file
-                    using (var backupConnection = new SqliteConnection($"Data Source={Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\\{Settings.Default.LastSelectedDep}_backup.db"))
+                    using (var backupConnection = new SqliteConnection($"Data Source={Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\\{Settings.Default.LastSelectedDepId}_backup.db"))
                     {
                         connection.Open();
                         backupConnection.Open();

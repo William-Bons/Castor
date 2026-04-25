@@ -22,7 +22,6 @@ namespace Castor
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private StackPanel _ExtraStack = null;
-        private string _DepartmentName = string.Empty;
         private static MainWindow _static_instance;
 
         public MainWindow()
@@ -81,25 +80,7 @@ namespace Castor
         public static MainWindow Instance => _static_instance;
         public event PropertyChangedEventHandler? PropertyChanged;
         public string CurrentDbName => $"Data Source={Settings.Default.sqliteConnection}";
-        public string Depname
-        {
-            get
-            {
-                if(!_DepartmentName.IsNullOrEmpty()) { return _DepartmentName; }
-                try
-                {
-                    using (MedisContext mc = new MedisContext())
-                    {
-                        _DepartmentName = mc.dep.Where(d => d.keyid == Settings.Default.LastSelectedDep)?.First().text;
-                    }
-
-                }
-                catch { }
-                return _DepartmentName;
-            }
-        }
-            
-        
+        public string Depname => Settings.Default.LastSelectedDepName;
 
         private void WidgetsExtraInitialize()
         {
@@ -148,13 +129,13 @@ namespace Castor
         {
             foreach (var item in _ExtraStack?.Children)
             {
-                if (item is IRefresh irf && classes.Where(c => c == item.GetType().FullName).Count() > 0)
+                if (item is IRefresh irf && classes.Any(c => c == item.GetType().FullName))
                 {
                     irf.Refresh();
                 }
             }
 
-            if(CentralFrame.Content is IRefresh rf && classes.Where(c => c == rf.GetType().FullName).Count() > 0)
+            if(CentralFrame.Content is IRefresh rf && classes.Any(c => c == rf.GetType().FullName))
             {
                 rf.Refresh();
             }

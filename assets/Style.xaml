@@ -53,26 +53,6 @@
         <Setter Property="HorizontalAlignment" Value="Left"/>
     </Style>
     
-    <Style TargetType="Button" x:Key="ButtonStyleGreen">
-        <Setter Property="MinWidth" Value="130" />
-        <Setter Property="Margin" Value="1" />
-
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-
-                    <Border BorderBrush="#FF185700" CornerRadius="1" BorderThickness="2" Background="#FFD2F3AA" >
-                        <TextBlock 
-                                Text="{TemplateBinding  Content}" Padding="6"
-                                VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                FontSize="16" FontFamily="Impact" FontStretch="Expanded" Foreground="DarkGreen" />
-
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style TargetType="{x:Type DataGridColumnHeader}" x:Key="ColumnHeaderSearch">
         <Style.Setters>
             <Setter Property="ContentTemplate">
@@ -91,20 +71,12 @@
         </Style.Setters>
     </Style>
 
-    <Style TargetType="Button" x:Key="ButtonGray">
-        <Setter Property="BorderBrush" Value="{x:Null}"/>
-        <Setter Property="FontFamily" Value="Arial Narrow"/>
-        <Setter Property="FontSize" Value="16"/>
+    <Style TargetType="Button" x:Key="Castor.ButtonGrayDialogue">
+        <Setter Property="FontFamily" Value="Courier New"/>
+        <Setter Property="FontSize" Value="15"/>
         <Setter Property="Padding" Value="4"/>
         <Setter Property="Margin" Value="3"/>
-        <Setter Property="Background">
-            <Setter.Value>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FFD4D4D4" Offset="1"/>
-                    <GradientStop Color="#FF979696"/>
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Width" Value="100" />
     </Style>
 
     <Style TargetType="{x:Type TextBlock}" x:Key="RegTextBoxStyle" >
@@ -155,12 +127,8 @@
         <Setter Property="SpellCheck.IsEnabled" Value="True"/>
     </Style>
 
-    <Style TargetType="TextBox" x:Key="PageTextBox">
+    <Style TargetType="TextBox" x:Key="Castor.StandardTextBox">
         <Setter Property="Margin" Value="3"/>
-        <Setter Property="FontFamily" Value="Arial Narrow"/>
-        <Setter Property="FontSize" Value="15"/>
-        <Setter Property="TextWrapping" Value="Wrap"/>
-        <Setter Property="AcceptsReturn" Value="True"/>
         <Setter Property="Language" Value="RU" />
         <Setter Property="Padding" Value="2" />
 
@@ -178,86 +146,6 @@
             <AdornedElementPlaceholder/>
         </DockPanel>
     </ControlTemplate>
-
-    <Style TargetType="Button" x:Key="GuiButton0">
-        <Setter Property="MinWidth" Value="130" />
-        <Setter Property="Margin" Value="1" />
-
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-
-                    <Border BorderBrush="#FF0A28AE" CornerRadius="3" BorderThickness="2" >
-                        <Border.Background>
-                            <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                                <GradientStop Color="#FF939393" Offset="0.996"/>
-                                <GradientStop Color="White"/>
-                            </LinearGradientBrush>
-                        </Border.Background>
-
-                        <Label 
-                                Content="{TemplateBinding  Content}" 
-                                TextBlock.Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                FontSize="16" FontFamily="Tahoma" FontWeight="Bold" Foreground="#FF08005B" />
-
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="Button" x:Key="GuiButtonX">
-        <Setter Property="MinWidth" Value="130" />
-        <Setter Property="Margin" Value="1" />
-
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border BorderBrush="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" BorderThickness="3" 
-                            Background="White" CornerRadius="3" >
-                        <Label 
-                                Content="{TemplateBinding  Content}" 
-                                FontFamily="Impact" FontSize="18" HorizontalContentAlignment="Center" Padding="5"
-                                Foreground="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="Button" x:Key="GuiButton1">
-        <Setter Property="MinWidth" Value="130" />
-        <Setter Property="Margin" Value="1" />
-
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border BorderBrush="DarkBlue" BorderThickness="1" Background="White" CornerRadius="1" >
-                        <Label 
-                                Content="{TemplateBinding  Content}" 
-                                FontFamily="Arial" FontSize="15" HorizontalContentAlignment="Right" Padding="3" Foreground="DarkBlue" />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="Button" x:Key="GuiButton2">
-        <Setter Property="MinWidth" Value="130" />
-        <Setter Property="Margin" Value="1" />
-
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border BorderBrush="#FF60A200" BorderThickness="3" Background="White" CornerRadius="3" >
-                        <Label 
-                                Content="{TemplateBinding  Content}" 
-                                FontFamily="Arial" FontSize="18" HorizontalContentAlignment="Left" Padding="5" Foreground="#FF4A7E00" />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <Style x:Key="styleCalendar" TargetType="{x:Type Calendar}">
         <Setter Property="Template">

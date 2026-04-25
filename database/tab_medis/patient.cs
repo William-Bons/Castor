@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castor.gui.common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -11,7 +12,7 @@ namespace Castor.database.tab_medis;
 ///  
 /// Пациент
 /// </summary>
-public partial class patient
+public partial class patient : ITableView
 {
     /// <summary>
     /// Пациент

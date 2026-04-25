@@ -54,6 +54,9 @@ namespace Castor.gui.movebook
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveButtonVisible)));
         }
 
+        /// <summary>
+        /// Загружает данные из базы в LoadedData при установленных флагах фильтрует ЗАКРЫТЫЕ и ВЫПИСАННЫЕ
+        /// </summary>
         private async Task Load()
         {
             if (context != null)  context.Dispose();
@@ -132,12 +135,18 @@ namespace Castor.gui.movebook
 
         private void LoadPatient(object sender, EventArgs e)
         {
-            CreateNew createNew = new CreateNew(sender is Button ? null : PatientsTable.SelectedItem);
-            createNew.ShowDialog();
+            FindPatient findPatient = new();
+            if(findPatient.ShowDialog().Value)
+            {
+                new CreateNew(findPatient.Visit).ShowDialog();
+            }
             NeedRefreshTable(sender, e);
         }
 
 
+        /// <summary>
+        /// Импорт из медис поступивших не более 30 дней назад и не импортированных в базу, сравнение по полному фио
+        /// </summary>
         private async void ImportNewby(object sender, RoutedEventArgs e)
         {
             List<long?> visitIds;
@@ -159,17 +168,18 @@ namespace Castor.gui.movebook
                     }
                     using (MedisContext cc = new MedisContext())
                     {
-                        // get visits for last 10 days
+                        // get visits for last 30 days
                         visitsWeek = cc.visit
-                           .Where(v => v.depid == Settings.Default.LastSelectedDep && (DateTime.Today.ToUniversalTime() - v.dat.Value).Days < 10 && v.dat1 == null)
+                           .Where(v => v.depid == Settings.Default.LastSelectedDepId && (DateTime.Today.ToUniversalTime() - v.dat.Value).Days < 30 && v.dat1 == null)
                            .Include(v => v.Patient)
+                           .ThenInclude(p => p.Diagnoses.Where(g => g.Diagnos.code.StartsWith("F"))) // привязка диагнозов пациента
+                           .ThenInclude(d => d.Diagnos)  // привязка к диагнозам пациента дианоза из мкб
+                           .ToList()
+                           .ExceptBy(fios, w => w.Fullname)
                            .ToList();
                     }
 
-                    var newby = visitsWeek
-                           .Where(v => !fios.Contains(v.Fullname));
-
-                    SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", newby, PlacementMode.Center, "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");
+                    SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", visitsWeek, PlacementMode.Center, "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");
                     soe.Selected += (a) =>
                     {
                         CreateNew createNew = new CreateNew(a);
@@ -185,6 +195,10 @@ namespace Castor.gui.movebook
             };
             await __check();
         }
+
+        /// <summary>
+        /// Импорт из медис по списку всех кто находится в отдлении и выписан не более 90 дней назад, исключая повторы, сравнение по visitId
+        /// </summary>
         private async void ImportList(object sender, RoutedEventArgs e)
         {
             List<long?> visitIds;
@@ -194,7 +208,7 @@ namespace Castor.gui.movebook
             {
                 try
                 {
-                    var __depId=Settings.Default.LastSelectedDep;
+                    var __depId=Settings.Default.LastSelectedDepId;
 
                     // получение списка VisitsIds загруженных в книгу
                     using (CastorContext castorContext = new CastorContext())
@@ -209,7 +223,7 @@ namespace Castor.gui.movebook
 
                         /* Medis выбирает тех кто находится в отделении и выписанных не более 30 дней назад */
                         visits = medisContext.visit
-                            .Where(v => v.depid == __depId && (!v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days <= 30)) // __depId - номер отдел. из Settings
+                            .Where(v => v.depid == __depId && (!v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days <= 90)) // __depId - номер отдел. из Settings
                             .Include(f => f.Patient)  // привязка пациента
                             .ThenInclude(p => p.Diagnoses.Where(g => g.Diagnos.code.StartsWith("F"))) // привязка диагнозов пациента
                             .ThenInclude(d => d.Diagnos)  // привязка к диагнозам пациента дианоза из мкб

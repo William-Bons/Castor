@@ -5,6 +5,7 @@ using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.Windows;
+using RefreshEventHandler = Castor.gui.common.RefreshEventHandler;
 
 namespace Castor.gui.dialogs
 {
@@ -13,15 +14,16 @@ namespace Castor.gui.dialogs
     /// </summary>
     public partial class SelectUser : Window, INotifyPropertyChanged, IDialog, IRefresh
     {
-        private dep _selectedDepartment;
         public event PropertyChangedEventHandler? PropertyChanged;
-        public event common.RefreshEventHandler RefreshNotify;
+        public event RefreshEventHandler RefreshNotify;
 
         public SelectUser()
         {
             try
             {
-                // список разрешенных отделений, устанавливается в настройках приложения, обновление только по перестроению
+                MainWindow.Wait(true);
+
+                // список разрешенных отделений, устанавливается в настройках приложения
                 List<long> allowed = new List<long>();
                 foreach (var d in Settings.Default.AllowedDepartments.Split(';'))
                 {
@@ -42,7 +44,7 @@ namespace Castor.gui.dialogs
                 }
 
                 // если отделение уже ранее выбрано то выбор его в списке отдлений
-                long depid = Settings.Default.LastSelectedDep;
+                long depid = Settings.Default.LastSelectedDepId;
                 if (depid > 0)
                 {
                     SelectedDepartment = Departments?.Where(dep => dep.keyid == depid)?.First();
@@ -51,6 +53,10 @@ namespace Castor.gui.dialogs
 
             }
             catch { }
+            finally
+            {
+                MainWindow.Wait();
+            }
             
             // Стандартная инициализация диалога
             InitializeComponent();
@@ -59,37 +65,39 @@ namespace Castor.gui.dialogs
 
         public ICollection<dep> Departments { get; set; } = new List<dep>();
         public string DbFilename { get; set; } = Settings.Default.sqliteConnection;
-        
-        public dep? SelectedDepartment
+        public dep? SelectedDepartment { get; set;  }
+
+
+        private void SaveDialogButton(object sender, RoutedEventArgs e)
         {
-            get => _selectedDepartment;
-            set
+            try
             {
-                _selectedDepartment= value;
-                Settings.Default.LastSelectedDep = _selectedDepartment.keyid;
-                DbFilename = $"{Settings.Default.dbPrefix}\\dep{_selectedDepartment.keyid}.db";
+                // Save SelectedDepartment Name and Doctors into Settings.Default
+                Settings.Default.LastSelectedDepId = SelectedDepartment.keyid;
+                Settings.Default.LastSelectedDepName = SelectedDepartment.text;
+                
+                DbFilename = $"{Settings.Default.dbPrefix}\\dep{SelectedDepartment.keyid}.db";
                 Settings.Default.sqliteConnection = DbFilename;
+                
+                //Settings.Default.DepartmentUsers = string.Join(';', [.. SelectedDepartment.Docdeps.Select(d => d.text)]);
                 Settings.Default.Save();
 
-                PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(nameof(SelectedDepartment)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedDepartment)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DbFilename)));
-            }
-        }
 
-        private void CloseDialogButton(object sender, RoutedEventArgs e)
-        {
-            // проверка существования файла БД и его создание в случае отсутствия
-            using(CastorContext context = new CastorContext())
-            {
-                context.Database.EnsureCreated();
+                // проверка существования файла БД и его создание в случае отсутствия
+                using (CastorContext context = new CastorContext())
+                {
+                    context.Database.EnsureCreated();
+                }
+                Close();
+                RefreshNotify?.Invoke("Castor.gui.movebook.Theband", "Castor.gui.movebook.Thebook");
             }
-            Close();
-            RefreshNotify?.Invoke("Castor.gui.movebook.Theband", "Castor.gui.movebook.Thebook");
+            catch { }
         }
 
         public void Refresh()
         {
-            throw new NotImplementedException();
         }
 
         private void SelectDbDirectory(object sender, RoutedEventArgs e)
@@ -106,7 +114,7 @@ namespace Castor.gui.dialogs
                     Settings.Default.dbPrefix = folderPath;
                     Settings.Default.Save();
 
-                    SelectedDepartment = _selectedDepartment;
+                    SelectedDepartment = SelectedDepartment;
                 }
             }
         }

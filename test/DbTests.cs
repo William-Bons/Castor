@@ -43,7 +43,7 @@ namespace Castor.test
                     {
                         // select visits patients aged<18 in last year from LastSelectedDep
                         IEnumerable<visit> visits = medis.visit
-                            .Where(v => v.depid == Settings.Default.LastSelectedDep && v.dat >= (DateTime.Parse("01.01.2025").ToUniversalTime()) && v.dat <= DateTime.Parse("31.12.2025").ToUniversalTime() /*&& v.dat1 != null*/)
+                            .Where(v => v.depid == Settings.Default.LastSelectedDepId && v.dat >= (DateTime.Parse("01.01.2025").ToUniversalTime()) && v.dat <= DateTime.Parse("31.12.2025").ToUniversalTime() /*&& v.dat1 != null*/)
                             .Include(v => v.Patient)
                             .ThenInclude(p => p.Diagnoses)
                             .ThenInclude(d => d.Diagnos)
@@ -92,7 +92,7 @@ namespace Castor.test
                     {
                         // select all visits in DEPARTMENT (dep)
                         visits = medis.dep
-                            .Where(d => d.keyid == Settings.Default.LastSelectedDep)
+                            .Where(d => d.keyid == Settings.Default.LastSelectedDepId)
                             .Include(d => d.Visits)
                             .ThenInclude(v => v.Patient)
                             .Select(d => d.Visits).First();
@@ -151,7 +151,7 @@ namespace Castor.test
 
                         // get visits for last 10 days
                         visitsWeek = cc.visit
-                           .Where(v => v.depid == Settings.Default.LastSelectedDep && (DateTime.Today.ToUniversalTime() - v.dat.Value).Days < 10 && v.dat1 == null)
+                           .Where(v => v.depid == Settings.Default.LastSelectedDepId && (DateTime.Today.ToUniversalTime() - v.dat.Value).Days < 10 && v.dat1 == null)
                            .Include(v => v.Patient)
                            .ToList();
 

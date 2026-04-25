@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castor.gui.common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +9,7 @@ namespace Castor.database.tab_medis;
 /// <summary>
 /// Диагнозы пациента
 /// </summary>
-public partial class patdiag
+public partial class patdiag : ITableView
 {
     [Key] public long keyid { get; set; }
 

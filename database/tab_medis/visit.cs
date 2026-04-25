@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castor.gui.common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,7 +10,7 @@ namespace Castor.database.tab_medis;
 ///  
 /// Визиты пациентов; Периоды госпитализации;
 /// </summary>
-public partial class visit
+public partial class visit : ITableView
 {
     /// <summary>
     /// визит
@@ -329,4 +330,5 @@ public partial class visit
     public virtual int DaysInDep => dat != null ? (DateTime.Now - dat).Value.Days : 0;
     public virtual string Fullname => Patient?.fullname ?? string.Empty;
     public virtual int Age => Patient?.age ?? 0;
+    public virtual string VPeriod => $"{dat} - {dat1}";
 }

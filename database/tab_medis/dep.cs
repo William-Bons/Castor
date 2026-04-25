@@ -1,4 +1,5 @@
 ﻿using Castor.database.tables;
+using Castor.gui.common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +15,7 @@ namespace Castor.database.tab_medis;
 /// 2742 - 6 отд
 /// 2709 - 12 отд
 /// </summary>
-public partial class dep 
+public partial class dep : ITableView
 {
     [Key] public long keyid { get; set; }
 
@@ -217,4 +218,5 @@ public partial class dep
 
     public virtual ICollection<visit>? Visits { get; set; }
     public virtual ICollection<docdep>? Docdeps { get; set; }
+    public virtual dep? Root { get; set; }
 }

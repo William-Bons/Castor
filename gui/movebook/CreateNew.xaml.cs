@@ -83,7 +83,7 @@ namespace Castor.gui.movebook
                 {
                     /* Запрос к Медис*/
                     ICollection<dep>? depList = medisContext.dep // отделения
-                        .Where(d => d.keyid == Settings.Default.LastSelectedDep) // где номер отделения = сохраненному в Settings
+                        .Where(d => d.keyid == Settings.Default.LastSelectedDepId) // где номер отделения = сохраненному в Settings
                         .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days < 8 )) // все невыписанные (!v.dat1.HasValue) и выписанные менее 8 дней назад
                         .ThenInclude(v => v.Doctor)  // привязка доктора
                         .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime( )- v.dat1).Value.Days < 8 ))
