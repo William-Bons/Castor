@@ -41,7 +41,7 @@ namespace Castor.gui.pages
                     ForceList = castor.Movebooks
                         .Where(m => m.Forcedid.HasValue)
                         .Include(m => m.ForceControl)
-                        .Where(f => f.ForceControl.Nextvk.Value.Month <= DateOnly.FromDateTime(DateTime.Today).Month)
+                        .Where(f => f.ForceControl.Nextvk.Month <= DateOnly.FromDateTime(DateTime.Today).Month)
                         .ToList();
                         
                 }

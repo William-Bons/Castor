@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Castor.gui.dialogs
+namespace Castor.gui.force
 {
     /// <summary>
     /// Логика взаимодействия для ForceControl.xaml
@@ -43,10 +43,6 @@ namespace Castor.gui.dialogs
 
         private void Calculate(object sender, RoutedEventArgs e)
         {
-            ForcedItem.Nextvk = ForcedItem.Nextvk.HasValue ?
-                ForcedItem.CalcNextVk(ForcedItem.Nextvk.Value) :
-                ForcedItem.CalcNextVk(ForcedItem.Start);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ForcedItem)));
         }
 
         private void CloseEln(object sender, RoutedEventArgs e)

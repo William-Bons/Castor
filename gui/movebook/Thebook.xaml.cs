@@ -3,6 +3,7 @@ using Castor.database.tab_medis;
 using Castor.database.tables;
 using Castor.gui.common;
 using Castor.gui.dialogs;
+using Castor.gui.force;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
@@ -354,22 +355,29 @@ namespace Castor.gui.movebook
             }
             else if (PatientsTable.CurrentColumn.DisplayIndex == 14) // select FORCE column
             {
-                using (CastorContext context = new CastorContext())
+                Movebook? mb = (PatientsTable.SelectedItem as Movebook);
+                if(mb!=null && mb.Forcedid.HasValue && mb.Forcedid.Value>0)
                 {
-                    Movebook mb = (PatientsTable.SelectedItem as Movebook);
-
-                    long? id = mb?.Forcedid;
-                    Forced forced = id.HasValue ? context.Forced.Where(f => f.Id==id.Value).First() : null;
-
-                    ForceControl forceControl = new ForceControl((object)forced ?? mb);
-                    if(forceControl.ShowDialog().Value == true)
-                    {
-                        mb.Forcedid = forceControl.ForcedItem.Id;  
-                        context.Update(mb);
-                        context.SaveChanges();
-                        NeedRefreshTable(sender, e);
-                    }
+                    Forcepage forcepage  = new Forcepage(mb.Patientid.Value);
+                    NavigationService.Navigate(forcepage);
                 }
+
+                //using (CastorContext context = new CastorContext())
+                //{
+                    
+
+                //    long? id = mb?.Forcedid;
+                //    Forced forced = id.HasValue ? context.Forced.Where(f => f.Id==id.Value).First() : null;
+
+                //    ForceControl forceControl = new ForceControl((object)forced ?? mb);
+                //    if(forceControl.ShowDialog().Value == true)
+                //    {
+                //        mb.Forcedid = forceControl.ForcedItem.Id;  
+                //        context.Update(mb);
+                //        context.SaveChanges();
+                //        NeedRefreshTable(sender, e);
+                //    }
+                //}
             }
         }
 

@@ -78,7 +78,7 @@
         </DataGrid>
         <DataGrid Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Visits}" AutoGenerateColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectedItem="{Binding Visit}" MouseDoubleClick="SelectPatient">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="" Binding="{Binding dep}" />
+                <DataGridTextColumn Header="" Binding="{Binding Dep.stext}" />
                 <DataGridTextColumn Header="" Binding="{Binding VPeriod}" />
                 <DataGridTextColumn Header="" Binding="{Binding }" />
                 <DataGridTextColumn Header="" Binding="{Binding }" />
