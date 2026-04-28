@@ -24,10 +24,10 @@
         </Grid.RowDefinitions>
 
         <ToolBar Grid.Row="0" Background="Transparent">
-            <Button ToolTip="Добавить постановление суда" Style="{DynamicResource Castor.Toolbarbutton}">
+            <Button ToolTip="Добавить постановление суда" Style="{DynamicResource Castor.Toolbarbutton}" Click="AddNewCourtOrder">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/log_logout_door_1563.ico" />
-                    <TextBlock Text="Поступление" FontSize="16" VerticalAlignment="Center"/>
+                    <Image Source="/img/add-icon.png" />
+                    <TextBlock Text=" добавить" FontSize="16" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
             <Button ToolTip="Фильтр"  Style="{DynamicResource Castor.Toolbarbutton}" Click="OpenHideContextMenu">
@@ -52,6 +52,7 @@
 
         </ToolBar>
 
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Forceds}" CanUserAddRows="False" x:Name="ForcesDataGrid"/>
 
     </Grid>
 </Page>

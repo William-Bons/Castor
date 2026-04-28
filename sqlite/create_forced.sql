@@ -1,0 +1,10 @@
+﻿CREATE TABLE "Forced" (
+    "Id" INTEGER NOT NULL CONSTRAINT "PK_Forced" PRIMARY KEY AUTOINCREMENT,
+    "RootId" INTEGER NOT NULL,
+    "Start" TEXT NOT NULL,
+    "End" TEXT NULL,
+    "Patientid" INTEGER NOT NULL,
+    "Visitid" INTEGER NOT NULL,
+    "Type" INTEGER NULL,
+    "Courtname" TEXT NULL
+)

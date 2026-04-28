@@ -11,13 +11,13 @@ namespace Castor.database.tables
     public class Forced : ITableView
     {
         [Key] public long Id { get; set; }
-        public long RootId { get; set; } // ссылка на самое первое постановление
+        public long RootId { get; set; } = 0; // ссылка на самое первое постановление
         public DateOnly Start {  get; set; }// начало принуд лечения (дата текущего пост суда)
         public DateOnly? End { get; set; } // дата закрытия этого постановления, заполняется после получения следующего пост суда 
         public long Patientid { get; set; } // id patient from medis
         public long Visitid { get; set; } // id visit from medis № и/бол
-        public int Type { get; set; } // 100-амб, 101-общ, 102 - спец, 103-стин, 104-снято, 199-в переходе, 
-        public string Courtname {  get; set; }// название суда
+        public int? Type { get; set; } // 100-амб, 101-общ, 102 - спец, 103-стин, 104-снято, 199-в переходе, 
+        public string? Courtname {  get; set; }// название суда
         
         
         public virtual int DaysTotal => End.HasValue ? (End.Value.ToDateTime(TimeOnly.MinValue)-Start.ToDateTime(TimeOnly.MinValue)).Days+1 : 0;

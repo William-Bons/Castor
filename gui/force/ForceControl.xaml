@@ -1,4 +1,4 @@
-﻿<Window x:Class="Castor.gui.force.ForceControl"
+﻿<Window x:Name="window" x:Class="Castor.gui.force.ForceControl"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,20 +6,30 @@
         xmlns:local="clr-namespace:Castor.gui.dialogs" xmlns:common="clr-namespace:Castor.gui.common"
         mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen"
         FontFamily="Courier New" FontSize="15" Language="RU"
-        Title="Принудительная мера" Height="237" Width="575">
-    
+        Title="Принудительная мера" d:Height="600" d:Width="800">
+
     <Window.Resources>
-        <common:DateOnlyConverter x:Key="DateOnlyConverter"/>
+        <ResourceDictionary>
+            <common:DateOnlyConverter x:Key="DateOnlyConverter"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/assets/Style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Margin="10" >
+        <Grid Grid.Row="0" Margin="20" DataContext="{Binding ForcedItem}" x:Name="FocusPanel">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -33,19 +43,44 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0" Text="Дата постановления суда" Padding="2" />
-            <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding ForcedItem.Start, Converter={StaticResource DateOnlyConverter}}" Margin="2" />
+            <TextBlock  Grid.Row="0" Text="Пациент" Style="{DynamicResource TextBlockStyle0}" />
+            <TextBlock  Grid.Row="0" Grid.Column="1" DataContext="{Binding ElementName=window, Mode=OneWay}" Text="{Binding Visit.Patient.fullname}" Style="{DynamicResource TextBlockStyle0}"/>
+            <Button Grid.Row="0" Grid.Column="1" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{DynamicResource TransparentButton}">
+                <Image Source="/img/jail-icon.png" />
+            </Button>
 
-            <TextBlock Grid.Row="1" Text="Дата снятия ПММХ" Padding="2" />
-            <DatePicker Grid.Row="1" Grid.Column="1" SelectedDate="{Binding ForcedItem.End, Converter={StaticResource DateOnlyConverter}}" Margin="2" />
-            <TextBlock Grid.Row="2" Text="Дата следующего ВК" Padding="2" />
-            <DatePicker Grid.Row="2" Grid.Column="1" SelectedDate="{Binding ForcedItem.Nextvk, Converter={StaticResource DateOnlyConverter}}" Margin="2" />
+            <TextBlock  Grid.Row="1" Text="Связь с первым постановлением" Style="{DynamicResource TextBlockStyle0}" />
+            <TextBlock  Grid.Row="1" Grid.Column="1" DataContext="{Binding ElementName=window, Mode=OneWay}" Text="{Binding FirstForce.Start}" Style="{DynamicResource TextBlockStyle0}"/>
+            <Button Grid.Row="1" Grid.Column="1" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{DynamicResource TransparentButton}">
+                <Image Source="/img/add-icon.png" />
+            </Button>
+
+            <TextBlock  Grid.Row="2" Text="Дата постановления суда" Style="{DynamicResource TextBlockStyle0}" />
+            <DatePicker Grid.Row="2" Grid.Column="1" SelectedDate="{Binding Start, Converter={StaticResource DateOnlyConverter}}" Margin="3" />
+
+            <TextBlock  Grid.Row="3" Text="Суд, назначивший ПММХ" Style="{DynamicResource TextBlockStyle0}" />
+            <ComboBox   Grid.Row="3" Grid.Column="1" Text="{Binding Courtname}" IsEditable="True" Style="{DynamicResource Castor.ComboBox0}" />
+
+            <TextBlock  Grid.Row="4" Text="Вид ПММХ" Style="{DynamicResource TextBlockStyle0}" />
+            <ComboBox   Grid.Row="4" Grid.Column="1" SelectedValuePath="Tag" SelectedValue="{Binding Type}" Style="{DynamicResource Castor.ComboBox0}">
+                <!--100-амб, 101-общ, 102 - спец, 103-стин, 104-снято, 199-в переходе,-->
+                <ComboBoxItem Tag="100">Амбулаторное ПЛ</ComboBoxItem>
+                <ComboBoxItem Tag="101">ПММХ Общий тип</ComboBoxItem>
+                <ComboBoxItem Tag="102">ПММХ Специализированный тип</ComboBoxItem>
+                <ComboBoxItem Tag="103">ПММХ СТИН</ComboBoxItem>
+                <ComboBoxItem Tag="104">Отменено</ComboBoxItem>
+                <ComboBoxItem Tag="199">Переходный период</ComboBoxItem>
+            </ComboBox>
+
+            <TextBlock  Grid.Row="10" Text="Дата снятия ПММХ" Style="{DynamicResource TextBlockStyle0}" />
+            <DatePicker Grid.Row="10" Grid.Column="1" SelectedDate="{Binding End, Converter={StaticResource DateOnlyConverter}}" Margin="3" />
+
 
         </Grid>
 
         <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10">
-            <Button Content="Рассчитать" Click="Calculate" Margin="5" />
-            <Button Content="Снять" Click="CloseEln" Margin="5" />
+            <Button Content="Рассчитать"  Margin="5" />
+            <Button Content="Снять"  Margin="5" />
             <Separator/>
             <Button Content="Записать" Click="Write" Margin="5" />
         </StackPanel>

@@ -113,7 +113,6 @@
         <Setter Property="Margin" Value="3"/>
         <Setter Property="Padding" Value="3"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
-        <Setter Property="Width" Value="150" />
     </Style>
 
     <Style TargetType="TextBox" x:Key="TextBoxStyle0">

@@ -124,6 +124,9 @@
   <data name="BlockTrTd" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\assets\BlockTrTd.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="create_forced" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\sqlite\create_forced.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="MonthReport" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\assets\MonthReport.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

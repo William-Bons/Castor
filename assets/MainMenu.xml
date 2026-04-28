@@ -11,6 +11,7 @@
 			<MenuItem Header="Запрос к БД 3"  ClassName="Castor.test.DbTests" Parameter ="TTestSelectTable3" />
 			<MenuItem Header="Create Html Test"  ClassName="Castor.test.DbTests" Parameter ="TCreateHtml" />
 		</MenuItem>
+		<MenuItem Header="Принудительное лечение"  ClassName="Castor.gui.force.Forcepage" />
 		<MenuItem Header="Движение пациентов"  ClassName="Castor.gui.movebook.Thebook" />
 		<MenuItem Header="Список пациентов в отделении" ClassName="Castor.gui.pages.LoadPatientsFromMedis"/>
 		<MenuItem Header="Мультибригада" ClassName="Castor.gui.bandbook.Theband"/>

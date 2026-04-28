@@ -64,7 +64,7 @@ namespace Castor.Properties {
         ///   Ищет локализованную строку, похожую на 
         ///
         ///&lt;tr&gt;
-        ///    &lt;td&gt;{0}&lt;/td &gt;
+        ///    &lt;th&gt;{0}&lt;/th &gt;
         ///    &lt;td&gt;{1}&lt;/td&gt; 
         ///    &lt;td&gt;{2}&lt;/td&gt; 
         ///&lt;/tr&gt; 
@@ -118,18 +118,36 @@ namespace Castor.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на CREATE TABLE &quot;Forced&quot; (
+        ///    &quot;Id&quot; INTEGER NOT NULL CONSTRAINT &quot;PK_Forced&quot; PRIMARY KEY AUTOINCREMENT,
+        ///    &quot;RootId&quot; INTEGER NOT NULL,
+        ///    &quot;Start&quot; TEXT NOT NULL,
+        ///    &quot;End&quot; TEXT NULL,
+        ///    &quot;Patientid&quot; INTEGER NOT NULL,
+        ///    &quot;Visitid&quot; INTEGER NOT NULL,
+        ///    &quot;Type&quot; INTEGER NULL,
+        ///    &quot;Courtname&quot; TEXT NULL
+        ///).
+        /// </summary>
+        internal static string create_forced {
+            get {
+                return ResourceManager.GetString("create_forced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на &lt;!DOCTYPE html&gt; 
         ///&lt;html&gt; 
         ///&lt;meta http-equiv=&apos;Content-Type&apos; content=&apos;text/html;charset=UTF-8&apos;&gt;
         ///&lt;head&gt;
         ///    &lt;style&gt;
         ///    p {{
-        ///        font-size: 16pt;
+        ///        font-size: 14pt;
         ///    }}
         ///    table {{                        /* This CSS rule makes the table use 100% of its parent container&apos;s width */
         ///        width: 100%;
         ///        border-collapse: collapse;  /* Optional: Makes borders look nicer */
-        ///        font-size: 14pt;
+        ///        font-size: 12pt;
         ///    }}
         ///
         ///    th, td {{

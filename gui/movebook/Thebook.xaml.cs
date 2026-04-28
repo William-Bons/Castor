@@ -356,9 +356,9 @@ namespace Castor.gui.movebook
             else if (PatientsTable.CurrentColumn.DisplayIndex == 14) // select FORCE column
             {
                 Movebook? mb = (PatientsTable.SelectedItem as Movebook);
-                if(mb!=null && mb.Forcedid.HasValue && mb.Forcedid.Value>0)
+                if(mb!=null)
                 {
-                    Forcepage forcepage  = new Forcepage(mb.Patientid.Value);
+                    Forcepage forcepage  = new Forcepage(mb);
                     NavigationService.Navigate(forcepage);
                 }
 

@@ -55,21 +55,21 @@ namespace Castor.gui.pages
 
         private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            try
-            {
-                Movebook? movebook = (sender as DataGrid)?.SelectedItem as Movebook;
-                Forced? forced = movebook?.ForceControl;
-                ForceControl control = new ForceControl(forced);
-                if (control.ShowDialog().Value)
-                {
-                    using (CastorContext castor = new CastorContext())
-                    {
-                        castor.Forced.Update(forced);
-                        castor.SaveChanges();
-                    }
-                }
-            }
-            catch { }
+            //try
+            //{
+            //    Movebook? movebook = (sender as DataGrid)?.SelectedItem as Movebook;
+            //    Forced? forced = movebook?.ForceControl;
+            //    ForceControl control = new ForceControl(forced);
+            //    if (control.ShowDialog().Value)
+            //    {
+            //        using (CastorContext castor = new CastorContext())
+            //        {
+            //            castor.Forced.Update(forced);
+            //            castor.SaveChanges();
+            //        }
+            //    }
+            //}
+            //catch { }
         }
     }
 }
