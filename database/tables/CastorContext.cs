@@ -1,5 +1,6 @@
 ﻿using Castor.database.tables;
 using Castor.Properties;
+using EfSchemaCompare;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System.Windows;
@@ -44,25 +45,39 @@ namespace Castor.database
         /// </summary>
         public string Variant => $"{VariantNames[(int)_contextVariant]}: {Database.GetDbConnection().DataSource} @ {Database.GetDbConnection().Database}";
 
+        public bool DBHasErrors()
+        {
+            var comparer = new CompareEfSql();
+
+            //ATTEMPT
+            //This will compare EF Core model of the database with
+            //the database that the context's connection points to
+            var hasErrors = comparer.CompareEfWithDb(this);
+
+            //VERIFY
+            //The CompareEfWithDb method returns true if there were errors. 
+            //The comparer.GetAllErrors property returns a string, with each error on a separate line
+            if (hasErrors)
+                MessageBox.Show(comparer.GetAllErrors,"DB Errors", MessageBoxButton.OK, MessageBoxImage.Error);
+            return hasErrors;
+        }
+
         public void Backup()
         {
             // создает ДБ backup in User Home directory
             try
             {
-                using (CastorContext context = new CastorContext())
+                // Access the underlying connection from your DbContext
+                var connection = (SqliteConnection)Database.GetDbConnection();
+
+                // Create a connection to the destination backup file
+                using (var backupConnection = new SqliteConnection($"Data Source={Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\\{Settings.Default.LastSelectedDepId}_backup.db"))
                 {
-                    // Access the underlying connection from your DbContext
-                    var connection = (SqliteConnection)context.Database.GetDbConnection();
+                    connection.Open();
+                    backupConnection.Open();
 
-                    // Create a connection to the destination backup file
-                    using (var backupConnection = new SqliteConnection($"Data Source={Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\\{Settings.Default.LastSelectedDepId}_backup.db"))
-                    {
-                        connection.Open();
-                        backupConnection.Open();
-
-                        // Perform the backup
-                        connection.BackupDatabase(backupConnection);
-                    }
+                    // Perform the backup
+                    connection.BackupDatabase(backupConnection);
                 }
             }
             catch { }

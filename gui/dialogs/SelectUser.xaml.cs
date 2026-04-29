@@ -102,21 +102,21 @@ namespace Castor.gui.dialogs
 
         private void SelectDbDirectory(object sender, RoutedEventArgs e)
         {
-            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
-            {
-                dialog.Description = "Select a folder for your project";
-                dialog.ShowNewFolderButton = true;
-                dialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            //using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            //{
+            //    dialog.Description = "Select a folder for your project";
+            //    dialog.ShowNewFolderButton = true;
+            //    dialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    string folderPath = dialog.SelectedPath;
-                    Settings.Default.dbPrefix = folderPath;
-                    Settings.Default.Save();
+            //    if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            //    {
+            //        string folderPath = dialog.SelectedPath;
+            //        Settings.Default.dbPrefix = folderPath;
+            //        Settings.Default.Save();
 
-                    SelectedDepartment = SelectedDepartment;
-                }
-            }
+            //        SelectedDepartment = SelectedDepartment;
+            //    }
+            //}
         }
     }
 }

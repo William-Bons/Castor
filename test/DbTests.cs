@@ -4,6 +4,7 @@ using Castor.database.tables;
 using Castor.gui.common;
 using Castor.gui.dialogs;
 using Castor.Properties;
+using EfSchemaCompare;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -126,8 +127,11 @@ namespace Castor.test
             //{
             //    ConsoleMessage?.Invoke($"{s} == {Regex.IsMatch(s, @"^F(21|01|22|23|25|30|31|32)")}");
             //}
-
             
+            //SETUP
+            //var options = //... with connection to database to check
+            
+
 
         }
 

@@ -27,6 +27,15 @@ namespace Castor
         public MainWindow()
         {
             _static_instance = this;
+
+            // предстартовые проверки схемы и бэкап
+            using CastorContext castorContext = new CastorContext();
+            if(castorContext.DBHasErrors())
+            {
+                return;
+            }
+            castorContext.Backup();
+
             InitializeComponent();
             new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
             DataContext = this;
@@ -45,9 +54,6 @@ namespace Castor
             //{
             //    MessageBox.Show("Ваше отделение не имеет права использовать приложение", "Контроль", MessageBoxButton.OK, MessageBoxImage.Error);
             //}
-
-            // BACKUP
-            new CastorContext().Backup();
 
             ContentRendered += async (o, e) =>
             {
