@@ -13,6 +13,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Castor
 {
@@ -21,7 +22,6 @@ namespace Castor
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private StackPanel _ExtraStack = null;
         private static MainWindow _static_instance;
 
         public MainWindow()
@@ -30,16 +30,14 @@ namespace Castor
 
             // предстартовые проверки схемы и бэкап
             using CastorContext castorContext = new CastorContext();
-            if(castorContext.DBHasErrors())
-            {
-                return;
-            }
+            
             castorContext.Backup();
 
+            // инициализация MainWindow and ExtraWidgets
+            DataContext = this;
             InitializeComponent();
             new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
-            DataContext = this;
-            Title = $"КНИГА ДВИЖЕНИЯ   :  {Depname}";
+            WidgetsExtraInitialize();
 
             // проверка сущестования файла БД для текущего отделения
             if (!File.Exists(Settings.Default.sqliteConnection))
@@ -48,32 +46,17 @@ namespace Castor
                 new SelectUser().ShowDialog();
             }
 
-            //// check department access
-            //if (Settings.Default.LastSelectedDep != 2704 &&
-            //    Settings.Default.LastSelectedDep != 2707)
-            //{
-            //    MessageBox.Show("Ваше отделение не имеет права использовать приложение", "Контроль", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
+            //todo ?? check department access
 
-            ContentRendered += async (o, e) =>
-            {
-                try
-                {
-                    Cursor = Cursors.Wait;
-                    // load page according SettingsCheet.Default.StartLoadedPage
-                    if (!Settings.Default.StartLoadingPage.IsNullOrEmpty())
-                        MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = Settings.Default.StartLoadingPage });
-                    Cursor = Cursors.Arrow;
+            // load page according SettingsCheet.Default.StartLoadedPage
+            if (!Settings.Default.StartLoadingPage.IsNullOrEmpty())
+                MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = Settings.Default.StartLoadingPage });
 
-                    WidgetsExtraInitialize();
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentDbName)));
 
-                }
-                catch { }
-            };
 
             Closed += (a, b) =>
             {
+                // сохранение открытой страницы 
                 if (!string.IsNullOrWhiteSpace(CentralFrame?.Content?.GetType().ToString())
                     && CentralFrame?.Content is IStartablePage)
                 {
@@ -90,7 +73,7 @@ namespace Castor
 
         private void WidgetsExtraInitialize()
         {
-            _ExtraStack = new StackPanel() { Orientation  = Orientation.Vertical };
+            var _ExtraStack = new StackPanel() { Orientation  = Orientation.Vertical };
             Grid.SetColumn(_ExtraStack, 0);
             MainFrameGrid.Children.Add(_ExtraStack);
 
@@ -131,31 +114,38 @@ namespace Castor
             }
         }
 
-        private void Refh_RefreshNotify(params string[] classes)
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
         {
-            foreach (var item in _ExtraStack?.Children)
+            if (depObj != null)
             {
-                if (item is IRefresh irf && classes.Any(c => c == item.GetType().FullName))
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
                 {
-                    irf.Refresh();
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
                 }
             }
+        }
 
-            if(CentralFrame.Content is IRefresh rf && classes.Any(c => c == rf.GetType().FullName))
-            {
-                rf.Refresh();
-            }
+        private void Refh_RefreshNotify(params string[] classes)
+        {
+            FindVisualChildren<UIElement>(this).OfType<IRefresh>()      // find all children UIElement interfaces IRefresh
+                .Where(x => classes.Contains(x.GetType().FullName))     // filter by names in classes parameter
+                .ToList().ForEach(i => i.Refresh());                    // call Refresh method for all found objects
         }
 
         private void PrintStatusMessage(string message, string barName)
         {
-            foreach (var item in MainStatusBar.Items)
-            {
-                if (item is TextBlock _iTextBlock && _iTextBlock.Name == barName)
-                {
-                    _iTextBlock.Text = message;
-                }
-            }
+            MainStatusBar.Items.OfType<TextBlock>()
+                .First(t =>  t.Name==barName)
+                .Text = message;
         }
 
         private void SwitchFramePage(string className, object param)

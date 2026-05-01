@@ -120,18 +120,19 @@ namespace Castor.test
             MainWindow.Wait();
         }
 
-        public async Task TTestSelectTable2()
+        public void TTestSelectTable2()
         {
             //string[] ds = { "F20", "F21","F32.2","F25","F43.2","F01.0","G20","F70.0","F23.1","20.0","21"  };
             //foreach (string s in ds)
             //{
             //    ConsoleMessage?.Invoke($"{s} == {Regex.IsMatch(s, @"^F(21|01|22|23|25|30|31|32)")}");
             //}
-            
+
             //SETUP
             //var options = //... with connection to database to check
-            
 
+            CastorContext castorContext = new CastorContext();
+            castorContext.DBHasErrors();
 
         }
 

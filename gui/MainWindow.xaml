@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:Castor"
         xmlns:gui="clr-namespace:Castor.gui" 
         xmlns:pages="clr-namespace:Castor.gui.pages"
-        
         mc:Ignorable="d"
         WindowState="Maximized"
-        d:Title="MainWindow" Height="450" Width="800">
+        Title="{Binding Depname}" Height="450" Width="800">
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

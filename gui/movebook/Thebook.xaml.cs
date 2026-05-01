@@ -42,7 +42,7 @@ namespace Castor.gui.movebook
 
         public bool IsHideDisordered { get; set; } = Settings.Default.HideDisordered;
         public bool IsHideClosedCards { get; set; } = Settings.Default.HideClosedCards;
-        public ICollection<Movebook> LoadedData { get; private set; }
+        public IEnumerable<Movebook> LoadedData { get; private set; }
         public Visibility SaveButtonVisible => need_save ? Visibility.Visible : Visibility.Collapsed;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -257,6 +257,7 @@ namespace Castor.gui.movebook
         {
             if (MessageBox.Show("Удалить строку из базы данных?", "Удаление", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
+                using CastorContext context = new CastorContext();
                 context.Movebooks.Remove(PatientsTable.SelectedItem as Movebook);
                 context.SaveChanges();
                 await Task.Run(() => Load());

@@ -82,15 +82,12 @@ namespace Castor.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Host=172.23.1.220;Port=5432;Database=med;Username=SOLUTION_MED;Password=elsoft;")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAfvJm6wKQ20G8cjaXRUwHVQAAAAACAAAAAAAQZgAAAAEAACAAAAAhfOZU5fLkarUroq4TOO8ZagN5Pvp+LS/rKZtr8wYtGQAAAAAOgAAAAAIAACAAAACDuam1+4TdsSWhb/gh2ExJhQyD4/73k824309gRZkgxlAAAAA40lWZ2eJAGIUxF3TYokkgamBVEf6aDpqxqrviXwb5YUBSYdkwHgdI6n4WILh1ZUrRKu6und5fiOXP+t8/YsTeoJf6Q0f29/hsGkOJXbIXuEAAAACGUwpF8Pvs11LI+FENdVFFpTmtTdity0LPYHGeLWW+X2i/Hkv3uho8cm4D+2FuKD2dIHvVaGUSq8MRb4zZACNW")]
         public string postgreeConnection {
             get {
                 return ((string)(this["postgreeConnection"]));
-            }
-            set {
-                this["postgreeConnection"] = value;
             }
         }
         
@@ -196,6 +193,18 @@ namespace Castor.Properties {
             }
             set {
                 this["DepartmentUsers"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public long LastForcedPatientID {
+            get {
+                return ((long)(this["LastForcedPatientID"]));
+            }
+            set {
+                this["LastForcedPatientID"] = value;
             }
         }
     }

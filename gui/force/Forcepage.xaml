@@ -52,7 +52,7 @@
 
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Forceds}" CanUserAddRows="False" x:Name="ForcesDataGrid"/>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding ForceList}" CanUserAddRows="False" x:Name="ForcesDataGrid"/>
 
     </Grid>
 </Page>

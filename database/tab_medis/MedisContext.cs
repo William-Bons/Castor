@@ -1,7 +1,10 @@
 ﻿using Castor.database.tables;
 using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 using System.Net.NetworkInformation;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows;
 
 namespace Castor.database.tab_medis
@@ -51,7 +54,7 @@ namespace Castor.database.tab_medis
         {
             try
             {
-                optionsBuilder.UseNpgsql(Properties.Settings.Default.postgreeConnection);
+                optionsBuilder.UseNpgsql(Decrypt(Properties.Settings.Default.postgreeConnection));
             }
             catch (Exception ex) 
             {
@@ -73,6 +76,22 @@ namespace Castor.database.tab_medis
             {
                 return IPStatus.Unknown;
             }
+        }
+
+        public static string Encrypt(string plainText, string password = null)
+        {
+            var data = Encoding.Default.GetBytes(plainText);
+            var pwd = !string.IsNullOrEmpty(password) ? Encoding.Default.GetBytes(password) : Array.Empty<byte>();
+            var cipher = ProtectedData.Protect(data, pwd, DataProtectionScope.CurrentUser);
+            return Convert.ToBase64String(cipher);
+        }
+
+        public static string Decrypt(string cipherText, string password = null)
+        {
+            var cipher = Convert.FromBase64String(cipherText);
+            var pwd = !string.IsNullOrEmpty(password) ? Encoding.Default.GetBytes(password) : Array.Empty<byte>();
+            var data = ProtectedData.Unprotect(cipher, pwd, DataProtectionScope.CurrentUser);
+            return Encoding.Default.GetString(data);
         }
     }
 }
