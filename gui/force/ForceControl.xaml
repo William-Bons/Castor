@@ -50,7 +50,11 @@
             </Button>
 
             <TextBlock  Grid.Row="1" Text="Связь с первым постановлением" Style="{DynamicResource TextBlockStyle0}" />
-            <TextBlock  Grid.Row="1" Grid.Column="1" DataContext="{Binding ElementName=window, Mode=OneWay}" Text="{Binding FirstForce.Start}" Style="{DynamicResource TextBlockStyle0}"/>
+            <TextBlock  Grid.Row="1" Grid.Column="1" DataContext="{Binding ElementName=window, Mode=OneWay}"  Style="{DynamicResource TextBlockStyle0}">
+                <Run Text="{Binding FirstForce.Start}"/>
+                <LineBreak/>
+                <Run Text="{Binding FirstForce.Number}"/>
+            </TextBlock>
             <Button Grid.Row="1" Grid.Column="1" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{DynamicResource TransparentButton}">
                 <Image Source="/img/add-icon.png" />
             </Button>
@@ -58,11 +62,14 @@
             <TextBlock  Grid.Row="2" Text="Дата постановления суда" Style="{DynamicResource TextBlockStyle0}" />
             <DatePicker Grid.Row="2" Grid.Column="1" SelectedDate="{Binding Start, Converter={StaticResource DateOnlyConverter}}" Margin="3" />
 
-            <TextBlock  Grid.Row="3" Text="Суд, назначивший ПММХ" Style="{DynamicResource TextBlockStyle0}" />
-            <ComboBox   Grid.Row="3" Grid.Column="1" Text="{Binding Courtname}" IsEditable="True" Style="{DynamicResource Castor.ComboBox0}" />
+            <TextBlock  Grid.Row="3" Text="Номер постановления суда" Style="{DynamicResource TextBlockStyle0}" />
+            <TextBox    Grid.Row="3" Grid.Column="1" Text="{Binding Number}" Style="{DynamicResource Castor.StandardTextBox}" />
 
-            <TextBlock  Grid.Row="4" Text="Вид ПММХ" Style="{DynamicResource TextBlockStyle0}" />
-            <ComboBox   Grid.Row="4" Grid.Column="1" SelectedValuePath="Tag" SelectedValue="{Binding Type}" Style="{DynamicResource Castor.ComboBox0}">
+            <TextBlock  Grid.Row="4" Text="Суд, назначивший ПММХ" Style="{DynamicResource TextBlockStyle0}" />
+            <ComboBox   Grid.Row="4" Grid.Column="1" DataContext="{Binding ElementName=window, Mode=OneWay}" ItemsSource="{Binding Courts}" Text="{Binding ForcedItem.Courtname}" IsEditable="True" Style="{DynamicResource Castor.ComboBox0}" />
+
+            <TextBlock  Grid.Row="5" Text="Вид ПММХ" Style="{DynamicResource TextBlockStyle0}" />
+            <ComboBox   Grid.Row="5" Grid.Column="1" SelectedValuePath="Tag" SelectedValue="{Binding Type}" Style="{DynamicResource Castor.ComboBox0}">
                 <!--100-амб, 101-общ, 102 - спец, 103-стин, 104-снято, 199-в переходе,-->
                 <ComboBoxItem Tag="100">Амбулаторное ПЛ</ComboBoxItem>
                 <ComboBoxItem Tag="101">ПММХ Общий тип</ComboBoxItem>

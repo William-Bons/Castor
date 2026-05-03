@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castor.gui.common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace Castor.gui.dialogs
     /// <summary>
     /// Логика взаимодействия для About.xaml
     /// </summary>
-    public partial class About : Window
+    public partial class About : Window, IDialog
     {
         public About()
         {

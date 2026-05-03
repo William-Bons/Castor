@@ -44,6 +44,7 @@ namespace Castor.database
         /// need for console output
         /// </summary>
         public string Variant => $"{VariantNames[(int)_contextVariant]}: {Database.GetDbConnection().DataSource} @ {Database.GetDbConnection().Database}";
+        public string Errors {  get; private set; }
 
         public bool DBHasErrors()
         {
@@ -58,7 +59,8 @@ namespace Castor.database
             //The CompareEfWithDb method returns true if there were errors. 
             //The comparer.GetAllErrors property returns a string, with each error on a separate line
             if (hasErrors)
-                MessageBox.Show(comparer.GetAllErrors,"DB Errors", MessageBoxButton.OK, MessageBoxImage.Error);
+                Errors = comparer.GetAllErrors;
+                //MessageBox.Show(comparer.GetAllErrors,"DB Errors", MessageBoxButton.OK, MessageBoxImage.Error);
             return hasErrors;
         }
 
@@ -102,30 +104,6 @@ namespace Castor.database
                     throw new ArgumentException("Propertie `contextValiant` not set correctly");
             }
             ;
-        }
-
-        [Obsolete]
-        private void CreateNewDatabase()
-        {
-            //FormattableString sqlLine;
-            //using(FileStream file = new FileStream("sqlite/movebook_create.sql", FileMode.Open))
-            //{
-            //    using(TextReader reader = new StreamReader(file))
-            //    {
-            //        sqlLine = FormattableStringFactory.Create(reader.ReadToEnd());
-            //    }
-            //}
-
-            try
-            {
-                Database.EnsureCreated();
-                //Database.ExecuteSql(sqlLine);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
         }
 
     }

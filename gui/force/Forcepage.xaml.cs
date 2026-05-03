@@ -87,9 +87,17 @@ namespace Castor.gui.force
         }
 
         /// <summary>
-        /// Добавляет постановление суда через диалог
+        /// Добавляет новое постановление суда через диалог
         /// </summary>
         private void AddNewCourtOrder(object sender, RoutedEventArgs e)
+        {
+            new ForceControl(ForceList).ShowDialog();
+        }
+
+        /// <summary>
+        /// редактирование выделенного постановления
+        /// </summary>
+        private void EditSelectedForceLine(object sender, MouseButtonEventArgs e)
         {
             new ForceControl(ForcesDataGrid.SelectedItem).ShowDialog();
         }

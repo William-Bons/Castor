@@ -11,6 +11,7 @@ namespace Castor.database.tables
     public class Forced : ITableView
     {
         [Key] public long Id { get; set; }
+        public string? Number { get; set; } // номер (идентификатор) дела/постановления
         public long RootId { get; set; } = 0; // ссылка на самое первое постановление
         public DateOnly Start {  get; set; }// начало принуд лечения (дата текущего пост суда)
         public DateOnly? End { get; set; } // дата закрытия этого постановления, заполняется после получения следующего пост суда 

@@ -207,5 +207,17 @@ namespace Castor.Properties {
                 this["LastForcedPatientID"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("FC;")]
+        public string UpdatesRun {
+            get {
+                return ((string)(this["UpdatesRun"]));
+            }
+            set {
+                this["UpdatesRun"] = value;
+            }
+        }
     }
 }

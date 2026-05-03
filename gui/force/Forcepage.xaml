@@ -52,7 +52,9 @@
 
         </ToolBar>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding ForceList}" CanUserAddRows="False" x:Name="ForcesDataGrid"/>
+        <DataGrid Language="RU" FontFamily="Courier New" FontSize="15"
+                  MouseDoubleClick="EditSelectedForceLine"
+                  Grid.Row="1" ItemsSource="{Binding ForceList}" CanUserAddRows="False" x:Name="ForcesDataGrid"/>
 
     </Grid>
 </Page>

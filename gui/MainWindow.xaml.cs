@@ -1,5 +1,6 @@
 ﻿using Castor.database;
 using Castor.database.tab_medis;
+using Castor.database.tables;
 using Castor.gui;
 using Castor.gui.common;
 using Castor.gui.dialogs;
@@ -27,16 +28,22 @@ namespace Castor
         public MainWindow()
         {
             _static_instance = this;
-
-            // предстартовые проверки схемы и бэкап
-            using CastorContext castorContext = new CastorContext();
-            
-            castorContext.Backup();
-
-            // инициализация MainWindow and ExtraWidgets
             DataContext = this;
             InitializeComponent();
             new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
+            Message.ShowPopup("Menu Loaded");
+
+            // предстартовые проверки схемы и бэкап
+            using CastorContext castorContext = new CastorContext();
+            if(castorContext.DBHasErrors() && castorContext.Errors.Contains("NOT IN DATABASE"))
+            {
+                Message.ShowPopup(castorContext.Errors);
+                new CastorUpdater().ProcessingUpdateDatabase();
+                return;
+            }
+            castorContext.Backup();
+
+            // инициализация MainWindow and ExtraWidgets
             WidgetsExtraInitialize();
 
             // проверка сущестования файла БД для текущего отделения
