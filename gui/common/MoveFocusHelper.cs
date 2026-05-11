@@ -8,7 +8,7 @@ namespace Castor.gui.common
 {
     class MoveFocusHelper
     {
-        public MoveFocusHelper(Panel PanelElementsOfFocus, Key[] Keys, Action<object> ActionOnEnter, Action ActionOnExit)
+        public MoveFocusHelper(Panel PanelElementsOfFocus, Key[] Keys, Action<object>? ActionOnEnter, Action? ActionOnExit)
         {
 
             foreach (FrameworkElement CurrentElement in PanelElementsOfFocus.Children)

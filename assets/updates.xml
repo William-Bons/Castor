@@ -14,8 +14,19 @@
 		"Courtname" TEXT NULL
 	)]]>
 		</Update>
+		
 		<Update id="F0">
 			<![CDATA[ALTER TABLE Forced ADD COLUMN 'Number' TEXT;]]>
 		</Update>
+		
+		<Update id="Movebookid">
+			<![CDATA[ALTER TABLE Forced ADD COLUMN "Movebookid" INTEGER NULL REFERENCES "Movebooks"("Id");]]>
+		</Update>
+
+		<Update id="IX_Forced_Movebookid">
+			<![CDATA[CREATE INDEX IX_Forced_Movebookid ON Forced(Movebookid);]]>
+		</Update>
+		
 	</updates>
 </CastorUpdater>
+

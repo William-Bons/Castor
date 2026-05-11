@@ -39,9 +39,9 @@ namespace Castor.gui.pages
                 using (CastorContext castor = new CastorContext())
                 {
                     ForceList = castor.Movebooks
-                        .Where(m => m.Forcedid.HasValue)
-                        .Include(m => m.ForceControl)
-                        .Where(f => f.ForceControl.Nextvk.Month <= DateOnly.FromDateTime(DateTime.Today).Month)
+                        .Where(m => m.Forceds.Any())
+                        .Include(m => m.Forceds)
+                        //.Where(f => f.ForceControl.Nextvk.Month <= DateOnly.FromDateTime(DateTime.Today).Month)
                         .ToList();
                         
                 }

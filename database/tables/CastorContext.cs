@@ -13,8 +13,7 @@ namespace Castor.database
         /// Контекст подключения к локальной базе данных Castor
         /// </summary>
         public enum ContextVariant { SQLITE, SQLSERVER, POSTGREE };
-        public string[] VariantNames = { "SQLITE", "SQLSERVER", "POSTGREE" };
-        private ContextVariant _contextVariant;
+        private ContextVariant _contextVariant = (ContextVariant)Settings.Default.contextValiant;
 
         #region TALBES
         /// <summary>
@@ -33,36 +32,16 @@ namespace Castor.database
         /// </summary>
         public CastorContext()
         {
-            _contextVariant = (ContextVariant)Settings.Default.contextValiant;
             if (!Database.CanConnect())
             {
                 Database.EnsureCreated();
             }
         }
 
-        /// <summary>
-        /// need for console output
-        /// </summary>
-        public string Variant => $"{VariantNames[(int)_contextVariant]}: {Database.GetDbConnection().DataSource} @ {Database.GetDbConnection().Database}";
-        public string Errors {  get; private set; }
+      
+        
 
-        public bool DBHasErrors()
-        {
-            var comparer = new CompareEfSql();
-
-            //ATTEMPT
-            //This will compare EF Core model of the database with
-            //the database that the context's connection points to
-            var hasErrors = comparer.CompareEfWithDb(this);
-
-            //VERIFY
-            //The CompareEfWithDb method returns true if there were errors. 
-            //The comparer.GetAllErrors property returns a string, with each error on a separate line
-            if (hasErrors)
-                Errors = comparer.GetAllErrors;
-                //MessageBox.Show(comparer.GetAllErrors,"DB Errors", MessageBoxButton.OK, MessageBoxImage.Error);
-            return hasErrors;
-        }
+        
 
         public void Backup()
         {
@@ -101,7 +80,7 @@ namespace Castor.database
                     optionsBuilder.UseSqlServer(Settings.Default.sqlserverConnection);
                     break;
                 default:
-                    throw new ArgumentException("Propertie `contextValiant` not set correctly");
+                    throw new ArgumentException("Property `contextValiant` not set correctly");
             }
             ;
         }

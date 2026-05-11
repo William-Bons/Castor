@@ -24,6 +24,15 @@
         </Grid.RowDefinitions>
 
         <ToolBar Grid.Row="0" Background="Transparent">
+            <WrapPanel Orientation="Horizontal" Background="LightYellow" Margin="2">
+                <Image Source="/img/jail-icon.png" Width="25" />
+                <TextBlock Width="200" Padding="3" >
+                    <Run Text="{Binding Movebook.Fio}" />
+                    <LineBreak/>
+                    <Run Text="{Binding Movebook.Patientid}"/>  
+                </TextBlock>
+            </WrapPanel>
+            
             <Button ToolTip="Добавить постановление суда" Style="{DynamicResource Castor.Toolbarbutton}" Click="AddNewCourtOrder">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/img/add-icon.png" />

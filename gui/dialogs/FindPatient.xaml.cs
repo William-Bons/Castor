@@ -26,8 +26,9 @@ namespace Castor.gui.dialogs
         private void TryToSearch(object src)
         {
             MainWindow.Wait(true);
-            using (MedisContext medis = new MedisContext())
+            try
             {
+                using MedisContext medis = new MedisContext();
                 Patients = medis.patient
                     .Where(p =>
                         p.lastname.Contains(Patientdata.Family.ToLower())
@@ -36,6 +37,11 @@ namespace Castor.gui.dialogs
                     ).Take(20)
                     .ToList();
             }
+            catch (Exception ex)
+            {
+                Message.ShowPopup(ex.Message);
+            }
+
             MainWindow.Wait();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Patients)));
         }
@@ -72,10 +78,11 @@ namespace Castor.gui.dialogs
 
         private void Patients_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Patient is patient)
+            if (Patient is not null)
             {
-                using (MedisContext medis = new MedisContext())
+                try
                 {
+                    using MedisContext medis = new MedisContext();
                     Visits = medis.visit
                         .Where(v => v.patientid == Patient.keyid)
                         .Include(v => v.Dep)
@@ -84,11 +91,15 @@ namespace Castor.gui.dialogs
                         .ThenInclude(p => p.Diagnoses.Where(g => g.Diagnos.code.StartsWith("F")))
                         .ThenInclude(d => d.Diagnos)
                         .ToList();
-                }
 
-                if (OnlySelectedDep)
+                    if (OnlySelectedDep)
+                    {
+                        Visits = Visits.Where(v => v.depid == Settings.Default.LastSelectedDepId).ToList();
+                    }
+                }
+                catch (Exception ex)
                 {
-                    Visits = Visits.Where(v => v.depid == Settings.Default.LastSelectedDepId).ToList();
+                    Message.ShowPopup(ex.Message);
                 }
 
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Visits)));

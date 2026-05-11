@@ -191,7 +191,7 @@ namespace Castor.gui.movebook
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Message.ShowPopup(ex.Message);
                 }
             };
             await __check();
@@ -247,7 +247,7 @@ namespace Castor.gui.movebook
                 catch (Exception ex)
                 {
                     MainWindow.Wait();
-                    Console.WriteLine(ex.Message);
+                    Message.ShowPopup(ex.Message);
                 }
             };
             await __check();

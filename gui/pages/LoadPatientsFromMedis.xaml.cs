@@ -44,20 +44,21 @@ namespace Castor.gui.pages
         {
             try
             {
-                using (MedisContext cc = new MedisContext())
-                {
-                    depList = cc.dep
-                        .Where(d => d.keyid == Settings.Default.LastSelectedDepId)
-                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
-                        .ThenInclude(v => v.Doctor)
-                        .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
-                        .ThenInclude(v => v.Patient)
-                        .ThenInclude(p => p.Diagnoses)
-                        .ToList();
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
-                }
+                using MedisContext cc = new MedisContext();
+                depList = cc.dep
+                    .Where(d => d.keyid == Settings.Default.LastSelectedDepId)
+                    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
+                    .ThenInclude(v => v.Doctor)
+                    .Include(d => d.Visits.Where(v => !v.dat1.HasValue))
+                    .ThenInclude(v => v.Patient)
+                    .ThenInclude(p => p.Diagnoses)
+                    .ToList();
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LoadedData)));
             }
-            catch { }
+            catch(Exception ex)
+            {
+                Message.ShowPopup(ex.Message);
+            }
         }
 
         /// <summary>
@@ -75,10 +76,6 @@ namespace Castor.gui.pages
 
         private void CurrentDocdepFilter(object sender, System.Windows.RoutedEventArgs e)
         {
-            using (MedisContext cc = new MedisContext())
-            {
-                
-            }
         }
     }
 }

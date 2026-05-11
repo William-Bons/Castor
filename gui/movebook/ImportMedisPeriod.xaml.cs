@@ -1,6 +1,7 @@
 ﻿using Castor.database;
 using Castor.database.tab_medis;
 using Castor.database.tables;
+using Castor.gui.common;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -75,7 +76,7 @@ namespace Castor.gui.movebook
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Message.ShowPopup(ex.Message);
                 }
             };
             await __check();
@@ -138,7 +139,7 @@ namespace Castor.gui.movebook
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    Message.ShowPopup(ex.Message);
                 }
                 Cursor = Cursors.Arrow;
             };
@@ -169,7 +170,7 @@ namespace Castor.gui.movebook
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Message.ShowPopup(ex.Message);
             }
         }
     }

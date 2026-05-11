@@ -52,7 +52,10 @@ namespace Castor.gui.dialogs
                 }
 
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Message.ShowPopup(ex.Message);
+            }
             finally
             {
                 MainWindow.Wait();
@@ -93,7 +96,10 @@ namespace Castor.gui.dialogs
                 Close();
                 RefreshNotify?.Invoke("Castor.gui.movebook.Theband", "Castor.gui.movebook.Thebook");
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Message.ShowPopup(ex.Message);
+            }
         }
 
         public void Refresh()

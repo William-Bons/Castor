@@ -1,6 +1,7 @@
 ﻿using Castor.database;
 using Castor.database.tables;
 using Castor.gui.common;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
@@ -34,7 +35,9 @@ namespace Castor.gui.movebook
                 IEnumerable<Movebook> disorders = context.Movebooks.Where(b => b.Dateout >= DateOnly.FromDateTime(datePeriod.Start) && b.Dateout <= DateOnly.FromDateTime(datePeriod.End)).ToList();
 
                 // select patients in DEP NOW
-                IEnumerable<Movebook> ordered = context.Movebooks.Where(o => o.Datein.HasValue && !o.Dateout.HasValue);
+                IEnumerable<Movebook> ordered = context.Movebooks
+                    .Where(o => o.Datein.HasValue && !o.Dateout.HasValue)
+                    .Include(o => o.Forceds);
 
                 // create error check
                 if (movebooks.Where(x => x.InControl == false).Count() > 0)
@@ -66,8 +69,8 @@ namespace Castor.gui.movebook
                     create3(disorders.Where(m => m.Outto == 3), disorders.Where(m => m.Outto == 3 && m.Agein < 18), "Перевод в ПНИ"),
 
                     create3(ordered.Where(m => m.DaysToday > 365), ordered.Where(m => m.DaysToday > 365 && m.Agein < 18), "Кол-во хронизированных"),
-                    create3(ordered.Where(m => m.Forcedid.HasValue), ordered.Where(m => m.Forcedid.HasValue && m.Agein < 18), "На принудительном лечении"),
-                    create3(ordered.Where(m => m.Forcedid.HasValue && m.DaysToday > 365), ordered.Where(m => m.Forcedid.HasValue && m.Agein < 18 && m.DaysToday > 365), " - из них более года"),
+                    create3(ordered.Where(m => m.Forceds.Any()), ordered.Where(m => m.Forceds.Any() && m.Agein < 18), "На принудительном лечении"),
+                    create3(ordered.Where(m => m.Forceds.Any() && m.DaysToday > 365), ordered.Where(m => m.Forceds.Any() && m.Agein < 18 && m.DaysToday > 365), " - из них более года"),
 
                     create3(movebooks.Where(m => m.Unvoluntaryid>0), movebooks.Where(m => m.Unvoluntaryid>0 && m.Agein < 18), "Поступило в порядке НГ"),
                     create3(movebooks.Where(m => m.Unvoluntaryid>0), movebooks.Where(m => m.Unvoluntaryid>0 && m.Agein < 18), " - из них по решению суда"),

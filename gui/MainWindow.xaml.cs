@@ -23,28 +23,12 @@ namespace Castor
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private static MainWindow _static_instance;
-
         public MainWindow()
         {
-            _static_instance = this;
+            Instance = this;
             DataContext = this;
             InitializeComponent();
             new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
-            Message.ShowPopup("Menu Loaded");
-
-            // предстартовые проверки схемы и бэкап
-            using CastorContext castorContext = new CastorContext();
-            if(castorContext.DBHasErrors() && castorContext.Errors.Contains("NOT IN DATABASE"))
-            {
-                Message.ShowPopup(castorContext.Errors);
-                new CastorUpdater().ProcessingUpdateDatabase();
-                return;
-            }
-            castorContext.Backup();
-
-            // инициализация MainWindow and ExtraWidgets
-            WidgetsExtraInitialize();
 
             // проверка сущестования файла БД для текущего отделения
             if (!File.Exists(Settings.Default.sqliteConnection))
@@ -53,13 +37,22 @@ namespace Castor
                 new SelectUser().ShowDialog();
             }
 
+            // предстартовые проверки схемы и бэкап
+            if (new CastorUpdater().ProcessingUpdateDatabase())
+            {
+                // бэкап только если успешны проверка и update
+                using CastorContext castorContext = new CastorContext();
+                castorContext.Backup();
+            }
+
+            // инициализация MainWindow and ExtraWidgets
+            WidgetsExtraInitialize();
+
             //todo ?? check department access
 
             // load page according SettingsCheet.Default.StartLoadedPage
             if (!Settings.Default.StartLoadingPage.IsNullOrEmpty())
                 MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = Settings.Default.StartLoadingPage });
-
-
 
             Closed += (a, b) =>
             {
@@ -73,8 +66,8 @@ namespace Castor
             };
         }
 
-        public static MainWindow Instance => _static_instance;
         public event PropertyChangedEventHandler? PropertyChanged;
+        public static MainWindow Instance { get; private set; }
         public string CurrentDbName => $"Data Source={Settings.Default.sqliteConnection}";
         public string Depname => Settings.Default.LastSelectedDepName;
 

@@ -1,10 +1,12 @@
 ﻿using Castor.database.tables;
 using Castor.gui.common;
+using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace Castor.database.tab_medis
@@ -36,13 +38,10 @@ namespace Castor.database.tab_medis
         {
             // EnsureCreated - функция проверки существования базы и ее создания в случае отрицательной проверки
             // для подключения к областной базе не нужна
-            // Database.EnsureCreated(); -- uncomment if you want create new database
-        }
 
-        /// <summary>
-        /// need for console output
-        /// </summary>
-        public string Variant => $"POSSTGREE: {Database.GetDbConnection().DataSource} @ {Database.GetDbConnection().Database}";
+            // Сначала пингуется хост, задержка в настройках, по умолчанию 500 мс, если пинга нет выбрасывается Exeption
+            PingHost();
+        }
 
 
         /// <summary>
@@ -54,31 +53,28 @@ namespace Castor.database.tab_medis
         {
             try
             {
-                optionsBuilder.UseNpgsql(Decrypt(Properties.Settings.Default.postgreeConnection));
+                optionsBuilder.UseNpgsql(Decrypt(Settings.Default.postgreeConnection));
             }
             catch (Exception ex) 
             {
-                MessageBox.Show($"Rised exception:\n{ex.Message}", ex.Source, MessageBoxButton.OK, MessageBoxImage.Error);
+                Message.ShowPopup($"Rised exception:\n{ex.Message}");
             }
         }
 
-        public static IPStatus PingHost(string nameOrAddress= "172.23.1.220")
+        public PingReply PingHost()
         {
-            try
-            {
-                using (Ping pinger = new Ping())
-                {
-                    PingReply reply = pinger.Send(nameOrAddress,1000);
-                    return reply.Status;
-                }
-            }
-            catch (PingException)
-            {
-                return IPStatus.Unknown;
-            }
+            var address = Regex.Match(Decrypt(Settings.Default.postgreeConnection),
+                        @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b").Value;
+
+            using Ping pinger = new Ping();
+            PingReply status = pinger.Send(address, Settings.Default.HostPingLatency);
+            if (status.Status != IPStatus.Success)
+                throw new Exception("Host cannot be reached!");
+
+            return status;
         }
 
-        public static string Encrypt(string plainText, string password = null)
+        public string Encrypt(string plainText, string password = null)
         {
             var data = Encoding.Default.GetBytes(plainText);
             var pwd = !string.IsNullOrEmpty(password) ? Encoding.Default.GetBytes(password) : Array.Empty<byte>();
@@ -86,7 +82,7 @@ namespace Castor.database.tab_medis
             return Convert.ToBase64String(cipher);
         }
 
-        public static string Decrypt(string cipherText, string password = null)
+        public string Decrypt(string cipherText, string password = null)
         {
             var cipher = Convert.FromBase64String(cipherText);
             var pwd = !string.IsNullOrEmpty(password) ? Encoding.Default.GetBytes(password) : Array.Empty<byte>();

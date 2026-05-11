@@ -219,5 +219,29 @@ namespace Castor.Properties {
                 this["UpdatesRun"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("500")]
+        public int HostPingLatency {
+            get {
+                return ((int)(this["HostPingLatency"]));
+            }
+            set {
+                this["HostPingLatency"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int MessageShowLatency {
+            get {
+                return ((int)(this["MessageShowLatency"]));
+            }
+            set {
+                this["MessageShowLatency"] = value;
+            }
+        }
     }
 }

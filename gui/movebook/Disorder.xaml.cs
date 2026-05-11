@@ -52,7 +52,7 @@ namespace Castor.gui.movebook
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Message.ShowPopup(ex.Message);
             }
 
             DataContext = this;

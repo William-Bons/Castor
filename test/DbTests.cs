@@ -136,40 +136,20 @@ namespace Castor.test
 
         public async Task TTestSelectTable3()
         {
-            // находятся в отделении но не внесены в базу
             
             await Task.Run(() =>
             {
-                IEnumerable<visit> visitsWeek = new List<visit>();
-                IEnumerable<string> fios = new List<string>();
+                string input = "DIFFERENT: Bandbook->PrimaryKey 'PK_Bandbooks', constraint name. Expected = PK_Bandbooks, found =\r\nDIFFERENT: Entity 'Bandbook', constraint name. Expected = PK_Bandbooks, found =\r\nNOT CHECKED: Entity 'Bandbook', constraint name. Expected = <null>\r\n\t, found = Bandbook\r\n\tDIFFERENT: Forced->PrimaryKey 'PK_Forced', constraint name. Expected = PK_Forced, found =\r\n\tDIFFERENT: Forced->Property 'Courtname', column type. Expected = TEXT, found = NUMERIC\r\n\tNOT IN DATABASE: Forced->Property 'Movebookid', column name. Expected = Movebookid\r\n\tDIFFERENT: Forced->Property 'Patientid', column type. Expected = INTEGER, found = NUMERIC\r\n\tNOT IN DATABASE: Forced->ForeignKey 'FK_Forced_Movebooks_Movebookid', constraint name. Expected = FK_Forced_Movebooks_Movebookid\r\n\tNOT IN DATABASE: Forced->Index 'Movebookid', index constraint name. Expected = IX_Forced_Movebookid\r\n\tDIFFERENT: Entity 'Forced', constraint name. Expected = PK_Forced, found =\r\n\tDIFFERENT: Fss->PrimaryKey 'PK_Fss', constraint name. Expected = PK_Fss, found =\r\n\tDIFFERENT: Entity 'Fss', constraint name. Expected = PK_Fss, found =\r\n\tDIFFERENT: Movebook->PrimaryKey 'PK_Movebooks', constraint name. Expected = PK_Movebooks, found =\r\n\tDIFFERENT: Entity 'Movebook', constraint name. Expected = PK_Movebooks, found =\r\n\tNOT CHECKED: Entity 'Movebook', constraint name. Expected = <null>, found = Movebook\r\nDIFFERENT: Reports->PrimaryKey 'PK_Reports', constraint name. Expected = PK_Reports, found = \r\nDIFFERENT: Entity 'Reports', constraint name. Expected = PK_Reports, found = \r\nDIFFERENT: Unvoluntary->PrimaryKey 'PK_Unvoluntaries', constraint name. Expected = PK_Unvoluntaries, found = \r\nDIFFERENT: Entity 'Unvoluntary', constraint name. Expected = PK_Unvoluntaries, found = ";
 
-                using (CastorContext castor = new CastorContext())
-                {
-                    using (MedisContext cc = new MedisContext())
-                    {
-                        // list of Fullnames unordered 
-                        fios = castor.Movebooks
-                            .Where(m => m.Dateout == null)
-                            .Select(m => m.Fio).ToList();
+                List<string> lines = input.Split("\r\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Where(l => Regex.IsMatch(l, @"^NOT IN DATABASE:"))
+                    .Select(l => Regex.Match(l, @"(?<=Expected =\s+)\w+").Value)
+                    .ToList();
+                    
 
-                        // get visits for last 10 days
-                        visitsWeek = cc.visit
-                           .Where(v => v.depid == Settings.Default.LastSelectedDepId && (DateTime.Today.ToUniversalTime() - v.dat.Value).Days < 10 && v.dat1 == null)
-                           .Include(v => v.Patient)
-                           .ToList();
+                string wordAfter = Regex.Match(input, @"(?<=Expected =\s+)\w+").Value;
 
-                        
-
-                        
-
-
-                    }
-                }
-
-                var a = visitsWeek
-                           .Where(v => !fios.Contains(v.Fullname));
-                int t = 3 + 3;
-
+                int t = 3 + 4;
             });
         }
 

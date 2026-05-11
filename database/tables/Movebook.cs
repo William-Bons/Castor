@@ -34,7 +34,6 @@ public class Movebook
     public bool Closed { get; set; }
     public bool Deceased { get; set; }
     public long? Fssid { get; set; }
-    public long? Forcedid { get; set; }
     public long? Unvoluntaryid { get; set; }
     public virtual int? Agein => CalculateAge(Datein);
     public virtual int? Ageout => CalculateAge(Dateout);
@@ -43,7 +42,7 @@ public class Movebook
     public bool? InControl => string.IsNullOrWhiteSpace(Dsin) ? null : calc0(Dsin).Take(5).Count(x => x) == 1;
     public bool? OutControl => string.IsNullOrWhiteSpace(Dsout) ? null : calc0(Dsout).Take(5).Count(x => x) == 1;
     public virtual Fss? FssControl {  get; set; }
-    public virtual Forced? ForceControl {  get; set; }
+    public virtual ICollection<Forced>? Forceds { get; set; }
     public virtual Unvoluntary? UnvoluntaryControl { get; set; }
 
 
