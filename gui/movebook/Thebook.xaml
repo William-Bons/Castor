@@ -52,7 +52,7 @@
                     <TextBlock Text="Выписать" FontSize="16" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
-            <Button ToolTip="Отчет ДВИЖЕНИЕ" Click="SaveInXml"  Style="{DynamicResource Castor.Toolbarbutton}">
+            <Button ToolTip="Отчет ДВИЖЕНИЕ" Click="ShowReportInPage"  Style="{DynamicResource Castor.Toolbarbutton}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/img/business_table_order_report_history_2332.ico" />
                     <TextBlock Text="Отчет Движение" FontSize="14" VerticalAlignment="Center"/>
@@ -130,24 +130,17 @@
                 <DataGridCheckBoxColumn Header="Возврат" Binding="{Binding Early}" />
                 <DataGridCheckBoxColumn Header="История сдана" Binding="{Binding Closed}" />
                 <DataGridCheckBoxColumn Header="Скончался" Binding="{Binding Deceased}" />
-                <DataGridTemplateColumn Header="НГ">
+                <DataGridTemplateColumn Header="ВК">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="/img/policeman-icon.png" Width="25" Height="25" Visibility="{Binding Unvoluntaryid, Converter={StaticResource ObjectToVisibleConverter}}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="ЭЛН">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding FssControl, Converter={StaticResource FssLogoConverter}}" Width="25" Height="25" />
+                            <Image Source="/img/policeman-icon.png" Width="25" Height="25" Visibility="{Binding Commities, Converter={StaticResource ObjectToVisibleConverter}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="ПММХ">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="/img/jail-icon.png" Width="25" Height="25" Visibility="{Binding Forcedid, Converter={StaticResource ObjectToVisibleConverter}}"/>
+                            <Image Source="/img/jail-icon.png" Width="25" Height="25" Visibility="{Binding Forceds, Converter={StaticResource ObjectToVisibleConverter}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

@@ -12,7 +12,7 @@ namespace Castor.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "18.5.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "18.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -35,14 +35,16 @@ namespace Castor.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=DESKTOP-J9NFCEV;Initial Catalog=deps;Integrated Security=True;Encrypt" +
             "=False")]
         public string sqlserverConnection {
             get {
                 return ((string)(this["sqlserverConnection"]));
+            }
+            set {
+                this["sqlserverConnection"] = value;
             }
         }
         
@@ -82,12 +84,15 @@ namespace Castor.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAfvJm6wKQ20G8cjaXRUwHVQAAAAACAAAAAAAQZgAAAAEAACAAAAAhfOZU5fLkarUroq4TOO8ZagN5Pvp+LS/rKZtr8wYtGQAAAAAOgAAAAAIAACAAAACDuam1+4TdsSWhb/gh2ExJhQyD4/73k824309gRZkgxlAAAAA40lWZ2eJAGIUxF3TYokkgamBVEf6aDpqxqrviXwb5YUBSYdkwHgdI6n4WILh1ZUrRKu6und5fiOXP+t8/YsTeoJf6Q0f29/hsGkOJXbIXuEAAAACGUwpF8Pvs11LI+FENdVFFpTmtTdity0LPYHGeLWW+X2i/Hkv3uho8cm4D+2FuKD2dIHvVaGUSq8MRb4zZACNW")]
         public string postgreeConnection {
             get {
                 return ((string)(this["postgreeConnection"]));
+            }
+            set {
+                this["postgreeConnection"] = value;
             }
         }
         
@@ -163,12 +168,15 @@ namespace Castor.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2704;2712;2701")]
         public string AllowedDepartments {
             get {
                 return ((string)(this["AllowedDepartments"]));
+            }
+            set {
+                this["AllowedDepartments"] = value;
             }
         }
         
@@ -205,18 +213,6 @@ namespace Castor.Properties {
             }
             set {
                 this["LastForcedPatientID"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("FC;")]
-        public string UpdatesRun {
-            get {
-                return ((string)(this["UpdatesRun"]));
-            }
-            set {
-                this["UpdatesRun"] = value;
             }
         }
         

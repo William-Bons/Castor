@@ -17,27 +17,33 @@ namespace Castor.gui.common
         private System.Timers.Timer timer;
         private Popup popup = new Popup();
 
-        private Message()
+        private Message(int? interval)
         {
-            timer = new System.Timers.Timer(TimeSpan.FromSeconds(Settings.Default.MessageShowLatency));
-            timer.Elapsed += (a, b) =>
+            try
             {
-                Application.Current.Dispatcher.Invoke(new Action(() =>
+                timer = new System.Timers.Timer(TimeSpan.FromSeconds(interval ?? Settings.Default.MessageShowLatency));
+                timer.Elapsed += (a, b) =>
                 {
-                    popup.IsOpen = false;
-                    Messages.Remove(this);
-                }), null);
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        popup.IsOpen = false;
+                        Messages.Remove(this);
+                    }), null);
 
-            };
-            timer.Start();
+                };
+                timer.Start();
+            }
+            catch 
+            {
+            }
         }
-        public static void ShowPopup(string _obj)
+        public static void ShowPopup(string _obj, int? interval=null)
         {
             if (_obj != null)
             {
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    Message _shown = new Message();
+                    Message _shown = new Message(interval);
                     Messages.Add(_shown);
 
                     TextBlock textBlock = new TextBlock()
@@ -61,7 +67,7 @@ namespace Castor.gui.common
                         HorizontalOffset = 30,
                         VerticalOffset = 30 + Messages.Count * 100,
                         IsOpen = true,
-                        StaysOpen = true,
+                        StaysOpen = interval.HasValue && interval.Value == 0 ? false : true
                     };
                     _shown.popup.MouseDown += (a, b) =>
                     {

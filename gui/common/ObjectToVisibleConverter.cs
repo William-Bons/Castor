@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace Castor.gui.common
             else if(value is long li)
                 return li > 0 ? Visibility.Visible :
                     Visibility.Hidden;
+            else if(value is IEnumerable<object> list)
+                return list.Count() > 0 ? Visibility.Visible : Visibility.Hidden;
             else
                 return Visibility.Hidden;
         }

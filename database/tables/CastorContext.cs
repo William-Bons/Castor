@@ -24,7 +24,10 @@ namespace Castor.database
         public DbSet<Forced> Forced => Set<Forced>();
         public DbSet<Fss> Fss => Set<Fss>();
         public DbSet<Unvoluntary> Unvoluntaries => Set<Unvoluntary>();
-        public DbSet<Bandbook> Bandbooks => Set<Bandbook>();
+        public DbSet<Commity> Commity => Set<Commity>();
+        public DbSet<Runs> Runs => Set<Runs>();
+        public DbSet<User> Users => Set<User>();
+
         #endregion
 
         /// <summary>
@@ -37,11 +40,6 @@ namespace Castor.database
                 Database.EnsureCreated();
             }
         }
-
-      
-        
-
-        
 
         public void Backup()
         {

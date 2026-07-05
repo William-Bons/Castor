@@ -28,7 +28,7 @@ namespace Castor
             Instance = this;
             DataContext = this;
             InitializeComponent();
-            new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
+            
 
             // проверка сущестования файла БД для текущего отделения
             if (!File.Exists(Settings.Default.sqliteConnection))
@@ -37,18 +37,14 @@ namespace Castor
                 new SelectUser().ShowDialog();
             }
 
-            // предстартовые проверки схемы и бэкап
-            if (new CastorUpdater().ProcessingUpdateDatabase())
-            {
-                // бэкап только если успешны проверка и update
-                using CastorContext castorContext = new CastorContext();
-                castorContext.Backup();
-            }
-
+            // предстартовые проверки схемы и бэкап, загрузка стандартного меню
+            // бэкап только если успешны проверка и update
+            using CastorContext castorContext = new CastorContext();
+            castorContext.Backup();
+            new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
+            
             // инициализация MainWindow and ExtraWidgets
             WidgetsExtraInitialize();
-
-            //todo ?? check department access
 
             // load page according SettingsCheet.Default.StartLoadedPage
             if (!Settings.Default.StartLoadingPage.IsNullOrEmpty())
@@ -63,6 +59,8 @@ namespace Castor
                     Settings.Default.StartLoadingPage = CentralFrame.Content?.GetType().ToString();
                     Settings.Default.Save();
                 }
+
+                Application.Current?.Shutdown();
             };
         }
 
@@ -138,7 +136,8 @@ namespace Castor
         {
             FindVisualChildren<UIElement>(this).OfType<IRefresh>()      // find all children UIElement interfaces IRefresh
                 .Where(x => classes.Contains(x.GetType().FullName))     // filter by names in classes parameter
-                .ToList().ForEach(i => i.Refresh());                    // call Refresh method for all found objects
+                .ToList()
+                .ForEach(i => i.Refresh());                             // call Refresh method for all found objects
         }
 
         private void PrintStatusMessage(string message, string barName)

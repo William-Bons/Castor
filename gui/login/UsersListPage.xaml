@@ -1,0 +1,123 @@
+﻿<Page x:Class="Castor.gui.login.UsersListPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="clr-namespace:Castor.gui.login"
+      Title="Пользователи"
+      Background="#FAFBFC">
+
+    <Page.Resources>
+        <local:BoolToColorConverter x:Key="BoolToColorConverter"/>
+        <local:BoolToStringConverter x:Key="BoolToStringConverter"/>
+    </Page.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок и кнопка добавления (мягкий вариант) -->
+        <Border Grid.Row="0"
+                Background="#FFFFFF"
+                BorderBrush="{StaticResource Brush.Steel}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12,8"
+                Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="Список пользователей"
+                           Foreground="{StaticResource Brush.TextMain}"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"/>
+
+                <Button Grid.Column="1"
+                        Content="Добавить пользователя"
+                        Style="{StaticResource AccentButton}"
+                        Padding="14,6"
+                        Click="AddUser_Click"
+                        Margin="12,0,0,0"/>
+            </Grid>
+        </Border>
+
+        <!-- Таблица пользователей -->
+        <DataGrid x:Name="UsersDataGrid"
+                  Grid.Row="1"
+                  Style="{StaticResource ModernDataGrid}"
+                  AutoGenerateColumns="False"
+                  SelectionChanged="UsersDataGrid_SelectionChanged"
+                  MouseDoubleClick="UsersDataGrid_MouseDoubleClick"
+                  CanUserAddRows="False">
+
+            <DataGrid.Columns>
+                <!-- ФИО -->
+                <DataGridTextColumn Header="ФИО"
+                                    Binding="{Binding FullName}"
+                                    Width="*"
+                                    IsReadOnly="True"/>
+
+                <!-- Логин -->
+                <DataGridTextColumn Header="Логин"
+                                    Binding="{Binding Login}"
+                                    Width="140"
+                                    IsReadOnly="True"/>
+
+                <!-- Роль -->
+                <DataGridTextColumn Header="Роль"
+                                    Binding="{Binding Role}"
+                                    Width="120"
+                                    IsReadOnly="True"/>
+
+                <!-- Статус (кружок + текст) -->
+                <DataGridTemplateColumn Header="Статус" Width="90">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Ellipse Width="10" Height="10" Margin="0,0,8,0">
+                                    <Ellipse.Fill>
+                                        <!-- Мягкий цвет статуса вместо яркого зелёного -->
+                                        <SolidColorBrush Color="{Binding IsActive, Converter={StaticResource BoolToColorConverter}, ConverterParameter=#4F75A1}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <TextBlock Text="{Binding IsActive, Converter={StaticResource BoolToStringConverter}, ConverterParameter=Активен|Неактивен}"
+                                           Foreground="{StaticResource Brush.TextSecondary}"
+                                           FontSize="12"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Кнопка активации/дезактивации прямо в таблице -->
+                <DataGridTemplateColumn Header="" Width="80" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding IsActive, Converter={StaticResource BoolToStringConverter}, ConverterParameter=Деактивировать|Активировать}"
+                                    Style="{StaticResource HardButton}"
+                                    Padding="8,4"
+                                    Click="ToggleStatus_Click"
+                                    Tag="{Binding}"
+                                    ToolTip="{Binding IsActive, Converter={StaticResource BoolToStringConverter}, ConverterParameter=Отключить пользователя|Включить пользователя}"
+                                    Cursor="Hand"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Дата создания -->
+                <DataGridTextColumn Header="Дата создания"
+                                    Binding="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy HH:mm}}"
+                                    Width="130"
+                                    IsReadOnly="True"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Панель действий (оставлена для совместимости) -->
+    </Grid>
+</Page>

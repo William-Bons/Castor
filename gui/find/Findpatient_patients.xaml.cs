@@ -1,4 +1,4 @@
-﻿using Castor.database.tables;
+﻿using Castor.gui.common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,20 +14,18 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Castor.gui.bandbook
+namespace Castor.gui.find
 {
     /// <summary>
-    /// Логика взаимодействия для SocialPage.xaml
+    /// Логика взаимодействия для Findpatient_patients.xaml
     /// </summary>
-    public partial class SocialPage : UserControl
+    public partial class Findpatient_patients : DataGrid
     {
-        public SocialPage(Bandbook bandbookSelected)
+        public Findpatient_patients()
         {
-            Bandline = bandbookSelected;
             InitializeComponent();
-            DataContext = this;
         }
 
-        public Bandbook Bandline { get; set; }
+
     }
 }

@@ -1,26 +1,23 @@
 ﻿using Castor.database;
 using Castor.database.tables;
-using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Windows.Controls;
 
-namespace Castor.gui.movebook
+namespace Castor.database.reports
 {
     public class MonthReportHtml : ICastorHtmlReport
     {
         StringBuilder _MainStringBuilding = new StringBuilder();
-        Reports _CreatedReport = new Reports();
 
         public string HtmlReport => _MainStringBuilding.ToString();
-        public DatePeriod datePeriod {  get; set; }
+        public DatePeriod datePeriod { get; set; }
 
-        //public MonthReportHtml() { }
-        public MonthReportHtml(DatePeriod datePeriod)
+        public MonthReportHtml(DatePeriod? datePeriod)
         {
-            this.datePeriod = datePeriod;
+            this.datePeriod = datePeriod ?? new DatePeriod();
             Calculate();
         }
 
@@ -28,7 +25,7 @@ namespace Castor.gui.movebook
         {
             using (CastorContext context = new CastorContext())
             {
-                // select movelines from Movebook in Date Period ORDERED
+                // select movelines from PatientRecord in Date Period ORDERED
                 IEnumerable<Movebook> movebooks = context.Movebooks.Where(b => b.Datein >= DateOnly.FromDateTime(datePeriod.Start) && b.Datein <= DateOnly.FromDateTime(datePeriod.End)).ToList();
 
                 //select DISORDERED in date period
@@ -72,43 +69,17 @@ namespace Castor.gui.movebook
                     create3(ordered.Where(m => m.Forceds.Any()), ordered.Where(m => m.Forceds.Any() && m.Agein < 18), "На принудительном лечении"),
                     create3(ordered.Where(m => m.Forceds.Any() && m.DaysToday > 365), ordered.Where(m => m.Forceds.Any() && m.Agein < 18 && m.DaysToday > 365), " - из них более года"),
 
-                    create3(movebooks.Where(m => m.Unvoluntaryid>0), movebooks.Where(m => m.Unvoluntaryid>0 && m.Agein < 18), "Поступило в порядке НГ"),
-                    create3(movebooks.Where(m => m.Unvoluntaryid>0), movebooks.Where(m => m.Unvoluntaryid>0 && m.Agein < 18), " - из них по решению суда"),
+                    create3(movebooks.Where(m => m.Unvoluntaryid > 0), movebooks.Where(m => m.Unvoluntaryid > 0 && m.Agein < 18), "Поступило в порядке НГ"),
+                    create3(movebooks.Where(m => m.Unvoluntaryid > 0), movebooks.Where(m => m.Unvoluntaryid > 0 && m.Agein < 18), " - из них по решению суда"),
 
                     create4("Оформлено документов МСЭ, ИПР, восстановление справок"),
                     create4("Наличие  ЧП,  побеги")
 
                     );
 
-                // save report html into database
-                //_CreatedReport.Id = 0;
-                //_CreatedReport.Created = DateTime.Now;
-                //_CreatedReport.DateStart = DateOnly.FromDateTime(datePeriod.Start);
-                //_CreatedReport.DateEnd = DateOnly.FromDateTime(datePeriod.End);
-                //_CreatedReport.ReportName = this.GetType().FullName;
-                //_CreatedReport.ReportData = Encoding.UTF8.GetBytes(_MainStringBuilding.ToString());
 
-                //context.Reports.Update(_CreatedReport);
-                //context.SaveChanges();
             }
 
-        }
-
-        /// <summary>
-        /// Shows Report in dialog as simple formatted HTML 
-        /// </summary>
-        public Page DisplayReportAsHTML()
-        {
-            /* записывет отчет в таблицу */
-            //using(CastorContext context = new CastorContext())
-            //{
-            //    _CreatedReport.Printed = true;
-            //    context.Reports.Update(_CreatedReport);
-            //    context.SaveChanges();
-            //}
-
-            DisplayReport displayReport = new DisplayReport(this);
-            return displayReport;
         }
 
         /// <summary>
@@ -125,22 +96,22 @@ namespace Castor.gui.movebook
             sb.AppendFormat(Properties.ResourceRu.BlockTrTd,
                 blockHeader,
                 movebooks.Count(),
-                movebooks.Where(x => x.calc0(x.Dsin)[0]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsin)[1]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsin)[2]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsin)[3]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsin)[4]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsin)[5]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsin)[6]).Count(),
+                movebooks.Count(x => x.calc0(x.Dsin)[0]),
+                movebooks.Count(x => x.calc0(x.Dsin)[1]),
+                movebooks.Count(x => x.calc0(x.Dsin)[2]),
+                movebooks.Count(x => x.calc0(x.Dsin)[3]),
+                movebooks.Count(x => x.calc0(x.Dsin)[4]),
+                movebooks.Count(x => x.calc0(x.Dsin)[5]),
+                movebooks.Count(x => x.calc0(x.Dsin)[6]),
 
                 children.Count(),
-                children.Where(x => x.calc0(x.Dsin)[0]).Count(),
-                children.Where(x => x.calc0(x.Dsin)[1]).Count(),
-                children.Where(x => x.calc0(x.Dsin)[2]).Count(),
-                children.Where(x => x.calc0(x.Dsin)[3]).Count(),
-                children.Where(x => x.calc0(x.Dsin)[4]).Count(),
-                children.Where(x => x.calc0(x.Dsin)[5]).Count(),
-                children.Where(x => x.calc0(x.Dsin)[6]).Count());
+                children.Count(x => x.calc0(x.Dsin)[0]),
+                children.Count(x => x.calc0(x.Dsin)[1]),
+                children.Count(x => x.calc0(x.Dsin)[2]),
+                children.Count(x => x.calc0(x.Dsin)[3]),
+                children.Count(x => x.calc0(x.Dsin)[4]),
+                children.Count(x => x.calc0(x.Dsin)[5]),
+                children.Count(x => x.calc0(x.Dsin)[6]));
 
             return sb.ToString();
         }
@@ -159,22 +130,22 @@ namespace Castor.gui.movebook
             sb.AppendFormat(Properties.ResourceRu.BlockTrTd,
                 blockHeader,
                 movebooks.Count(),
-                movebooks.Where(x => x.calc0(x.Dsout)[0]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsout)[1]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsout)[2]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsout)[3]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsout)[4]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsout)[5]).Count(),
-                movebooks.Where(x => x.calc0(x.Dsout)[6]).Count(),
+                movebooks.Count(x => x.calc0(x.Dsout)[0]),
+                movebooks.Count(x => x.calc0(x.Dsout)[1]),
+                movebooks.Count(x => x.calc0(x.Dsout)[2]),
+                movebooks.Count(x => x.calc0(x.Dsout)[3]),
+                movebooks.Count(x => x.calc0(x.Dsout)[4]),
+                movebooks.Count(x => x.calc0(x.Dsout)[5]),
+                movebooks.Count(x => x.calc0(x.Dsout)[6]),
 
                 children.Count(),
-                children.Where(x => x.calc0(x.Dsout)[0]).Count(),
-                children.Where(x => x.calc0(x.Dsout)[1]).Count(),
-                children.Where(x => x.calc0(x.Dsout)[2]).Count(),
-                children.Where(x => x.calc0(x.Dsout)[3]).Count(),
-                children.Where(x => x.calc0(x.Dsout)[4]).Count(),
-                children.Where(x => x.calc0(x.Dsout)[5]).Count(),
-                children.Where(x => x.calc0(x.Dsout)[6]).Count());
+                children.Count(x => x.calc0(x.Dsout)[0]),
+                children.Count(x => x.calc0(x.Dsout)[1]),
+                children.Count(x => x.calc0(x.Dsout)[2]),
+                children.Count(x => x.calc0(x.Dsout)[3]),
+                children.Count(x => x.calc0(x.Dsout)[4]),
+                children.Count(x => x.calc0(x.Dsout)[5]),
+                children.Count(x => x.calc0(x.Dsout)[6]));
 
             return sb.ToString();
         }

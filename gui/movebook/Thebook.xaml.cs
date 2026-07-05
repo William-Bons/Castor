@@ -1,12 +1,17 @@
 ﻿using Castor.database;
+using Castor.database.reports;
 using Castor.database.tab_medis;
 using Castor.database.tables;
+using Castor.gui.commities;
 using Castor.gui.common;
 using Castor.gui.dialogs;
+using Castor.gui.find;
 using Castor.gui.force;
+using Castor.gui.pages;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,7 +25,7 @@ namespace Castor.gui.movebook
     /// </summary>
     public partial class Thebook : Page, INotifyPropertyChanged, IRefresh, IStartablePage, IConsoleMessage
     {
-        private CastorContext context;
+        private CastorContext? context;
         private bool need_save = false;
         private DatePeriod _FilterDatePeriod = new DatePeriod() { Set = false };
 
@@ -42,12 +47,12 @@ namespace Castor.gui.movebook
 
         public bool IsHideDisordered { get; set; } = Settings.Default.HideDisordered;
         public bool IsHideClosedCards { get; set; } = Settings.Default.HideClosedCards;
-        public IEnumerable<Movebook> LoadedData { get; private set; }
+        public IEnumerable<Movebook> LoadedData { get; private set; } = new List<Movebook>();
         public Visibility SaveButtonVisible => need_save ? Visibility.Visible : Visibility.Collapsed;
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        public event common.RefreshEventHandler RefreshNotify;
-        public event ConsoleMessageHandler ConsoleMessage;
+        public event common.RefreshEventHandler? RefreshNotify;
+        public event ConsoleMessageHandler? ConsoleMessage;
 
         private void PatientsTable_CellEditEnding(object sender, EventArgs e)
         {
@@ -70,13 +75,15 @@ namespace Castor.gui.movebook
                     LoadedData = context.Movebooks
                         .Where(x => (x.Datein >= DateOnly.FromDateTime(_FilterDatePeriod.Start) && x.Datein <= DateOnly.FromDateTime(_FilterDatePeriod.End)) ||
                         (x.Dateout >= DateOnly.FromDateTime(_FilterDatePeriod.Start) && x.Dateout <= DateOnly.FromDateTime(_FilterDatePeriod.End)))
-                        .Include(f => f.FssControl)
+                        .Include(x => x.Forceds)
+                        .Include(x => x.Commities)
                         .ToList();
                 }
                 else
                 {
                     LoadedData = context.Movebooks
-                        .Include(f => f.FssControl)
+                        .Include(x => x.Forceds)
+                        .Include(x => x.Commities)
                         .ToList();
                     ;
                 }
@@ -126,17 +133,14 @@ namespace Castor.gui.movebook
             }
         }
 
-        private void SaveInXml(object sender, RoutedEventArgs e)
+        private void ShowReportInPage(object sender, RoutedEventArgs e)
         {
-            Cursor = Cursors.Wait;
-            MonthReportHtml monthReportHtml = new MonthReportHtml(SelectDatePeriod.GetStandard());
-            NavigationService.Navigate(monthReportHtml.DisplayReportAsHTML());
-            Cursor = Cursors.Arrow;
+            NavigationService.Navigate(new DisplayReport(new MonthReportHtml(null)));
         }
 
         private void LoadPatient(object sender, EventArgs e)
         {
-            FindPatient findPatient = new();
+            FindPatient findPatient = new FindPatient();
             if(findPatient.ShowDialog().Value)
             {
                 new CreateNew(findPatient.Visit).ShowDialog();
@@ -150,7 +154,6 @@ namespace Castor.gui.movebook
         /// </summary>
         private async void ImportNewby(object sender, RoutedEventArgs e)
         {
-            List<long?> visitIds;
             List<visit> visits = new List<visit>();
 
             Func<Task> __check = async () =>
@@ -294,7 +297,7 @@ namespace Castor.gui.movebook
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Debug.WriteLine(ex.ToString());
             }
          }
 
@@ -316,45 +319,17 @@ namespace Castor.gui.movebook
             {
                 LoadPatient(sender,e);
             }
-            else if (PatientsTable.CurrentColumn.DisplayIndex == 12) // select UNVOLUNTARY
+            else if (PatientsTable.CurrentColumn.DisplayIndex == 12) // select COMMITIES
             {
-                using (CastorContext context = new CastorContext())
+                Movebook? mb = (PatientsTable.SelectedItem as Movebook);
+                if (mb != null)
                 {
-                    Movebook mb = (PatientsTable.SelectedItem as Movebook);
-
-                    long? id = mb?.Unvoluntaryid;
-                    Unvoluntary _unvl = id.HasValue ? context.Unvoluntaries.Where(f => f.Id == id.Value).First() : null;
-                    UnvoluntaryControl unvlControl = new UnvoluntaryControl((object)_unvl ?? (object)mb);
-                    if (unvlControl.ShowDialog().Value)
-                    {
-                        mb.Unvoluntaryid = unvlControl.UnlItem.Id;
-                        context.Update(mb);
-                        context.SaveChanges();
-                        NeedRefreshTable(sender, e);
-                    }
+                    CommitiesPage forcepage = new CommitiesPage(mb);
+                    NavigationService.Navigate(forcepage);
                 }
 
             }
-            else if(PatientsTable.CurrentColumn.DisplayIndex==13) // select FSS column
-            {
-                using (CastorContext context = new CastorContext())
-                {
-                    Movebook mb = (PatientsTable.SelectedItem as Movebook);
-
-                    long? id = mb?.Fssid;
-                    Fss _fss = id.HasValue ? context.Fss.Where(f => f.Id ==id.Value).First() : null;
-                    FssControl fssControl = new FssControl((object)_fss ?? (object)mb);
-                    if (fssControl.ShowDialog().Value)
-                    {
-                        mb.Fssid = fssControl.FssItem.Id;
-                        context.Update(mb);
-                        context.SaveChanges();
-                        NeedRefreshTable(sender, e);
-                    }
-                }
-                
-            }
-            else if (PatientsTable.CurrentColumn.DisplayIndex == 14) // select FORCE column
+            else if (PatientsTable.CurrentColumn.DisplayIndex == 13) // select FORCE column
             {
                 Movebook? mb = (PatientsTable.SelectedItem as Movebook);
                 if(mb!=null)

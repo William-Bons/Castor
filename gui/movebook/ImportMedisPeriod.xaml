@@ -1,36 +1,118 @@
-﻿<Window x:Class="Castor.gui.movebook.ImportMedisPeriod"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Castor.gui.movebook"
-        mc:Ignorable="d"
-        Title="ImportMedisPeriod" Height="450" Width="800">
-    <Grid>
+﻿<Page x:Class="Castor.gui.movebook.ImportMedisPeriod"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:local="clr-namespace:Castor.gui.movebook"
+      mc:Ignorable="d"
+      Title="Импорт периодов MEDIS" 
+      d:Height="520" 
+      d:Width="900"
+      Background="#FAFBFC">
+
+    <Page.Resources>
+
+        <!-- 2. Стиль для кнопки с иконкой (Action Button) -->
+        <Style x:Key="IconButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Page.Resources>
+
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <!-- Панель инструментов -->
+            <RowDefinition Height="4"/>
+            <!-- Отступ -->
             <RowDefinition/>
+            <!-- Таблица -->
             <RowDefinition Height="Auto"/>
+            <!-- Футер/статус -->
         </Grid.RowDefinitions>
 
-        <ToolBar Grid.Row="1" Background="Transparent">
-            <DatePicker SelectedDate="{Binding Start}" DataContext="{Binding DatePeriod}" Height="23" x:Name="DP0"/>
-            <Separator />
-            <DatePicker SelectedDate="{Binding End}"  DataContext="{Binding DatePeriod}" Height="23" x:Name="DP1"/>
-            <Button ToolTip="Импортировать" Click="LoadRecords">
-                <Image Source="/img/ariadna-logo.png" Width="32" Height="25"  />
-            </Button>
-        </ToolBar>
+        <!-- Панель действий вместо ToolBar -->
+        <!-- Заголовок и кнопка добавления (мягкий вариант) -->
+        <Border Grid.Row="0"
+            Background="#FFFFFF"
+            BorderBrush="{StaticResource Brush.Steel}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="12,8"
+            Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <DataGrid Grid.Row="2" AutoGenerateColumns="True" ItemsSource="{Binding DataRowSource, Mode=OneWay}" x:Name="ImportDataGrid">
+                <TextBlock Grid.Column="0"
+                   Text="Список пациентов отделения из БД"
+                   Foreground="{StaticResource Brush.TextMain}"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"/>
+
+                <Button Grid.Column="1"
+                    Content="Загрузить всех"
+                    Style="{StaticResource AccentButton}"
+                    Padding="14,6"
+                    Click="SaveSelectedInCastor"
+                    Margin="12,0,0,0"/>
+            </Grid>
+        </Border>
+
+        <!-- DataGrid с явными колонками (пример структуры для мед. данных) -->
+        <DataGrid Grid.Row="2" 
+                  x:Name="MedisDataGrid"
+                  Style="{StaticResource ModernDataGrid}"
+                  ItemsSource="{Binding DataRowSource, Mode=OneWay}" 
+                  SelectedItem="{Binding SelectedDataItem, UpdateSourceTrigger=PropertyChanged}"
+                  Language="RU">
+
+            <DataGrid.Columns>
+                <!-- Пример колонок. Замени на реальные поля твоей модели DataRowSource -->
+                <DataGridTextColumn Header="Пациент" Binding="{Binding Fio}" Width="200"/>
+                <DataGridTextColumn Header="Диагноз" Binding="{Binding Dsin}" Width="120"/>
+                <DataGridTextColumn Header="Дата визита" Binding="{Binding Datein, StringFormat=dd.MM.yyyy}" Width="110"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding Card_Id}" Width="100"/>
+                <DataGridTextColumn Header="Дней в стационаре" Binding="{Binding DaysToday}" Width="150"/>
+            </DataGrid.Columns>
+
             <DataGrid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Диагнозы все" Click="ShowAllDiagnosis"/>
+                    <MenuItem Header="Все визиты пациента" Click="ShowAllVisistsForPatient"/>
+                    <MenuItem Header="Все диагнозы пациента" Click="ShowAllDiagnosis"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
-
         </DataGrid>
 
+        <!-- Опционально: строка статуса внизу -->
+        <TextBlock Grid.Row="3" 
+                   x:Name="StatusLabel"
+                   Text="Готов к импорту" 
+                   Foreground="{StaticResource Brush.TextSecondary}"
+                   Margin="0,10,0,0"
+                   VerticalAlignment="Bottom"/>
     </Grid>
-</Window>
+</Page>

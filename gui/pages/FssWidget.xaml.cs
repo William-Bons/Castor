@@ -4,6 +4,7 @@ using Castor.gui.common;
 using Castor.gui.dialogs;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Controls;
 
 namespace Castor.gui.pages
@@ -50,7 +51,7 @@ namespace Castor.gui.pages
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 

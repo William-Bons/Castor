@@ -323,12 +323,23 @@ public partial class visit : ITableView
     public long? booking_id { get; set; }
 
     public virtual ICollection<patserv>? Patservs { get; set; }
-    public virtual visit? root { get; set; }
+    /// <summary>
+    /// Поступление в стационар, в п/п dat здесь - это дата поступления 
+    /// </summary>
+    public virtual visit? Root { get; set; }
     public virtual patient? Patient { get; set; }
     public virtual dep? Dep { get; set; }
     public virtual docdep? Doctor { get; set; }
-    public virtual int DaysInDep => dat != null ? (DateTime.Now - dat).Value.Days : 0;
+    /// <summary>
+    /// истинная дата поступления, взятая из Root visit
+    /// </summary>
+    public virtual DateTime? order_dat => Root is null ? dat : Root.dat;
+
+    /// <summary>
+    /// кол-во дней в стационаре(!), начиная с поступления в п/п
+    /// </summary>
+    public virtual int DaysIn => order_dat != null ? (DateTime.Now - order_dat).Value.Days : 0;
     public virtual string Fullname => Patient?.fullname ?? string.Empty;
     public virtual int Age => Patient?.age ?? 0;
-    public virtual string VPeriod => $"{dat} - {dat1}";
+    public virtual string VPeriod => $"{order_dat} - {dat1}";
 }

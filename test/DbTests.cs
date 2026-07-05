@@ -7,9 +7,12 @@ using Castor.Properties;
 using EfSchemaCompare;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Net.Http;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Castor.test
 {
@@ -120,18 +123,14 @@ namespace Castor.test
             MainWindow.Wait();
         }
 
-        public void TTestSelectTable2()
+        public async Task TTestSelectTable2()
         {
-            //string[] ds = { "F20", "F21","F32.2","F25","F43.2","F01.0","G20","F70.0","F23.1","20.0","21"  };
-            //foreach (string s in ds)
-            //{
-            //    ConsoleMessage?.Invoke($"{s} == {Regex.IsMatch(s, @"^F(21|01|22|23|25|30|31|32)")}");
-            //}
-
-            //SETUP
-            //var options = //... with connection to database to check
-            Message.ShowPopup("//string[] ds = { \"F20\", \"F21\",\"F32.2\",\"F25\",\"F43.2\",\"F01.0\",\"G20\",\"F70.0\",\"F23.1\",\"20.0\",\"21\"  };\r\n            //foreach (string s in ds)\r\n            //{\r\n            //    ConsoleMessage?.Invoke($\"{s} == {Regex.IsMatch(s, @\"^F(21|01|22|23|25|30|31|32)\")}\");\r\n            //}");
-
+            DateTime start = new DateTime(2026, 5, 25);
+            for (int i = 0; i < 10; i++)
+            {
+                Debug.WriteLine($"{start.ToString()} : {CachedCalendarCalculator.Get15thDayCorrectedAsync(start).Result.ToString()}");
+                start = start.AddDays(1);
+            }
         }
 
         public async Task TTestSelectTable3()
@@ -139,7 +138,7 @@ namespace Castor.test
             
             await Task.Run(() =>
             {
-                string input = "DIFFERENT: Bandbook->PrimaryKey 'PK_Bandbooks', constraint name. Expected = PK_Bandbooks, found =\r\nDIFFERENT: Entity 'Bandbook', constraint name. Expected = PK_Bandbooks, found =\r\nNOT CHECKED: Entity 'Bandbook', constraint name. Expected = <null>\r\n\t, found = Bandbook\r\n\tDIFFERENT: Forced->PrimaryKey 'PK_Forced', constraint name. Expected = PK_Forced, found =\r\n\tDIFFERENT: Forced->Property 'Courtname', column type. Expected = TEXT, found = NUMERIC\r\n\tNOT IN DATABASE: Forced->Property 'Movebookid', column name. Expected = Movebookid\r\n\tDIFFERENT: Forced->Property 'Patientid', column type. Expected = INTEGER, found = NUMERIC\r\n\tNOT IN DATABASE: Forced->ForeignKey 'FK_Forced_Movebooks_Movebookid', constraint name. Expected = FK_Forced_Movebooks_Movebookid\r\n\tNOT IN DATABASE: Forced->Index 'Movebookid', index constraint name. Expected = IX_Forced_Movebookid\r\n\tDIFFERENT: Entity 'Forced', constraint name. Expected = PK_Forced, found =\r\n\tDIFFERENT: Fss->PrimaryKey 'PK_Fss', constraint name. Expected = PK_Fss, found =\r\n\tDIFFERENT: Entity 'Fss', constraint name. Expected = PK_Fss, found =\r\n\tDIFFERENT: Movebook->PrimaryKey 'PK_Movebooks', constraint name. Expected = PK_Movebooks, found =\r\n\tDIFFERENT: Entity 'Movebook', constraint name. Expected = PK_Movebooks, found =\r\n\tNOT CHECKED: Entity 'Movebook', constraint name. Expected = <null>, found = Movebook\r\nDIFFERENT: Reports->PrimaryKey 'PK_Reports', constraint name. Expected = PK_Reports, found = \r\nDIFFERENT: Entity 'Reports', constraint name. Expected = PK_Reports, found = \r\nDIFFERENT: Unvoluntary->PrimaryKey 'PK_Unvoluntaries', constraint name. Expected = PK_Unvoluntaries, found = \r\nDIFFERENT: Entity 'Unvoluntary', constraint name. Expected = PK_Unvoluntaries, found = ";
+                string input = "DIFFERENT: Bandbook->PrimaryKey 'PK_Bandbooks', constraint name. Expected = PK_Bandbooks, found =\r\nDIFFERENT: Entity 'Bandbook', constraint name. Expected = PK_Bandbooks, found =\r\nNOT CHECKED: Entity 'Bandbook', constraint name. Expected = <null>\r\n\t, found = Bandbook\r\n\tDIFFERENT: Forced->PrimaryKey 'PK_Forced', constraint name. Expected = PK_Forced, found =\r\n\tDIFFERENT: Forced->Property 'Courtname', column type. Expected = TEXT, found = NUMERIC\r\n\tNOT IN DATABASE: Forced->Property 'Movebookid', column name. Expected = Movebookid\r\n\tDIFFERENT: Forced->Property 'Patientid', column type. Expected = INTEGER, found = NUMERIC\r\n\tNOT IN DATABASE: Forced->ForeignKey 'FK_Forced_Movebooks_Movebookid', constraint name. Expected = FK_Forced_Movebooks_Movebookid\r\n\tNOT IN DATABASE: Forced->Index 'Movebookid', index constraint name. Expected = IX_Forced_Movebookid\r\n\tDIFFERENT: Entity 'Forced', constraint name. Expected = PK_Forced, found =\r\n\tDIFFERENT: Fss->PrimaryKey 'PK_Fss', constraint name. Expected = PK_Fss, found =\r\n\tDIFFERENT: Entity 'Fss', constraint name. Expected = PK_Fss, found =\r\n\tDIFFERENT: PatientRecord->PrimaryKey 'PK_Movebooks', constraint name. Expected = PK_Movebooks, found =\r\n\tDIFFERENT: Entity 'PatientRecord', constraint name. Expected = PK_Movebooks, found =\r\n\tNOT CHECKED: Entity 'PatientRecord', constraint name. Expected = <null>, found = PatientRecord\r\nDIFFERENT: Reports->PrimaryKey 'PK_Reports', constraint name. Expected = PK_Reports, found = \r\nDIFFERENT: Entity 'Reports', constraint name. Expected = PK_Reports, found = \r\nDIFFERENT: Unvoluntary->PrimaryKey 'PK_Unvoluntaries', constraint name. Expected = PK_Unvoluntaries, found = \r\nDIFFERENT: Entity 'Unvoluntary', constraint name. Expected = PK_Unvoluntaries, found = ";
 
                 List<string> lines = input.Split("\r\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                     .Where(l => Regex.IsMatch(l, @"^NOT IN DATABASE:"))

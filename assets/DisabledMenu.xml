@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!--ClassName = Class Type name-->
+<!--Parameter = string: parameter to constructor-->
+
+<Menu Grid.Row="0">
+	<MenuItem Header="База данных">
+		<MenuItem Header="Тесты">
+			<MenuItem Header="Запрос к БД 1"  ClassName="Castor.test.DbTests" Parameter ="TTestSelectTable1" />
+			<MenuItem Header="Запрос к БД 2"  ClassName="Castor.test.DbTests" Parameter ="TTestSelectTable2" />
+			<MenuItem Header="Запрос к БД 3"  ClassName="Castor.test.DbTests" Parameter ="TTestSelectTable3" />
+			<MenuItem Header="Create Html Test"  ClassName="Castor.test.DbTests" Parameter ="TCreateHtml" />
+		</MenuItem>
+		<MenuItem Header="Сменить отделение" ClassName="Castor.gui.dialogs.SelectUser"/>
+		<MenuItem Header="Обновление" ClassName="Castor.gui.dialogs.ManualUpdate" />
+		<Separator/>
+		<MenuItem Header="Console"   />
+	</MenuItem>
+</Menu>

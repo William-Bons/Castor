@@ -19,7 +19,7 @@ namespace Castor.database.tables
         public long Visitid { get; set; } // id visit from medis № и/бол
         public int? Type { get; set; } // 100-амб, 101-общ, 102 - спец, 103-стин, 104-снято, 199-в переходе, 
         public string? Courtname {  get; set; }// название суда
-        public long? Movebookid { get; set; }// привязув к Id Movebook
+        public long? Movebookid { get; set; }// привязув к Id PatientRecord
         
         
         public virtual Movebook? Movebook { get; set; }

@@ -1,0 +1,32 @@
+﻿using Castor.database.tab_medis;
+using Castor.gui.common;
+using Microsoft.EntityFrameworkCore;
+using System.Windows;
+using System.Windows.Input;
+
+namespace Castor.gui.find
+{
+    public partial class PatientSearchWindow : Window, IDialog
+    {
+        public PatientSearchWindow()
+        {
+            InitializeComponent();
+
+            var context = new MedisContext(); // твой DbContext
+            var viewModel = new PatientSearchViewModel(context);
+            DataContext = viewModel;
+
+            // опционально: закрыть контекст при закрытии окна
+            this.Closed += (s, e) => context.Dispose();
+        }
+    }
+
+    public class RelayCommand : ICommand
+    {
+        private readonly Action _execute;
+        public RelayCommand(Action execute) => _execute = execute;
+        public bool CanExecute(object? parameter) => true;
+        public void Execute(object? parameter) => _execute();
+        public event EventHandler? CanExecuteChanged;
+    }
+}

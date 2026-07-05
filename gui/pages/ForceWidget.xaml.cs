@@ -4,6 +4,7 @@ using Castor.gui.common;
 using Castor.gui.dialogs;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Controls;
 
 namespace Castor.gui.pages
@@ -49,7 +50,7 @@ namespace Castor.gui.pages
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
@@ -57,7 +58,7 @@ namespace Castor.gui.pages
         {
             //try
             //{
-            //    Movebook? movebook = (sender as DataGrid)?.SelectedItem as Movebook;
+            //    PatientRecord? movebook = (sender as DataGrid)?.SelectedItem as PatientRecord;
             //    Forced? forced = movebook?.ForceControl;
             //    ForceControl control = new ForceControl(forced);
             //    if (control.ShowDialog().Value)

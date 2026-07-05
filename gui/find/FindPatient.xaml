@@ -1,4 +1,4 @@
-﻿<Window x:Class="Castor.gui.dialogs.FindPatient"
+﻿<Window x:Class="Castor.gui.find.FindPatient"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -17,7 +17,7 @@
         </ResourceDictionary>
     </Window.Resources>
     
-    <Grid Margin="10">
+    <Grid Margin="10" x:Name="CentralGridPanel">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
@@ -26,20 +26,25 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <WrapPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
             <Button Content="Отменить" Style="{DynamicResource Castor.ButtonGrayDialogue}" Click="Exit"/>
-            <Button Content="Выбрать" Style="{DynamicResource Castor.ButtonGrayDialogue}" Click="SelectPatient"/>
+            <Button Content="Пациент" Style="{DynamicResource Castor.ButtonGrayDialogue}" Click="SelectPatient"/>
+            <Button Content="Визиты" Style="{DynamicResource Castor.ButtonGrayDialogue}" Click="SelectVisits"/>
         </WrapPanel>
 
-        <WrapPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" Orientation="Vertical" Margin="5">
-            <CheckBox Content="Только визиты выбранного отделения" IsChecked="{Binding OnlySelectedDep}"/>
-        </WrapPanel>
+        
 
         <Grid Grid.Row="0" Grid.Column="0" Margin="5" x:Name="ObservePanel" DataContext="{Binding Patientdata}">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -64,27 +69,15 @@
             <TextBlock Grid.Row="3" Text="СНИЛС" Style="{DynamicResource TextBlockStyle0}"/>
             <TextBox   Grid.Row="3" Grid.Column="1" Style="{DynamicResource Castor.StandardTextBox}" Text="{Binding SNILS}"  />
 
+            <Separator Grid.Row="9" Grid.ColumnSpan="2" Margin="1,10"/>
+            <ComboBox  Grid.Row="10" Grid.Column="1" ItemsSource="{Binding Deps}" SelectedItem="{Binding Department}" Style="{DynamicResource Castor.ComboBox0}" />
+            <CheckBox  Grid.Row="11" Grid.Column="1" Content="Только визиты выбранного отделения" IsChecked="{Binding OnlySelectedDep}" ScrollViewer.VerticalScrollBarVisibility="Auto" />
         </Grid>
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="False" Width="5"/>
 
-        <DataGrid Grid.Row="0" Grid.Column="2" ItemsSource="{Binding Patients}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectedItem="{Binding Patient}" SelectionChanged="Patients_SelectionChanged">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="" Binding="{Binding fullname}"/>
-                <DataGridTextColumn Header="" Binding="{Binding age}"/>
-                <DataGridTextColumn Header="" Binding="{Binding birthdate}"/>
-                <DataGridTextColumn Header="" Binding="{Binding city}"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <DataGrid Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Visits}" AutoGenerateColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectedItem="{Binding Visit}" MouseDoubleClick="SelectPatient">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="" Binding="{Binding Dep.stext}" />
-                <DataGridTextColumn Header="" Binding="{Binding VPeriod}" />
-                <DataGridTextColumn Header="" Binding="{Binding }" />
-                <DataGridTextColumn Header="" Binding="{Binding }" />
-                <DataGridTextColumn Header="" Binding="{Binding }" />
-            </DataGrid.Columns>
-        </DataGrid>
+        
+        
 
     </Grid>
 </Window>

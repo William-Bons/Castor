@@ -69,9 +69,9 @@ namespace Castor.gui.movebook
             }
             using (CastorContext castor = new CastorContext())
             {
-                //Movebook.Dateout = DateOnly.FromDateTime(DateInControl.SelectedDate.Value);
-                //FormattableString fstr = $@"UPDATE Movebooks set dsout={Movebook.Dsout}, dateout={Movebook.Dateout}, city={Movebook.City}, early={Movebook.Early}, unvoluntary={Movebook.Unvoluntary}, first={Movebook.First}, second={Movebook.Second}, closed={Movebook.Closed}, outto={Movebook.Outto}, deceased={Movebook.Deceased}
-                //  where Id={Movebook.Id}";
+                //PatientRecord.Dateout = DateOnly.FromDateTime(DateInControl.SelectedDate.Value);
+                //FormattableString fstr = $@"UPDATE Movebooks set dsout={PatientRecord.Dsout}, dateout={PatientRecord.Dateout}, city={PatientRecord.City}, early={PatientRecord.Early}, unvoluntary={PatientRecord.Unvoluntary}, first={PatientRecord.First}, second={PatientRecord.Second}, closed={PatientRecord.Closed}, outto={PatientRecord.Outto}, deceased={PatientRecord.Deceased}
+                //  where Id={PatientRecord.Id}";
                 //castor.Database.ExecuteSql(fstr);
                 castor.Update(Movebook);
                 castor.SaveChanges();

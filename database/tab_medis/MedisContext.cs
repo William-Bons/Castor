@@ -15,6 +15,7 @@ namespace Castor.database.tab_medis
     /// Класс контекста данных базы данных Медис
     /// осуществляет подключение к базе данных и дальнейшеее взаимодействие с ней
     /// подключение - Postgree
+    /// Host=172.23.1.220;Port=5432;Database=med;Username=SOLUTION_MED;Password=elsoft;
     /// </summary>
     public class MedisContext : DbContext
     {
@@ -29,6 +30,8 @@ namespace Castor.database.tab_medis
         public DbSet<dep> dep => Set<dep>();
         public DbSet<diagnos> diagnos => Set<diagnos>();
         public DbSet<patdiag> patdiag => Set<patdiag>();
+        public DbSet<docdep> docdep => Set<docdep>();
+        public DbSet<lu> lu => Set<lu>();
         #endregion
 
         /// <summary>
@@ -40,7 +43,7 @@ namespace Castor.database.tab_medis
             // для подключения к областной базе не нужна
 
             // Сначала пингуется хост, задержка в настройках, по умолчанию 500 мс, если пинга нет выбрасывается Exeption
-            PingHost();
+            //PingHost();
         }
 
 
@@ -54,6 +57,10 @@ namespace Castor.database.tab_medis
             try
             {
                 optionsBuilder.UseNpgsql(Decrypt(Settings.Default.postgreeConnection));
+            }
+            catch (FormatException f_ex)
+            {
+
             }
             catch (Exception ex) 
             {
@@ -74,13 +81,7 @@ namespace Castor.database.tab_medis
             return status;
         }
 
-        public string Encrypt(string plainText, string password = null)
-        {
-            var data = Encoding.Default.GetBytes(plainText);
-            var pwd = !string.IsNullOrEmpty(password) ? Encoding.Default.GetBytes(password) : Array.Empty<byte>();
-            var cipher = ProtectedData.Protect(data, pwd, DataProtectionScope.CurrentUser);
-            return Convert.ToBase64String(cipher);
-        }
+        
 
         public string Decrypt(string cipherText, string password = null)
         {

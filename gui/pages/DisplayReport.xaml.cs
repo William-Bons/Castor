@@ -1,5 +1,5 @@
-﻿using Castor.database.tables;
-using Castor.gui.common;
+﻿using Castor.database.reports;
+using Castor.database.tables;
 using Castor.gui.dialogs;
 using SelectPdf;
 using System.Globalization;
@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 
-namespace Castor.gui.movebook
+namespace Castor.gui.pages
 {
     /// <summary>
     /// Логика взаимодействия для DisplayReport.xaml
@@ -23,8 +23,11 @@ namespace Castor.gui.movebook
 
             // show report 
             //webBrowser.Language = System.Windows.Markup.XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag);
-            Browser.NavigateToString(_report.HtmlReport);
+            
+            
+            Browser.NavigateToString(_report?.HtmlReport ?? $"NO DATA!");
 
+            
             //HtmlToPdf converter = new HtmlToPdf();
             //converter.Options.PdfPageSize = PdfPageSize.A4;
             //converter.Options.MarginBottom = 25;

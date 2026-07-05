@@ -171,4 +171,6 @@ public partial class docdep : ITableView
 
     public virtual ICollection<visit>? Visits { get; set; }
 
+    public virtual lu? Position { get; set; }
+
 }

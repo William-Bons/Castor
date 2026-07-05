@@ -5,13 +5,6 @@ using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Castor.database.tables;
-
-public struct DatePeriod
-{
-    public bool Set {  get; set; }
-    public DateTime Start { get; set; }
-    public DateTime End { get; set; }
-}
 public class Movebook
 {
     public long Id { get; set; }
@@ -44,6 +37,7 @@ public class Movebook
     public virtual Fss? FssControl {  get; set; }
     public virtual ICollection<Forced>? Forceds { get; set; }
     public virtual Unvoluntary? UnvoluntaryControl { get; set; }
+    public virtual ICollection<Commity> Commities { get; set; }
 
 
     /// <summary>
@@ -57,14 +51,14 @@ public class Movebook
         {
             bool[] result =
             [
-             /*A*/   Regex.IsMatch(input, @"^F(21|22|23|25|30|31|32|33|00|01)"),
-         /*B*/   Regex.IsMatch(input, @"^F(20)"),
-         /*C*/   Regex.IsMatch(input, @"^F(70|71|72|72)"),
-         /*D*/   Regex.IsMatch(input, @"^F(02|03|04|05|06|07|50|60|61|62|90|91|40|41|42|43|45|48)"),
-         /*E*/   Regex.IsMatch(input, @"^F1\d"),
-         /*F*/   Regex.IsMatch(input, @"^F10"),
-         /*G*/   Regex.IsMatch(input, @"^F1[1-9]"),
-        ];
+         /*A*/   Regex.IsMatch(input, @"^F(21|22|23|25|30|31|32|33|00|01)"),                                //Психозы + состояние слабоумия старческого  возраста
+         /*B*/   Regex.IsMatch(input, @"^F(20)"),                                                           //Шизофрения
+         /*C*/   Regex.IsMatch(input, @"^F(70|71|72|73)"),                                                  //Умственная отсталость
+         /*D*/   Regex.IsMatch(input, @"^F(02|03|04|05|06|07|50|60|61|62|90|91|40|41|42|43|45|48|65|88)"),  //Непсихотические расстройства
+         /*E*/   Regex.IsMatch(input, @"^F1\d"),                                                            //В  связи с употреблением психоактивных веществ
+         /*F*/   Regex.IsMatch(input, @"^F10"),                                                             //•	из них:   -  хронический Алкоголизм (F 10.1;  F 10.2; F 10.3 )
+         /*G*/   Regex.IsMatch(input, @"^F1[1-9]"),                                                         //наркомании, токсикомании
+            ];
             return result;
         }
         catch

@@ -42,6 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="EfCore.SchemaCompare" Version="8.2.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.12.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
@@ -111,13 +112,13 @@
     <None Update="assets\BlockTrTd.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="assets\DisabledMenu.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="assets\MainMenu.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="assets\MonthReport.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="assets\updates.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="img\kurwa.jpg">
@@ -135,6 +136,9 @@
   <ItemGroup>
     <Page Update="assets\Style.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Page>
+    <Page Update="gui\commities\CommityForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
 

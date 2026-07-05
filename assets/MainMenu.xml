@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
 <!--ClassName = Class Type name-->
-<!--ClassName Parameter = string: parameter to constructor-->
+<!--Parameter = string: parameter to constructor-->
 
 <Menu Grid.Row="0">
 	<MenuItem Header="База данных">
@@ -14,41 +14,26 @@
 		<MenuItem Header="Принудительное лечение"  ClassName="Castor.gui.force.Forcepage" />
 		<MenuItem Header="Движение пациентов"  ClassName="Castor.gui.movebook.Thebook" />
 		<MenuItem Header="Список пациентов в отделении" ClassName="Castor.gui.pages.LoadPatientsFromMedis"/>
-		<MenuItem Header="Мультибригада" ClassName="Castor.gui.bandbook.Theband"/>
+		<MenuItem Header="Загрузить находящихся в отделении" ClassName="Castor.gui.movebook.ImportMedisPeriod"/>
+		<MenuItem Header="Журнал ВК" ClassName="Castor.gui.commities.CommitiesPage"/>
 		<MenuItem Header="Properties" ClassName="Castor.gui.dialogs.SettingsCheet"/>
 		<MenuItem Header="Сменить отделение" ClassName="Castor.gui.dialogs.SelectUser"/>
+		<MenuItem Header="Обновление" ClassName="Castor.gui.dialogs.ManualUpdate" />
+		<MenuItem Header="Добавление пользователя" ClassName="Castor.gui.login.UserCreateWindow" />
 		<Separator/>
 		<MenuItem Header="Console"   />
 	</MenuItem>
 	<MenuItem Header="Пациент" >
-		<MenuItem Header="Новый"  ClassName="Castor.gui.movebook.CreateNew" />
-		<MenuItem Header="Открыть по номеру карты" ClassName="" Parameter="B" InputGestureText="F3"/>
+		<MenuItem Header="Поиск"  ClassName="Castor.gui.find.PatientSearchWindow" />
+		<MenuItem Header="Протокол ВК" ClassName="Castor.gui.medicalcomission.ProtocolWindow"/>
 		<MenuItem Header="Открыть последнего" ClassName="" Parameter="O" InputGestureText="F2"/>
 	</MenuItem>
 
 	<MenuItem Header="Журналы">
-		<MenuItem Header="Журнал ВК"  ClassName="Animalia.CommityJournal" />
-		<MenuItem Header="Журнал операций"  ClassName="Animalia.ActionsJournal"/>
-		<MenuItem Header="Журнал рецептов"  ClassName="Animalia.ReceptsJournal"/>
-		<MenuItem Header="Журнал записей"   ClassName="Animalia.RecordsJournal" />
-		<MenuItem Header="Журнал госпитализаций"   ClassName="Animalia.HospitalsJournal" />
-		<MenuItem Header="Перекидка"   ClassName="Animalia.Pages.CycleControl" />
-		<MenuItem Header="Карты"  ClassName="Animalia.Reestr.CardsReestr" />
+		<MenuItem Header="Журнал ВК"  ClassName="Castor.gui.commities.CommityForm" />
+		<MenuItem Header="Журнал пользователей"  ClassName="Castor.gui.login.UsersListPage"/>
+
 	</MenuItem>
-	<MenuItem Header="Контракты">
-		<MenuItem Header="Добавить контракт"  ClassName="Animalia.AppendContractDialog"/>
-	</MenuItem>
-	
-	<MenuItem Header="Misk">
-		<MenuItem Header="Сменить пользователя"  ClassName="Animalia.Commands" Parameter="#NewUser" />
-		<MenuItem Header="Наша Марка"  ClassName="Anstatistic.Statforma, Anstatistic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-		<MenuItem Header="NewMedCommPage"  ClassName="Animalia.Vk.NewMedCommPage" />
-		<MenuItem Header="MedcommReestr"  ClassName="Animalia.Reestr.MedcommReestr" />
-		<MenuItem Header="PayedTicketPage"  ClassName="Animalia.Ticket.PayedTicketPage" />
-		<MenuItem Header="SemdReestr"  ClassName="Animalia.Reestr.SemdReestr" />
-		<MenuItem Header="Avicenna"  ClassName="Animalia.AV.gui.AvicennaUserWork" />
-		<MenuItem Header="Avicenna2"  ClassName="Animalia.AV.gui.AddresToMDBSConverter" />
-		<MenuItem Header="Avicenna4"  ClassName="Animalia.AV.import.Consistence" />
-	</MenuItem>
+
 
 </Menu>

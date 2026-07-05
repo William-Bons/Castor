@@ -5,12 +5,7 @@
     <Setting Name="sqliteConnection" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="sqlserverConnection" Type="(Connection string)" Scope="Application">
-      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;SerializableConnectionString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
-  &lt;ConnectionString&gt;Data Source=DESKTOP-J9NFCEV;Initial Catalog=deps;Integrated Security=True;Encrypt=False&lt;/ConnectionString&gt;
-  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
-&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+    <Setting Name="sqlserverConnection" Type="System.String" Scope="User">
       <Value Profile="(Default)">Data Source=DESKTOP-J9NFCEV;Initial Catalog=deps;Integrated Security=True;Encrypt=False</Value>
     </Setting>
     <Setting Name="contextValiant" Type="System.Int32" Scope="User">
@@ -22,7 +17,7 @@
     <Setting Name="LastSelectedDepId" Type="System.Int64" Scope="User">
       <Value Profile="(Default)">2704</Value>
     </Setting>
-    <Setting Name="postgreeConnection" Type="System.String" Scope="Application">
+    <Setting Name="postgreeConnection" Type="System.String" Scope="User">
       <Value Profile="(Default)">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAfvJm6wKQ20G8cjaXRUwHVQAAAAACAAAAAAAQZgAAAAEAACAAAAAhfOZU5fLkarUroq4TOO8ZagN5Pvp+LS/rKZtr8wYtGQAAAAAOgAAAAAIAACAAAACDuam1+4TdsSWhb/gh2ExJhQyD4/73k824309gRZkgxlAAAAA40lWZ2eJAGIUxF3TYokkgamBVEf6aDpqxqrviXwb5YUBSYdkwHgdI6n4WILh1ZUrRKu6und5fiOXP+t8/YsTeoJf6Q0f29/hsGkOJXbIXuEAAAACGUwpF8Pvs11LI+FENdVFFpTmtTdity0LPYHGeLWW+X2i/Hkv3uho8cm4D+2FuKD2dIHvVaGUSq8MRb4zZACNW</Value>
     </Setting>
     <Setting Name="StartLoadingPage" Type="System.String" Scope="User">
@@ -43,7 +38,7 @@
     <Setting Name="HideDisordered" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AllowedDepartments" Type="System.String" Scope="Application">
+    <Setting Name="AllowedDepartments" Type="System.String" Scope="User">
       <Value Profile="(Default)">2704;2712;2701</Value>
     </Setting>
     <Setting Name="LastSelectedDepName" Type="System.String" Scope="User">
@@ -54,9 +49,6 @@
     </Setting>
     <Setting Name="LastForcedPatientID" Type="System.Int64" Scope="User">
       <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="UpdatesRun" Type="System.String" Scope="User">
-      <Value Profile="(Default)">FC;</Value>
     </Setting>
     <Setting Name="HostPingLatency" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">500</Value>

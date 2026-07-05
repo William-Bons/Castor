@@ -1,23 +1,12 @@
 ﻿using Castor.database;
-using Castor.database.tab_medis;
 using Castor.database.tables;
+using Castor.gui.common;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Castor.gui.force
 {
@@ -35,10 +24,11 @@ namespace Castor.gui.force
         {
             if (Settings.Default.LastForcedPatientID > 0)
             {
-                LoadForcelistForPatient(Settings.Default.LastForcedPatientID);
-                using CastorContext context = new CastorContext();
-                Movebook = context.Movebooks
-                    .First(m => m.Patientid == Settings.Default.LastForcedPatientID); //todo: работает правильно если в книге одна запись о госпитализации, и неверно если пац поступает 2... раз
+                using CastorContext castor = new CastorContext();
+                PatientRecord = castor.Movebooks
+                    .First(m => m.Patientid == Settings.Default.LastForcedPatientID);
+
+                LoadForcelistForPatient();
             }
 
             InitializeComponent();
@@ -50,28 +40,35 @@ namespace Castor.gui.force
         /// </summary>
         public Forcepage(Movebook movebook)
         {
-            Movebook = movebook;
-            Settings.Default.LastForcedPatientID = movebook.Patientid.HasValue ?  movebook.Patientid.Value : 0;
+            PatientRecord = movebook;
+            Settings.Default.LastForcedPatientID = movebook.Patientid.HasValue ? movebook.Patientid.Value : 0;
             Settings.Default.Save();
-            LoadForcelistForPatient(Settings.Default.LastForcedPatientID);
+            LoadForcelistForPatient();
 
             InitializeComponent();
             DataContext = this;
         }
 
         public IEnumerable<Forced> ForceList { get; set; } = new List<Forced>();
-        public Movebook? Movebook { get; set; }
+        public Movebook? PatientRecord { get; set; }
 
-        private void LoadForcelistForPatient(long patientid)
+        private void LoadForcelistForPatient()
         {
-            using (CastorContext castor = new CastorContext())
+            try
             {
+                using CastorContext castor = new CastorContext();
+
                 ForceList = castor.Forced
-                    .Where(f => f.Patientid == patientid)
+                    .Where(f => f.Patientid == PatientRecord.Patientid)
                     .Include(f => f.Movebook)
                     .OrderBy(f => f.Start)
                     .ToList();
+
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ForceList)));
+            }
+            catch (Exception ex)
+            {
+                Message.ShowPopup(ex.Message);
             }
         }
 
@@ -85,7 +82,7 @@ namespace Castor.gui.force
         private Forced? GetLastForce()
         {
             return ForceList.Count() > 0 ?
-                ForceList.MaxBy(f => f.Start) : 
+                ForceList.MaxBy(f => f.Start) :
                 null;
         }
 
@@ -99,12 +96,12 @@ namespace Castor.gui.force
         /// </summary>
         private void AddNewCourtOrder(object sender, RoutedEventArgs e)
         {
-            if(ForceList.Count() > 0)
+            if (ForceList.Count() > 0)
                 new ForceControl(ForceList).ShowDialog(); // добавление пост. к списку имеющихся
             else
-                new ForceControl(Movebook).ShowDialog();// добвление первичного постановления т.к. список пуст
+                new ForceControl(PatientRecord).ShowDialog();// добвление первичного постановления т.к. список пуст
 
-            LoadForcelistForPatient(Settings.Default.LastForcedPatientID);
+            LoadForcelistForPatient();
         }
 
         /// <summary>
@@ -114,7 +111,7 @@ namespace Castor.gui.force
         {
             new ForceControl(ForcesDataGrid.SelectedItem).ShowDialog(); // редактирование выделенного постановления
 
-            LoadForcelistForPatient(Settings.Default.LastForcedPatientID);
+            LoadForcelistForPatient();
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Castor.gui.force
                     Start = DateOnly.FromDateTime(DateTime.Now)
                 };
             }
-            // создание нового по ссылке на запись Movebook
+            // создание нового по ссылке на запись PatientRecord
             else if (_force is Movebook mb) 
             {
                 ForcedItem = new Forced() 

@@ -4,168 +4,156 @@ using Castor.database.tables;
 using Castor.gui.common;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Castor.gui.movebook
 {
     /// <summary>
     /// Логика взаимодействия для ImportMedisPeriod.xaml
     /// </summary>
-    public partial class ImportMedisPeriod : Window, INotifyPropertyChanged
+    public partial class ImportMedisPeriod : Page, IRefresh, INotifyPropertyChanged, IConsoleMessage
     {
         public ImportMedisPeriod()
         {
             InitializeComponent();
             DataContext = this;
 
-            CheckNewby();
+            Loaded += async (a, b) =>
+            {
+                MainWindow.Wait(true);
+                await Task.Run(() => LoadExistsFromMedis());
+                ConsoleMessage?.Invoke($"    Загружено строк: {DataRowSource?.Count()}");
+                MainWindow.Wait();
+            };
+
+            /*Task.Run(() => */
+            //LoadExistsFromMedis();
         }
 
-        public object DataRowSource { get; private set; }
-        public DatePeriod DatePeriod { get; set; } = new DatePeriod() { End = DateTime.Now, Start = DateTime.Now.AddDays(-30) };
+        public DateTime ControlDate { get; set; } = DateTime.Now.AddDays(-30); // стандарт - за месяц до сегодня
+        public IEnumerable<Movebook> DataRowSource { get; private set; } = new List<Movebook>();
+        public object SelectedDataItem { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event common.RefreshEventHandler RefreshNotify;
+        public event ConsoleMessageHandler ConsoleMessage;
 
-        private async void CheckNewby()
+        public void Refresh()
         {
-            List<long?> visitIds;
-            List<visit> visits= new List<visit>();
-
-            Func<Task> __check = async () =>
-            {
-                try
-                {
-                    
-
-                    using(CastorContext castorContext = new CastorContext())
-                    {
-                        visitIds = castorContext.Movebooks.Select(m => m.Visitid).ToList();
-                    }
-
-                    using (MedisContext medisContext = new MedisContext())
-                    {
-                        /* Запрос к Медис*/
-                        ICollection<dep>? depList = medisContext.dep // отделения
-                            .Where(d => d.keyid == Settings.Default.LastSelectedDepId) // где номер отделения = сохраненному в Settings
-                            .Include(d => d.Visits.Where(v => !v.dat1.HasValue || (DateTime.Today.ToUniversalTime() - v.dat1).Value.Days < 8))
-                            .ThenInclude(v => v.Patient)  // привязка пациента
-                            .ToList();
-
-                        visits = depList.Select(d => d.Visits).First().ExceptBy(visitIds, v => v.keyid).ToList();
-                    }
-
-                    SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", visits, PlacementMode.Center, "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");
-
-                }
-                catch (Exception ex)
-                {
-                    Message.ShowPopup(ex.Message);
-                }
-            };
-            await __check();
-            
+            throw new NotImplementedException();
         }
 
-        private async void LoadRecords(object sender, RoutedEventArgs e)
+
+        /// <summary>
+        /// Импорт выбранных визитов в базу Castor
+        /// </summary>
+        private void SaveSelectedInCastor(object sender, RoutedEventArgs e)
         {
-            DatePeriod = new DatePeriod() { Start=DP0.SelectedDate.Value, End=DP1.SelectedDate.Value };
-            
-            List<Movebook> _drs = new List<Movebook>();
-
-            Func<Task> Foo = async () =>
+            try
             {
-                Cursor = Cursors.Wait;
-                try
+                using CastorContext castorContext = new CastorContext();
+                castorContext.Movebooks.AddRange(DataRowSource);
+                castorContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Message.ShowPopup(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Загружает визиты пациентов находящихся в отделении, в Root - поступление в п/п, оттуда - дата начала госпитализации
+        /// </summary>
+        private async Task LoadExistsFromMedis()
+        {
+            try
+            {
+                // список номеров и/б уже загруженных в базу Кастор
+                using CastorContext castorContext = new CastorContext();
+                List<long> castorIds = castorContext.Movebooks
+                    .Select(x => x.Card_Id)
+                    .ToList();
+
+
+                using MedisContext medisContext = new MedisContext();
+
+                // список визитов пациентов нваходящихся в настоящее время в отделении исключая номера историй уже заруженных в базу (по castorIds)
+                List<visit> __DataRowSource = medisContext.visit
+                    .Where(v => v.depid == Settings.Default.LastSelectedDepId && !v.dat1.HasValue) // Только находящиеся в отделении
+                    .Include(v => v.Root) // чаще всего это поступление в п/п
+                    .Include(v => v.Patient)  // привязка пациента
+                    .ThenInclude(p => p.Diagnoses.Where(d => d.Diagnos.code.StartsWith("F"))) // диагнозы пациента
+                    .ThenInclude(d => d.Diagnos)
+                    .ToList()
+                    .ExceptBy(castorIds, v => v.num)
+                    .ToList();
+
+                // для каждого полученного визита создается запись в movebook
+                List<Movebook> movebooks = new List<Movebook>();
+                foreach (visit vis in __DataRowSource)
                 {
-                    using (MedisContext medis = new MedisContext())
-                    {
+                    Movebook movebook = new Movebook();
+                    movebook.Fio = vis.Patient?.fullname ?? string.Empty;
+                    movebook.Datein = DateOnly.FromDateTime(vis.order_dat.Value); //vis.dat.HasValue ? DateOnly.FromDateTime(vis.dat.Value) : null;
+                    movebook.Ordered = 0;
+                    movebook.Card_Id = vis.num;
+                    movebook.Patientid = vis?.Patient?.num;
+                    movebook.Birthdate = DateOnly.FromDateTime(vis.Patient.birthdate.Value);
+                    movebook.Visitid = vis?.keyid;
+                    movebook.Dsin = vis.Patient.CurrentDs.Diagnos.code;
 
-                        ICollection<dep>? depList = medis.dep
-                                .Where(d => d.keyid == Settings.Default.LastSelectedDepId)
-                                .Include(d => d.Visits.Where(v => (v.dat >= DatePeriod.Start.ToUniversalTime() && v.dat <= DatePeriod.End.ToUniversalTime())
-                                        || (v.dat1 >= DatePeriod.Start.ToUniversalTime() && v.dat1 <= DatePeriod.End.ToUniversalTime())))
-                                .ThenInclude(v => v.Patient)
-                                .ThenInclude(p => p.Diagnoses)
-                                .ToList();
+                    //if (vis.dat1.HasValue)
+                    //{
+                    //    movebook.Dateout = vis.dat1.HasValue ? DateOnly.FromDateTime(vis.dat1.Value) : null;
+                    //    diagnos? dsOut = medis.diagnos
+                    //        .Where(d => d.keyid == vis.Patient.CurrentDs.diagid)?.First();
+                    //    movebook.Dsout = dsOut?.code;
+                    //}
 
-                        ICollection<visit>? visits = depList?.First()?.Visits?.ToList() ?? new List<visit>();
+                    // проверка повторности поступления - поиск уже закрытых карт для пациента в этом учреждении
+                    movebook.Second = medisContext.visit
+                        .Include(v => v.Patient).Where(v => v.Patient.num == vis.Patient.num)
+                        .Include(v => v.Dep)
+                        .Where(v => v.Dep.rootid == Settings.Default.RootDepartmentId && v.dat1.HasValue && v.vistype == 102 && v.num != vis.num) // root=ДПБ и дата выписки заполнена и поступление в п/п и номер истории не равен загружаемому
+                        .Count() > 0
+                        ;
 
-                        foreach (var vis in visits)
-                        {
-                            Movebook movebook = new Movebook();
-                            movebook.Fio = vis.Patient?.fullname ?? string.Empty;
-                            movebook.Datein = vis.dat.HasValue ? DateOnly.FromDateTime(vis.dat.Value) : null;
-                            movebook.Ordered = 0;
-                            movebook.Card_Id = vis.num;
-                            movebook.Patientid = vis?.Patient?.num;
-                            movebook.Birthdate = DateOnly.FromDateTime(vis.Patient.birthdate.Value);
-                            movebook.Visitid = vis?.keyid;
-
-                            diagnos? dsIn = medis.diagnos
-                                .Where(d => d.keyid == vis.Patient.CurrentDs.diagid)?.First();
-                            movebook.Dsin = dsIn?.code;
-
-                            if (vis.dat1.HasValue)
-                            {
-                                movebook.Dateout = vis.dat1.HasValue ? DateOnly.FromDateTime(vis.dat1.Value) : null;
-                                diagnos? dsOut = medis.diagnos
-                                    .Where(d => d.keyid == vis.Patient.CurrentDs.diagid)?.First();
-                                movebook.Dsout = dsOut?.code;
-                            }
-
-                            _drs.Add(movebook);
-                        }
-
-                        DataRowSource = _drs;
-                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DataRowSource)));
-                    }
+                    movebooks.Add(movebook);
                 }
-                catch (Exception ex)
-                {
-                    Message.ShowPopup(ex.Message);
-                }
-                Cursor = Cursors.Arrow;
-            };
-            await Foo();
+
+                DataRowSource = movebooks;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DataRowSource)));
+
+            }
+            catch (Exception ex)
+            {
+                Message.ShowPopup(ex.Message);
+            }
         }
 
         private void ShowAllDiagnosis(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (ImportDataGrid.SelectedItem is Movebook book)
+                if (SelectedDataItem is Movebook book)
                 {
+                    using MedisContext medis = new MedisContext();
+                    ICollection<patdiag> dss = medis.patdiag
+                        .Where(p => p.patientid == book.Patientid)
+                        .Include(p => p.Diagnos)
+                        .ToList();
 
-                    using (MedisContext medis = new MedisContext())
-                    {
-                        ICollection<patient> dss = medis.patient
-                            .Where(p => p.num == book.Patientid)
-                            .Include(p => p.Diagnoses)
-                            .ToList();
-
-                        DataGrid dataGrid = new DataGrid() { Language = XmlLanguage.GetLanguage("ru-RU") };
-                        dataGrid.ItemsSource = dss.First().Diagnoses;
-                        Window window = new Window();
-                        window.Content = dataGrid;
-                        window.Show();
-                    }
+                    DataGrid dataGrid = new DataGrid() { Language = XmlLanguage.GetLanguage("ru-RU") };
+                    dataGrid.ItemsSource = dss;
+                    Window window = new Window();
+                    window.Content = dataGrid;
+                    window.Show();
                 }
             }
             catch (Exception ex)
@@ -173,5 +161,38 @@ namespace Castor.gui.movebook
                 Message.ShowPopup(ex.Message);
             }
         }
+
+        /// <summary>
+        /// отбирает все визиты пациента в указанное учреждение. Всключая закрытые истории и поступления в п/п
+        /// </summary>
+        private void ShowAllVisistsForPatient(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (SelectedDataItem is Movebook _book)
+                {
+                    using MedisContext medis = new MedisContext();
+
+                    ICollection<visit> dss = medis.visit
+                        .Where(v => v.patientid == _book.Patientid)
+                        .Include(v => v.Dep)
+                        .Where(w => w.Dep.rootid == Settings.Default.RootDepartmentId)
+                        .ToList();
+
+                    DataGrid dataGrid = new DataGrid() { Language = XmlLanguage.GetLanguage("ru-RU") };
+                    dataGrid.ItemsSource = dss;
+                    Window window = new Window();
+                    window.Content = dataGrid;
+                    window.Show();
+                }
+            }
+            catch (Exception ex)
+            {
+                Message.ShowPopup(ex.Message);
+            }
+        }
+
+
     }
+
 }

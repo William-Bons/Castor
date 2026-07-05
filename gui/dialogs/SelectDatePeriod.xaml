@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="SelectDatePeriod" Width="350" Height="160" WindowStartupLocation="CenterOwner">
 
-    <Grid Margin="10">
+    <Grid Margin="10" DataContext="{Binding Period}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
@@ -18,9 +18,9 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock  Grid.Row="0" Text="Дата начала периода" VerticalAlignment="Center"/>
-        <DatePicker Grid.Row="0" Grid.Column="1" Margin="3" SelectedDate="{Binding SelectedStart}"/>
+        <DatePicker Grid.Row="0" Grid.Column="1" Margin="3" SelectedDate="{Binding Start}"/>
         <TextBlock  Grid.Row="1" Text="Дата конца периода" VerticalAlignment="Center"/>
-        <DatePicker Grid.Row="1" Grid.Column="1" Margin="3" SelectedDate="{Binding SelectedEnd}"/>
+        <DatePicker Grid.Row="1" Grid.Column="1" Margin="3" SelectedDate="{Binding End}"/>
 
     </Grid>
 </Window>

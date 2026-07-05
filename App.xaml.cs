@@ -1,6 +1,16 @@
-﻿using System.Configuration;
+﻿using Castor.database;
+using Castor.database.tables;
+using Castor.gui.dialogs;
+using Castor.gui.login;
+using Castor.Properties;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Configuration;
 using System.Data;
+using System.IO;
+using System.Net.NetworkInformation;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Castor
 {
@@ -9,6 +19,180 @@ namespace Castor
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            System.Diagnostics.Debug.WriteLine($"App constructor called at {DateTime.Now}");
+            var st = new System.Diagnostics.StackTrace(true);
+            System.Diagnostics.Debug.WriteLine(st.ToString()); // покажет, кто вызвал конструктор
+
+
+            // ЭТО САМОЕ ВАЖНОЕ: ловим ошибку ДО того, как WPF начнёт падать
+            DispatcherUnhandledException += OnDispatcherUnhandledException;
+        }
+
+        private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            // Используем твой централизованный метод логирования
+            LogError("Startup", e.Exception);
+
+            string userMessage = $"Критическая ошибка при старте приложения.\n\nПричина: {e.Exception.Message}\n\nПодробности записаны в лог-файл в папке Logs.\n\nОбратитесь к системному администратору.";
+
+            MessageBox.Show(
+                userMessage,
+                "Ошибка запуска Castor",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+            );
+
+            e.Handled = true;
+            // Никакого Shutdown() — приложение корректно завершит инициализацию
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            // 1. Проверка наличия зашифрованной строки подключения к Medis, если нет - запрос строки
+            string connString = null;
+            connString = Settings.Default.postgreeConnection;
+            if (string.IsNullOrWhiteSpace(connString))
+            {
+                var dialog = new ConnectionDialog();
+                if (dialog.ShowDialog() != true)
+                {
+                    // Пользователь нажал "Отмена" при вводе данных
+                    Application.Current.Shutdown();
+                    return;
+                }
+                connString = dialog.ConnectionString;
+            }
+
+            // Проверка версии приложения по наличию таблицы Users 
+            using CastorContext _db = new CastorContext();
+            if(!MetaTable.TableUsersExistsAsync(_db).Result)
+            {
+                // если Users нет - база данных старая
+                MessageBox.Show("СТАРАЯ");
+            }
+
+
+            // Миграции
+            try
+            {
+                using var context = new CastorContext();
+                context.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                LogError("Migrations", ex);
+                MessageBox.Show($"Ошибка обновления базы: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            // Аутентификация в системе
+            var authResult = TryAuthenticate();
+            if (authResult.IsSuccess)
+            {
+                // Полноценный вход: показываем обычный MainWindow
+                var mainWindow = new MainWindow();
+                mainWindow.Title = "Castor — Режим администратора";
+                mainWindow.Show();
+            }
+            else if (authResult.IsCancelled)
+            {
+                // Пользователь отказался от входа: показываем УРЕЗАННУЮ версию
+                var demoWindow = new MainWindow(); // отдельное окно с ограниченным функционалом
+                demoWindow.Title = "Castor — Демо‑режим (без доступа к данным)";
+                demoWindow.Show();
+
+                // Можно показать подсказку:
+                MessageBox.Show(
+                    "Вы работаете в демо‑режиме: редактирование и ЭЦП недоступны.\nДля полноценной работы требуется авторизация.",
+                    "Демо‑режим",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            else
+            {
+                // Неверный пароль: не пускаем вообще
+                LogWarning("Auth", "Failed login attempt");
+                MessageBox.Show("Неверный логин или пароль.", "Ошибка входа", MessageBoxButton.OK, MessageBoxImage.Error);
+                Shutdown();
+                return;
+            }
+        }
+
+        private AuthResult TryAuthenticate()
+        {
+            // Создаём окно входа БЕЗ контекста БД (оно просто собирает данные)
+            var loginWindow = new LoginWindow();
+
+            // Опционально: если хочешь предварительно загрузить список пользователей в ComboBox
+            // Это можно сделать через временный контекст, но лучше пусть пользователь вводит логин сам.
+
+            var dialogResult = loginWindow.ShowDialog();
+
+            // Пользователь нажал "Отмена" или крестик
+            if (dialogResult == false)
+            {
+                return new AuthResult
+                {
+                    IsCancelled = true,
+                    ErrorMessage = "Вход отменён"
+                };
+            }
+
+            string login = loginWindow.GetLogin();
+            string password = loginWindow.PasswordBox.Password;
+
+            // ВАЖНО: Очищаем память от пароля сразу после получения
+            loginWindow.PasswordBox.Clear();
+
+            // Используем наш сервис для проверки
+            var authService = new AuthService();
+
+            if (!authService.ValidateCredentials(login, password))
+            {
+                return new AuthResult
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Неверный логин или пароль"
+                };
+            }
+
+            return new AuthResult { IsSuccess = true };
+        }
+
+
+        // --- НОВЫЕ МЕТОДЫ ЛОГИРОВАНИЯ (вставь их в класс App) ---
+        public static void LogError(string category, Exception ex)
+        {
+            var logDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+            Directory.CreateDirectory(logDir);
+            var path = Path.Combine(logDir, $"error_{category}_{DateTime.Now:yyyyMMdd}.log");
+
+            var message = $"[{DateTime.Now:o}] [{category}] {ex.ToString()}\n\n";
+            File.AppendAllText(path, message);
+        }
+
+        public static void LogWarning(string category, string message)
+        {
+            var logDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+            Directory.CreateDirectory(logDir);
+            var path = Path.Combine(logDir, $"warn_{category}_{DateTime.Now:yyyyMMdd}.log");
+
+            var line = $"[{DateTime.Now:o}] [{category}] {message}\n";
+            File.AppendAllText(path, line);
+        }
+        // ---------------------------------------------------------
+
     }
 
+
+
+    public class AuthResult
+    {
+        public bool IsSuccess { get; set; }
+        public bool IsCancelled { get; set; } // пользователь нажал «Отмена»
+        public string ErrorMessage { get; set; } = string.Empty;
+    }
 }
