@@ -316,6 +316,7 @@
 
     <!-- 3. Стиль для DataGrid (строгий, медицинский стиль) -->
     <Style x:Key="CastorDataGrid" TargetType="DataGrid">
+        <!-- Базовые настройки DataGrid -->
         <Setter Property="Background" Value="#FFFFFF"/>
         <Setter Property="Foreground" Value="{StaticResource Brush.TextMain}"/>
         <Setter Property="BorderBrush" Value="{StaticResource Brush.Steel}"/>
@@ -328,59 +329,74 @@
         <Setter Property="CanUserAddRows" Value="False"/>
         <Setter Property="CanUserDeleteRows" Value="False"/>
         <Setter Property="AutoGenerateColumns" Value="False"/>
-        <!-- ВАЖНО: всегда False для учета пациентов -->
         <Setter Property="HeadersVisibility" Value="Column"/>
-
-        <!-- Скроллбар (стиль под Castor) -->
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-    </Style>
-    <Style TargetType="DataGridColumnHeader">
-        <Setter Property="Background" Value="#FAFAFA"/>
-        <Setter Property="Foreground" Value="{StaticResource Brush.TextSecondary}"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Padding" Value="12,8"/>
-        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Brush.Steel}"/>
-        <Setter Property="SeparatorVisibility" Value="Hidden"/>
-        <Setter Property="Template">
+
+        <!-- Вложенные стили — через Setter с соответствующими свойствами -->
+        <Setter Property="CellStyle">
             <Setter.Value>
-                <ControlTemplate TargetType="DataGridColumnHeader">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
-                                              Margin="{TemplateBinding Padding}"/>
-                    </Border>
-                </ControlTemplate>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Padding" Value="10,6"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridCell">
+                                <Border Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
             </Setter.Value>
         </Setter>
-    </Style>
 
-    <Style TargetType="DataGridRow">
-        <Setter Property="Background" Value="White"/>
-        <Setter Property="Margin" Value="0,0,0,1"/>
-        <Style.Triggers>
-            <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
-                <Setter Property="Foreground" Value="{StaticResource Brush.TextMain}"/>
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#F5F5F5"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style TargetType="DataGridCell">
-        <Setter Property="Padding" Value="10,6"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="Template">
+        <Setter Property="ColumnHeaderStyle">
             <Setter.Value>
-                <ControlTemplate TargetType="DataGridCell">
-                    <Border Padding="{TemplateBinding Padding}">
-                        <ContentPresenter/>
-                    </Border>
-                </ControlTemplate>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#FAFAFA"/>
+                    <Setter Property="Foreground" Value="{StaticResource Brush.TextSecondary}"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="Padding" Value="12,8"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource Brush.Steel}"/>
+                    <Setter Property="SeparatorVisibility" Value="Hidden"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridColumnHeader">
+                                <Border
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                                    <ContentPresenter
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Margin="{TemplateBinding Padding}"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="RowStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Margin" Value="0,0,0,1"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                            <Setter Property="Foreground" Value="{StaticResource Brush.TextMain}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#F5F5F5"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
             </Setter.Value>
         </Setter>
     </Style>

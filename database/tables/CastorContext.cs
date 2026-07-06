@@ -1,4 +1,5 @@
 ﻿using Castor.database.tables;
+using Castor.gui.dialogs;
 using Castor.Properties;
 using EfSchemaCompare;
 using Microsoft.Data.Sqlite;
@@ -35,9 +36,16 @@ namespace Castor.database
         /// </summary>
         public CastorContext()
         {
-            if (!Database.CanConnect())
+            try
             {
-                Database.EnsureCreated();
+                if (!Database.CanConnect())
+                {
+                    Database.EnsureCreated();
+                }
+            }
+            catch (Exception ex) 
+            {
+                new SelectUser().ShowDialog();
             }
         }
 

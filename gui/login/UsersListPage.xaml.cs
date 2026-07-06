@@ -1,6 +1,9 @@
 ﻿using Castor.database;
+using Castor.database.tab_medis;
 using Castor.database.tables;
 using Castor.gui.login;
+using Castor.Properties;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -106,6 +109,50 @@ namespace Castor.gui.login
             bool hasSelection = selected != null;
         }
 
+        // Добавить всех сотрудников отделения сразу
+        private void AddDep_Click(object sender, RoutedEventArgs e)
+        {
+            using MedisContext medisContext = new MedisContext();
+            using CastorContext _db = new CastorContext();
+            List<User> users = new List<User>();
+
+            var docs = medisContext.docdep
+                .Where(d => d.depid == Settings.Default.LastSelectedDepId)
+                .Include(d => d.Position)
+                .ToList();
+
+            docs.ForEach(d =>
+            {
+                User user = new User()
+                {
+                    IsActive = true,
+                    FullName = d.text,
+                    Login = LoginGenerator.GenerateUniqueLoginAsync(d.text).Result,
+                    Role = d.Position?.text ?? string.Empty,
+                    CreatedAt = DateTime.Now,
+                    DocdepId = d.keyid
+                };
+                users.Add(user);
+            });
+
+            if(MessageBox.Show($"Загружено {users.Count} пользователей", "Пользователи", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                using CastorContext context = new CastorContext();
+                context.Users.AddRange(users);
+                context.SaveChanges();
+                LoadUsers();
+            }
+        }
+
+        private void DeleteUser_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = UsersDataGrid.SelectedItem as User;
+            if (selected == null) return;
+            using CastorContext context = new CastorContext();
+            context.Users.Remove(selected);
+            context.SaveChanges();
+            LoadUsers();
+        }
     }
 
     public static class DataGridExtensions

@@ -69,7 +69,7 @@ namespace Castor
 
             // Проверка версии приложения по наличию таблицы Users 
             using CastorContext _db = new CastorContext();
-            if(!MetaTable.TableUsersExistsAsync(_db).Result)
+            if(!MetaTable.TableUsersExistsAsync(_db))
             {
                 // если Users нет - база данных старая
                 MessageBox.Show("СТАРАЯ");
@@ -88,39 +88,19 @@ namespace Castor
                 MessageBox.Show($"Ошибка обновления базы: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            // Аутентификация в системе
-            var authResult = TryAuthenticate();
-            if (authResult.IsSuccess)
-            {
-                // Полноценный вход: показываем обычный MainWindow
-                var mainWindow = new MainWindow();
-                mainWindow.Title = "Castor — Режим администратора";
-                mainWindow.Show();
-            }
-            else if (authResult.IsCancelled)
-            {
-                // Пользователь отказался от входа: показываем УРЕЗАННУЮ версию
-                var demoWindow = new MainWindow(); // отдельное окно с ограниченным функционалом
-                demoWindow.Title = "Castor — Демо‑режим (без доступа к данным)";
-                demoWindow.Show();
 
-                // Можно показать подсказку:
-                MessageBox.Show(
-                    "Вы работаете в демо‑режиме: редактирование и ЭЦП недоступны.\nДля полноценной работы требуется авторизация.",
-                    "Демо‑режим",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-            }
-            else
-            {
-                // Неверный пароль: не пускаем вообще
-                LogWarning("Auth", "Failed login attempt");
-                MessageBox.Show("Неверный логин или пароль.", "Ошибка входа", MessageBoxButton.OK, MessageBoxImage.Error);
-                Shutdown();
-                return;
-            }
+            // Полноценный вход: показываем обычный MainWindow
+            var mainWindow = new MainWindow();
+            mainWindow.Title = "Castor — Режим администратора";
+            mainWindow.Show();
+            
         }
 
+
+        /// <summary>
+        /// при необходимости вызывается эта процедура для установления пользователя и проверки пароля
+        /// </summary>
+        /// <returns></returns>
         private AuthResult TryAuthenticate()
         {
             // Создаём окно входа БЕЗ контекста БД (оно просто собирает данные)

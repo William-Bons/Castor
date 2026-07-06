@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Castor.gui.dialogs" xmlns:common="clr-namespace:Castor.gui.common"
         mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen"
         FontFamily="Courier New" FontSize="15" Language="RU"
-        Title="Принудительная мера" d:Height="600" d:Width="700">
+        Title="Принудительная мера" d:Height="600" d:Width="700" d:DesignHeight="358">
 
     <Window.Resources>
         <ResourceDictionary>

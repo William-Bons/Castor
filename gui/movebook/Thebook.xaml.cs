@@ -334,8 +334,8 @@ namespace Castor.gui.movebook
                 Movebook? mb = (PatientsTable.SelectedItem as Movebook);
                 if(mb!=null)
                 {
-                    Forcepage forcepage  = new Forcepage(mb);
-                    NavigationService.Navigate(forcepage);
+                    ForcedTreeWindow forcedTreeWindow = new ForcedTreeWindow(mb);
+                    forcedTreeWindow.ShowDialog();
                 }
 
                 //using (CastorContext context = new CastorContext())

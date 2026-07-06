@@ -177,7 +177,8 @@ namespace Castor.gui.login
                         Role = role,
                         PasswordHash = hash,
                         IsActive = true,
-                        CreatedAt = DateTime.UtcNow
+                        CreatedAt = DateTime.UtcNow,
+                        DocdepId = 0
                     };
 
                     localDb.Users.Add(newUser);
@@ -234,7 +235,8 @@ namespace Castor.gui.login
                     {
                         FullName = _doc.text,
                         Login = LoginGenerator.GenerateUniqueLoginAsync(_doc.text).Result,
-                        Role = _doc.Position.text
+                        Role = _doc.Position.text,
+                        DocdepId = _doc.keyid
 
                     });
                 }

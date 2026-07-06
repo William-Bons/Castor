@@ -12,6 +12,7 @@ namespace Castor.database.tables
 
         [Required, MaxLength(100)]
         public string Login { get; set; } = string.Empty;
+        public long DocdepId { get; set; }
 
         // Только хеш (BCrypt), без отдельной соли
         [Required]

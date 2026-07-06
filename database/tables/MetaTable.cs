@@ -13,18 +13,15 @@ namespace Castor.database.tables
             return properties;
         }
 
-        public static async Task<bool> TableUsersExistsAsync(CastorContext context)
+        public static bool TableUsersExistsAsync(CastorContext context)
         {
             // ПРОВЕРКА ДЛЯ SQLITE (упрощенная, без параметров)
-            const string sql = @"
-            SELECT COUNT(*) 
-            FROM sqlite_master 
-            WHERE type = 'table' 
-              AND name = 'Users';"; // Проверь регистр: Users или users
+            var row = context.Database
+                .SqlQueryRaw<string>(@"PRAGMA table_info('Users')")
+                .ToList();
 
-
-            var count = await context.Database.ExecuteSqlRawAsync(sql);
-            return count > 0;
+            bool tableExists = row.Any();
+            return tableExists;
         }
     }
 }

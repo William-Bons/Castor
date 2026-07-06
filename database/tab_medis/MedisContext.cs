@@ -1,5 +1,6 @@
 ﻿using Castor.database.tables;
 using Castor.gui.common;
+using Castor.gui.dialogs;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
@@ -58,9 +59,9 @@ namespace Castor.database.tab_medis
             {
                 optionsBuilder.UseNpgsql(Decrypt(Settings.Default.postgreeConnection));
             }
-            catch (FormatException f_ex)
+            catch (CryptographicException f_ex)
             {
-
+                new ConnectionDialog().ShowDialog();
             }
             catch (Exception ex) 
             {

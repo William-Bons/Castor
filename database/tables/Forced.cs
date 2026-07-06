@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,12 +23,17 @@ namespace Castor.database.tables
         public long? Movebookid { get; set; }// привязув к Id PatientRecord
         
         
+        public virtual ICollection<Forced>? AllForces { get; set; }
+        
+        [ForeignKey(nameof(RootId))]
+        public virtual Forced? RootForced { get; set; }
         public virtual Movebook? Movebook { get; set; }
         public virtual int DaysTotal => End.HasValue ? (End.Value.ToDateTime(TimeOnly.MinValue)-Start.ToDateTime(TimeOnly.MinValue)).Days+1 : 0;
         public virtual int DaysToday => (DateTime.Today - Start.ToDateTime(TimeOnly.MinValue)).Days+1;
         public virtual int Months => (DateTime.Today.Month - Nextvk.Month) + 12 * (DateTime.Today.Year - Nextvk.Year);
         public virtual DateOnly Nextvk => Start.AddMonths(6); // рассчетная дата окончания действия постановления
-        
+
+        public virtual int Month => RootForced?.Nextvk.Month ?? 0;
 
         
     }
