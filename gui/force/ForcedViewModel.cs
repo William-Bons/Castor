@@ -2,14 +2,9 @@
 using Castor.database.tables;
 using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Castor.gui.force
@@ -17,7 +12,15 @@ namespace Castor.gui.force
     public class ForcedViewModel : INotifyPropertyChanged
     {
         private Forced? _selectedItem;
-        private Movebook _movebook;
+        private Movebook? _movebook;
+
+        // Данные пациента (только для отображения вверху формы)
+        private string? _patientInfo;
+        public string? PatientInfo
+        {
+            get => _patientInfo;
+            set { _patientInfo = value; OnPropertyChanged(); }
+        }
 
         public ObservableCollection<ForcedNode> TreeItems { get; } = new();
 
@@ -35,7 +38,7 @@ namespace Castor.gui.force
 
         public bool CanEdit => SelectedItem != null;
 
-        // --- Поля формы с поддержкой INotifyPropertyChanged ---
+        // Поля формы — имена строго соответствуют полям класса Forced
         private string? _number;
         public string? Number
         {
@@ -57,20 +60,6 @@ namespace Castor.gui.force
             set { _end = value; OnPropertyChanged(); }
         }
 
-        private long _patientId;
-        public long PatientId
-        {
-            get => _patientId;
-            set { _patientId = value; OnPropertyChanged(); }
-        }
-
-        private long _visitId;
-        public long VisitId
-        {
-            get => _visitId;
-            set { _visitId = value; OnPropertyChanged(); }
-        }
-
         private int? _type;
         public int? Type
         {
@@ -78,64 +67,86 @@ namespace Castor.gui.force
             set { _type = value; OnPropertyChanged(); }
         }
 
+        // Список значений для ComboBox (100–199)
+        public List<int> TypeOptions { get; } = new()
+        {
+            100, // амб
+            101, // общ
+            102, // спец
+            103, // стин
+            104, // снято
+            199  // в переходе
+        };
+
+        private string? _section;
+        public string? Section
+        {
+            get => _section;
+            set { _section = value; OnPropertyChanged(); }
+        }
+
         private string? _courtName;
-        public string? CourtName
+        public string? Courtname
         {
             get => _courtName;
             set { _courtName = value; OnPropertyChanged(); }
         }
 
-        private long? _moveBookId;
-        public long? MoveBookId
+        private int[]? _month;
+        public int[]? Month
         {
-            get => _moveBookId;
-            set { _moveBookId = value; OnPropertyChanged(); }
+            get => _month;
+            set { _month = value; OnPropertyChanged(); }
         }
-        // -----------------------------------------------------
 
         public ICommand SaveCommand { get; }
         public ICommand RefreshCommand { get; }
-        public ICommand CreateCommand { get; }
+        public ICommand AddCommand { get; }
 
-        public ForcedViewModel(Movebook movebook)
+        public ForcedViewModel(Movebook mb)
         {
-            _movebook = movebook;
-            SaveCommand = new RelayCommandAsync(Save, () => CanEdit);
-            RefreshCommand = new RelayCommandAsync(LoadTree);
-            CreateCommand = new RelayCommand(Create);
-            Task.Run(LoadTree);
+            _movebook = mb;
+            SaveCommand = new RelayCommandAsync(async () => await SaveAsync(), () => CanEdit);
+            RefreshCommand = new RelayCommand(LoadTree);
+            AddCommand = new RelayCommand(AddItem);
+            LoadTree();
         }
 
-        private void Create()  
+        private void AddItem()
         {
-            if(TreeItems.Count == 0)
+            if(TreeItems.Count==0 && _movebook!=null)
             {
-                // создание ROOT постановления
+                // добавление первичного 
+                SelectedItem = new Forced()
+                {
+                    Movebookid = _movebook.Id,
+                    Patientid = _movebook.Patientid ?? 0,
+                    Visitid = _movebook.Visitid ?? 0
+                };
+            }
+            else if(_movebook!=null)
+            {
+                // добавление последующих
+                ForcedNode? root = TreeItems
+                    .Where(t => t.Data.RootId == null)
+                    .ToList().First();
                 SelectedItem = new Forced()
                 {
                     Movebookid = _movebook.Id,
                     Patientid = _movebook.Patientid ?? 0,
                     Visitid = _movebook.Visitid ?? 0,
-                    RootId = 0 // RootId = 0 у первичного постановления
+                    RootId = root?.Data.Id ?? 0,
                 };
-                var node = new ForcedNode(SelectedItem);
-                BuildTree(SelectedItem, node);
-                TreeItems.Add(node);
             }
-            else
-            {
-                // создание вторичного постановления
-            }
-
-            
+            LoadFormData();
         }
 
-        public async Task LoadTree()
+        public void LoadTree()
         {
             using CastorContext _context = new CastorContext();
             TreeItems.Clear();
             var roots = _context.Forced
-                .Where(f => f.Movebookid == _movebook.Id) // корневые
+                .Where(f => f.Movebookid==_movebook.Id && f.RootId==null)
                 .Include(f => f.AllForces)
                 .ToList();
 
@@ -154,7 +165,7 @@ namespace Castor.gui.force
             {
                 var childNode = new ForcedNode(child);
                 parentNode.Children.Add(childNode);
-                BuildTree(child, childNode); // рекурсия, если есть вложенность глубже
+                BuildTree(child, childNode);
             }
         }
 
@@ -163,17 +174,23 @@ namespace Castor.gui.force
             if (SelectedItem == null)
             {
                 ClearForm();
+                PatientInfo = null;
                 return;
             }
 
-            Number = SelectedItem.Number;
-            Start = SelectedItem.Start;
-            End = SelectedItem.End;
-            PatientId = SelectedItem.Patientid;
-            VisitId = SelectedItem.Visitid;
-            Type = SelectedItem.Type;
-            CourtName = SelectedItem.Courtname;
-            MoveBookId = SelectedItem.Movebookid;
+            var item = SelectedItem;
+
+            // Формируем строку с данными пациента (подставь свои поля из Patient/Visit, если они есть в контексте)
+            // Здесь пока просто заготовка на основе ID из Forced
+            PatientInfo = $"Пациент: #{_movebook?.Fio ?? string.Empty} | Визит: #{item.Visitid}";
+
+            Number = item.Number;
+            Start = item.Start;
+            End = item.End;
+            Type = item.Type;
+            Section = item.Section;
+            Courtname = item.Courtname;
+            Month = item.Month;
         }
 
         private void ClearForm()
@@ -181,35 +198,35 @@ namespace Castor.gui.force
             Number = null;
             Start = DateOnly.FromDateTime(DateTime.Today);
             End = null;
-            PatientId = 0;
-            VisitId = 0;
             Type = null;
-            CourtName = null;
-            MoveBookId = null;
+            Section = null;
+            Courtname = null;
+            Month = null;
         }
 
-        private async Task Save()
+        private async Task SaveAsync()
         {
-            if (SelectedItem == null || !CanEdit) return;
+            if (SelectedItem == null) return;
 
-            SelectedItem.Number = Number;
-            SelectedItem.Start = Start;
-            SelectedItem.End = End;
-            SelectedItem.Patientid = PatientId;
-            SelectedItem.Visitid = VisitId;
-            SelectedItem.Type = Type;
-            SelectedItem.Courtname = CourtName;
-            SelectedItem.Movebookid = MoveBookId;
+            var item = SelectedItem;
+            item.Number = Number;
+            item.Start = Start;
+            item.End = End;
+            item.Type = Type;
+            item.Section = Section;
+            item.Courtname = Courtname;
 
             using CastorContext _context = new CastorContext();
             _context.Update(SelectedItem);
             await _context.SaveChangesAsync();
-            // опционально: обновить дерево или показать уведомление
+            LoadTree(); // обновить дерево после сохранения
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
     }
 
     public class ForcedNode
@@ -217,10 +234,30 @@ namespace Castor.gui.force
         public Forced Data { get; }
         public ObservableCollection<ForcedNode> Children { get; } = new();
 
-        public ForcedNode(Forced data) => Data = data;
+        public string DisplayText => BuildDisplayText(Data);
 
-        public override string ToString() =>
-            Data.Number ?? $"Постановление #{Data.Id} ({Data.Start})";
+        public ForcedNode(Forced forced)
+        {
+            Data = forced;
+        }
+
+        private static string BuildDisplayText(Forced item)
+        {
+            // Формируем читаемую строку для узла дерева
+            var parts = new System.Text.StringBuilder();
+
+            if (!string.IsNullOrEmpty(item.Number))
+                parts.Append($"№ {item.Number}");
+
+            if (parts.Length > 0)
+                parts.Append(" | ");
+
+            parts.Append($"Тип: {item.Type}");
+
+            if (item.Start != default)
+                parts.Append($" | {item.Start.ToString("dd.MM.yyyy")}");
+
+            return parts.ToString();
+        }
     }
-
 }

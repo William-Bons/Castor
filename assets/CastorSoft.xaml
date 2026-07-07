@@ -15,7 +15,10 @@
     <SolidColorBrush x:Key="Brush.Graphite" Color="{StaticResource Color.Graphite}"/>
     <SolidColorBrush x:Key="Brush.Charcoal" Color="{StaticResource Color.Charcoal}"/>
     <SolidColorBrush x:Key="Brush.Accent" Color="{StaticResource Color.Accent}"/>
-
+    <SolidColorBrush x:Key="Brush.BackgroundAlt" Color="#F5F7FA"/>
+    <SolidColorBrush x:Key="Brush.AccentLight" Color="#E6F0FA"/>
+    <!-- чуть светлее акцента -->
+    <SolidColorBrush x:Key="Brush.TextDark" Color="#2D333B"/>
     <SolidColorBrush x:Key="Brush.TextMain" Color="#2D333B"/>
     <SolidColorBrush x:Key="Brush.TextSecondary" Color="#8C949D"/>
 

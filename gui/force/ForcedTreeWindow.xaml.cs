@@ -44,7 +44,7 @@ namespace Castor.gui.force
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Task.Run(_viewModel.LoadTree); // сброс и перезагрузка
+            _viewModel.LoadTree(); // сброс и перезагрузка
         }
     }
 

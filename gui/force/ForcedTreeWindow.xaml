@@ -1,22 +1,30 @@
 ﻿<Window x:Class="Castor.gui.force.ForcedTreeWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Castor.gui.common"
         Title="Учёт постановлений (принудительное лечение)"
         Width="1100" Height="720"
         WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+        <converters:DateOnlyConverter x:Key="DateOnlyConverter"/>
+        <converters:MonthToNameConverter x:Key="MonthToNameConverter"/>
+    </Window.Resources>
+
     <Grid Margin="12">
+        <!-- ИСПРАВЛЕНИЕ: ColumnDefinitions как коллекция ColumnDefinition -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="320"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Дерево слева -->
+        <!-- === ЛЕВАЯ ЧАСТЬ: Дерево === -->
         <Border Grid.Column="0"
-                Background="{StaticResource Brush.Steel}"
-                BorderBrush="{StaticResource Brush.Charcoal}"
+                Background="{StaticResource Brush.BackgroundAlt}"
+                BorderBrush="{StaticResource Brush.Steel}"
                 BorderThickness="1"
-                CornerRadius="6">
+                CornerRadius="6"
+                Margin="0,0,8,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -24,6 +32,7 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Margin="8">
+                    <!-- Стиль кнопки: AccentButton (акцентная) -->
                     <Button Content="Обновить"
                             Command="{Binding RefreshCommand}"
                             Style="{StaticResource AccentButton}"
@@ -33,129 +42,159 @@
                 <TreeView Grid.Row="1"
                           ItemsSource="{Binding TreeItems}"
                           SelectedItemChanged="TreeView_OnSelectedItemChanged"
-                          Margin="4">
+                          Margin="4"
+                          BorderThickness="0">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem">
+                            <Setter Property="IsExpanded" Value="True"/>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding}"
+                            <TextBlock Text="{Binding DisplayText}"
                                        Foreground="{StaticResource Brush.TextMain}"
-                                       FontSize="13"/>
+                                       FontSize="13"
+                                       Style="{StaticResource BaseText}"/>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
                 </TreeView>
             </Grid>
         </Border>
 
-        <!-- Форма справа -->
+        <!-- === ПРАВАЯ ЧАСТЬ: Форма === -->
         <Border Grid.Column="1"
                 Background="White"
                 BorderBrush="{StaticResource Brush.Steel}"
                 BorderThickness="1"
                 CornerRadius="6"
-                Margin="8,0,0,0">
+                Margin="0,0,0,0">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
                 <StackPanel>
+                    <!-- Блок с данными пациента (акцентный фон) -->
+                    <Border Background="{StaticResource Brush.AccentLight}"
+                            CornerRadius="4"
+                            Padding="12"
+                            Margin="0,0,0,16">
+                        <TextBlock Text="{Binding PatientInfo, FallbackValue='Выберите запись для отображения данных пациента'}"
+                                   Foreground="{StaticResource Brush.TextDark}"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"
+                                   Style="{StaticResource BaseText}"/>
+                    </Border>
+
                     <TextBlock Text="Редактирование постановления"
                                FontWeight="SemiBold"
                                FontSize="16"
                                Margin="0,0,0,16"
                                Foreground="{StaticResource Brush.TextMain}"/>
 
+                    <!-- Номер/идентификатор -->
                     <StackPanel Margin="0,0,0,12">
                         <TextBlock Text="Номер/идентификатор"
-                                   Style="{StaticResource BaseText}"
+                                   Style="{StaticResource LabelText}"
                                    Margin="0,0,0,4"/>
                         <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource ModernTextBox}"
                                  Height="32"/>
                     </StackPanel>
 
+                    <!-- Даты: начало и окончание -->
                     <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="320"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,8,0">
                             <TextBlock Text="Дата начала"
-                                       Style="{StaticResource  BaseText}"
+                                       Style="{StaticResource LabelText}"
                                        Margin="0,0,0,4"/>
-                            <DatePicker SelectedDate="{Binding Start, UpdateSourceTrigger=PropertyChanged}"
+                            <DatePicker SelectedDate="{Binding Start, Converter={StaticResource DateOnlyConverter}, UpdateSourceTrigger=PropertyChanged}"
                                         Style="{StaticResource ModernDatePicker}"
                                         Height="32"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="Дата окончания"
-                                       Style="{StaticResource BaseText}"
+                                       Style="{StaticResource LabelText}"
                                        Margin="0,0,0,4"/>
-                            <DatePicker SelectedDate="{Binding End, UpdateSourceTrigger=PropertyChanged}"
+                            <DatePicker SelectedDate="{Binding End,Converter={StaticResource DateOnlyConverter}, UpdateSourceTrigger=PropertyChanged}"
                                         Style="{StaticResource ModernDatePicker}"
                                         Height="32"/>
                         </StackPanel>
                     </Grid>
 
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="320"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                            <TextBlock Text="PatientId"
-                                       Style="{StaticResource  BaseText}"
-                                       Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding PatientId, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource ModernTextBox}"
-                                     Height="32"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1">
-                            <TextBlock Text="VisitId"
-                                       Style="{StaticResource BaseText}"
-                                       Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding VisitId, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource ModernTextBox}"
-                                     Height="32"/>
-                        </StackPanel>
-                    </Grid>
-
+                    <!-- Тип (100–199) -->
                     <StackPanel Margin="0,0,0,12">
                         <TextBlock Text="Тип (100–199)"
-                                   Style="{StaticResource  BaseText}"
-                                   Margin="0,0,0,4"/>
-                        <TextBox Text="{Binding Type, UpdateSourceTrigger=PropertyChanged}"
-                                 Style="{StaticResource  ModernTextBox}"
-                                 Height="32"/>
+                           Style="{StaticResource LabelText}"
+                           Margin="0,0,0,4"/>
+                        <ComboBox ItemsSource="{Binding TypeOptions, Mode=OneWay}"
+                          SelectedValue="{Binding Type, UpdateSourceTrigger=PropertyChanged}"
+                          Style="{StaticResource ModernComboBox}" SelectedValuePath="Tag"
+                          Height="32">
+                            <ComboBoxItem Tag="100">Амбулаторное</ComboBoxItem>
+                            <ComboBoxItem Tag="101">Общий тип</ComboBoxItem>
+                            <ComboBoxItem Tag="102">Специализированный тип</ComboBoxItem>
+                            <ComboBoxItem Tag="103">СТИН</ComboBoxItem>
+                            <ComboBoxItem Tag="104">Снято</ComboBoxItem>
+                            <ComboBoxItem Tag="199">В переходе</ComboBoxItem>
+                        </ComboBox>
                     </StackPanel>
 
+                    <!-- Статья УК (Section) -->
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock Text="Статья УК (Section)"
+                                   Style="{StaticResource LabelText}"
+                                   Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding Section, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBox}"
+                                 Height="50"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"/>
+                    </StackPanel>
+
+                    <!-- Суд -->
                     <StackPanel Margin="0,0,0,12">
                         <TextBlock Text="Суд"
-                                   Style="{StaticResource BaseText}"
+                                   Style="{StaticResource LabelText}"
                                    Margin="0,0,0,4"/>
-                        <TextBox Text="{Binding CourtName, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Courtname, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource ModernTextBox}"
                                  Height="32"/>
                     </StackPanel>
 
+                    <!-- Месяц (НОВОЕ ПОЛЕ) -->
                     <StackPanel Margin="0,0,0,12">
-                        <TextBlock Text="MoveBookId"
-                                   Style="{StaticResource BaseText}"
-                                   Margin="0,0,0,4"/>
-                        <TextBox Text="{Binding MoveBookId, UpdateSourceTrigger=PropertyChanged}"
-                                 Style="{StaticResource ModernTextBox}"
-                                 Height="32"/>
+                        <TextBlock Text="Месяц (отчётность)"
+                               Style="{StaticResource LabelText}"
+                               ToolTip="Номер месяца (1–12) для отчётности, если требуется"
+                               Margin="0,0,0,4"/>
+                        <TextBlock Text="{Binding Month, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MonthToNameConverter}}"
+                                 Style="{StaticResource BaseText}"
+                                 Height="32"
+                                 Language="RU"
+                                 TextAlignment="Center"/>
                     </StackPanel>
 
+                    <!-- Кнопки действий -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0">
+                       
+                        <Button Content="Добавить"
+                            Command="{Binding AddCommand}"
+                            Style="{StaticResource AccentButton}"
+                            Padding="16,6"
+                            Margin="0,0,8,0"/>
+
+                        <!-- Акцентная кнопка "Сохранить" -->
                         <Button Content="Сохранить"
                                 Command="{Binding SaveCommand}"
                                 Style="{StaticResource AccentButton}"
                                 Padding="16,6"
                                 Margin="0,0,8,0"/>
-                        <Button Content="Создать новое"
-                                Command="{Binding CreateCommand}"
-                                Style="{StaticResource AccentButton}"
-                                Padding="16,6"
-                                Margin="0,0,8,0"/>  
+
+                        <!-- Нейтральная кнопка "Отмена" -->
                         <Button Content="Отмена"
                                 Click="Cancel_Click"
-                                Style="{StaticResource AccentButton}"
+                                Style="{StaticResource HardButton}"
                                 Padding="16,6"/>
                     </StackPanel>
                 </StackPanel>

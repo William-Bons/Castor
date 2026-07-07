@@ -13,27 +13,32 @@ namespace Castor.database.tables
     {
         [Key] public long Id { get; set; }
         public string? Number { get; set; } // номер (идентификатор) дела/постановления
-        public long RootId { get; set; } = 0; // ссылка на самое первое постановление
-        public DateOnly Start {  get; set; }// начало принуд лечения (дата текущего пост суда)
+        public long? RootId { get; set; } // ссылка на самое первое постановление
+        public DateOnly Start { get; set; }// начало принуд лечения (дата текущего пост суда)
         public DateOnly? End { get; set; } // дата закрытия этого постановления, заполняется после получения следующего пост суда 
         public long Patientid { get; set; } // id patient from medis
         public long Visitid { get; set; } // id visit from medis № и/бол
         public int? Type { get; set; } // 100-амб, 101-общ, 102 - спец, 103-стин, 104-снято, 199-в переходе, 
-        public string? Courtname {  get; set; }// название суда
+        public string? Section { get; set; } // статья(и) уголовного кодекса с комментарием
+        public string? Courtname { get; set; }// название суда
         public long? Movebookid { get; set; }// привязув к Id PatientRecord
-        
-        
+
+
+
+
         public virtual ICollection<Forced>? AllForces { get; set; }
-        
+
         [ForeignKey(nameof(RootId))]
         public virtual Forced? RootForced { get; set; }
         public virtual Movebook? Movebook { get; set; }
-        public virtual int DaysTotal => End.HasValue ? (End.Value.ToDateTime(TimeOnly.MinValue)-Start.ToDateTime(TimeOnly.MinValue)).Days+1 : 0;
-        public virtual int DaysToday => (DateTime.Today - Start.ToDateTime(TimeOnly.MinValue)).Days+1;
+        public virtual int DaysTotal => End.HasValue ? (End.Value.ToDateTime(TimeOnly.MinValue) - Start.ToDateTime(TimeOnly.MinValue)).Days + 1 : 0;
+        public virtual int DaysToday => (DateTime.Today - Start.ToDateTime(TimeOnly.MinValue)).Days + 1;
         public virtual int Months => (DateTime.Today.Month - Nextvk.Month) + 12 * (DateTime.Today.Year - Nextvk.Year);
         public virtual DateOnly Nextvk => Start.AddMonths(6); // рассчетная дата окончания действия постановления
 
-        public virtual int Month => RootForced?.Nextvk.Month ?? 0;
+        public virtual int[]? Month => RootId == null ?
+            [Start.Month, ((Start.Month - 1 + 6) % 12) + 1] :
+            RootForced?.Month;
 
         
     }
