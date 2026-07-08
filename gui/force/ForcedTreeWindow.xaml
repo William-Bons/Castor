@@ -127,8 +127,7 @@
                         <TextBlock Text="Тип (100–199)"
                            Style="{StaticResource LabelText}"
                            Margin="0,0,0,4"/>
-                        <ComboBox ItemsSource="{Binding TypeOptions, Mode=OneWay}"
-                          SelectedValue="{Binding Type, UpdateSourceTrigger=PropertyChanged}"
+                        <ComboBox SelectedValue="{Binding Type, UpdateSourceTrigger=PropertyChanged}"
                           Style="{StaticResource ModernComboBox}" SelectedValuePath="Tag"
                           Height="32">
                             <ComboBoxItem Tag="100">Амбулаторное</ComboBoxItem>

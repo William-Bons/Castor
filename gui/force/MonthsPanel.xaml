@@ -104,7 +104,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Run Text="{Binding Force.Movebook.Fio}" />
+    <LineBreak/>
+    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -117,7 +121,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+                                    <Run Text="{Binding Force.Movebook.Fio}" />
+                                    <LineBreak/>
+                                    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -130,7 +138,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Run Text="{Binding Force.Movebook.Fio}" />
+    <LineBreak/>
+    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -143,7 +155,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Run Text="{Binding Force.Movebook.Fio}" />
+    <LineBreak/>
+    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -156,7 +172,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Run Text="{Binding Force.Movebook.Fio}" />
+    <LineBreak/>
+    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -169,7 +189,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Run Text="{Binding Force.Movebook.Fio}" />
+    <LineBreak/>
+    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -195,7 +219,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Run Text="{Binding Force.Movebook.Fio}" />
+    <LineBreak/>
+    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -208,7 +236,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Run Text="{Binding Force.Movebook.Fio}" />
+    <LineBreak/>
+    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -221,7 +253,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Run Text="{Binding Force.Movebook.Fio}" />
+    <LineBreak/>
+    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -234,7 +270,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Run Text="{Binding Force.Movebook.Fio}" />
+    <LineBreak/>
+    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -247,7 +287,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Run Text="{Binding Force.Movebook.Fio}" />
+    <LineBreak/>
+    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -260,7 +304,11 @@
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Run Text="{Binding Force.Movebook.Fio}" />
+    <LineBreak/>
+    <Run Text="{Binding Doctor}"/>
+                                </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>

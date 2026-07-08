@@ -1,5 +1,7 @@
 ﻿using Castor.database;
+using Castor.database.tab_medis;
 using Castor.database.tables;
+using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,18 +23,18 @@ namespace Castor.gui.force
         }
 
         // --- Свойства для биндинга (ровно те, что в XAML) ---
-        public ObservableCollection<Forced> PatientsMonth1 { get; private set; } = new();
-        public ObservableCollection<Forced> PatientsMonth2 { get; private set; } = new();
-        public ObservableCollection<Forced> PatientsMonth3 { get; private set; } = new();
-        public ObservableCollection<Forced> PatientsMonth4 { get; private set; } = new();
-        public ObservableCollection<Forced> PatientsMonth5 { get; private set; } = new();
-        public ObservableCollection<Forced> PatientsMonth6 { get; private set; } = new();
-        public ObservableCollection<Forced> PatientsMonth7 { get; private set; } = new();
-        public ObservableCollection<Forced> PatientsMonth8 { get; private set; } = new();   
-        public ObservableCollection<Forced> PatientsMonth9 { get; private set; } = new();
-        public ObservableCollection<Forced> PatientsMonth10 { get; private set; } = new();
-        public ObservableCollection<Forced> PatientsMonth11 { get; private set; } = new();
-        public ObservableCollection<Forced> PatientsMonth12 { get; private set; } = new();
+        public ObservableCollection<CombinedRow> PatientsMonth1 { get; private set; } = new();
+        public ObservableCollection<CombinedRow> PatientsMonth2 { get; private set; } = new();
+        public ObservableCollection<CombinedRow> PatientsMonth3 { get; private set; } = new();
+        public ObservableCollection<CombinedRow> PatientsMonth4 { get; private set; } = new();
+        public ObservableCollection<CombinedRow> PatientsMonth5 { get; private set; } = new();
+        public ObservableCollection<CombinedRow> PatientsMonth6 { get; private set; } = new();
+        public ObservableCollection<CombinedRow> PatientsMonth7 { get; private set; } = new();
+        public ObservableCollection<CombinedRow> PatientsMonth8 { get; private set; } = new();   
+        public ObservableCollection<CombinedRow> PatientsMonth9 { get; private set; } = new();
+        public ObservableCollection<CombinedRow> PatientsMonth10 { get; private set; } = new();
+        public ObservableCollection<CombinedRow> PatientsMonth11 { get; private set; } = new();
+        public ObservableCollection<CombinedRow> PatientsMonth12 { get; private set; } = new();
 
         /// <summary>
         /// Загружает данные по месяцам и раскладывает по коллекциям.
@@ -53,16 +55,36 @@ namespace Castor.gui.force
                     .ToList();
 
 
+                // список визитов пациентов нваходящихся в настоящее время в отделении исключая номера историй уже заруженных в базу (по castorIds)
+                using MedisContext medisContext = new MedisContext();
+                var __DataRowSource = medisContext.visit
+                    .Where(v => v.depid == Settings.Default.LastSelectedDepId && !v.dat1.HasValue) // Только находящиеся в отделении
+                    .Include(v => v.Doctor)
+                    .Include(v => v.Patient)
+                    .ToList()
+                    .Select(v => (pid: v.Patient.num, doc: v.Doctor.text))
+                    .ToList();
 
-                foreach (Forced item in data)
+                var result = data.Join(
+                    __DataRowSource,
+                    a => a.Patientid,
+                    b => b.pid,
+                    (a, b) => new CombinedRow
+                    {
+                        Key = a.Patientid,
+                        Force = a,
+                        Doctor = b.doc ?? string.Empty
+                    });
+
+                foreach (CombinedRow item in result)
                 {
-                    string prop0 = $"PatientsMonth{item.Month[0]}";
-                    string prop1 = $"PatientsMonth{item.Month[1]}";
+                    string prop0 = $"PatientsMonth{item.Force.Month[0]}";
+                    string prop1 = $"PatientsMonth{item.Force.Month[1]}";
 
-                    (GetType().GetProperty(prop0).GetValue(this) as ObservableCollection<Forced>)?
+                    (GetType().GetProperty(prop0).GetValue(this) as ObservableCollection<CombinedRow>)?
                         .Add(item);
 
-                    (GetType().GetProperty(prop1).GetValue(this) as ObservableCollection<Forced>)?
+                    (GetType().GetProperty(prop1).GetValue(this) as ObservableCollection<CombinedRow>)?
                         .Add(item);
 
                     OnPropertyChanged(prop0);
@@ -89,5 +111,12 @@ namespace Castor.gui.force
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+    }
+
+    public class CombinedRow
+    {
+        public long Key { get; set; } // PatientID
+        public Forced? Force { get; set; } // Pat name
+        public string? Doctor { get; set; } // Doc name
     }
 }
