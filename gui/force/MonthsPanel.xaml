@@ -4,6 +4,75 @@
 
     <!-- Используем только ModernBorder из CASTOR -->
     <Border Style="{StaticResource ModernBorder}" Margin="8" Padding="8">
+        <Border.Resources>
+            <!-- Общий стиль для всех элементов списка месяцев -->
+            <Style x:Key="MonthListViewItemStyle" TargetType="ListViewItem">
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Margin" Value="0,2,0,0"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Background" Value="Transparent"/>
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListViewItem">
+                            <Grid x:Name="RootGrid"
+                              Background="{TemplateBinding Background}"
+                              Margin="{TemplateBinding Margin}">
+
+                                <!-- Контент строки (текст) -->
+                                <ContentPresenter x:Name="ContentPresenter"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+
+                                <!-- Визуальные состояния (выделение и наведение) -->
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal"/>
+                                        <VisualState x:Name="PointerOver">
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="RootGrid" 
+                                                            Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" 
+                                                            To="#FFE0E0E0" Duration="0"/>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="RootGrid" 
+                                                            Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" 
+                                                            To="#FFD0D0D0" Duration="0"/>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Selected">
+                                            <Storyboard>
+                                                <!-- Используем AccentLight из твоей темы CASTOR -->
+                                                <ColorAnimation Storyboard.TargetName="RootGrid" 
+                                                            Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" 
+                                                            To="{StaticResource Color.Accent}" Duration="0"/>
+                                                <!-- Опционально: меняем цвет текста при выделении, если нужно -->
+                                                <!--<ColorAnimation Storyboard.TargetName="ContentPresenter" 
+                                                            Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" 
+                                                            To="White" Duration="0"/>-->
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="SelectedUnfocused">
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="RootGrid" 
+                                                            Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" 
+                                                            To="{StaticResource Color.Accent}" Duration="0"/>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Border.Resources>
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -29,76 +98,81 @@
             <!-- Ячейки: 1–6 (списки пациентов) -->
             <UniformGrid Grid.Row="1" Rows="1" Columns="6">
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth1}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <!-- Только BaseText из CASTOR -->
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth1}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
 
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth2}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth2}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
 
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth3}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth3}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
 
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth4}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth4}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
 
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth5}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth5}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
 
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth6}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth6}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
             </UniformGrid>
 
@@ -115,77 +189,84 @@
             <!-- Ячейки: 7–12 (списки пациентов) -->
             <UniformGrid Grid.Row="3" Rows="1" Columns="6">
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth7}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth7}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
 
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth8}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth8}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
 
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth9}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth9}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
 
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth10}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth10}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
 
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth11}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth11}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
 
                 <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding PatientsMonth12}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FullName}" Style="{StaticResource BaseText}" Margin="0,2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ListView ItemsSource="{Binding PatientsMonth12}" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource MonthListViewItemStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Movebook.Fio}" Style="{StaticResource BaseText}" Margin="0,2"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Border>
             </UniformGrid>
         </Grid>
     </Border>
+
 </Page>

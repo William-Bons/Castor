@@ -23,8 +23,32 @@
     <SolidColorBrush x:Key="Brush.TextSecondary" Color="#8C949D"/>
 
     <System:Double x:Key="GlobalControlMinHeight">32</System:Double>
-    
-    
+
+    <!-- Рамка всей панели: тонкая, нейтральная, скруглённая -->
+    <Style x:Key="ModernBorder" TargetType="Border">
+        <Setter Property="BorderBrush" Value="#CCCCCC"/>
+        <!-- Светло-серый цвет рамки -->
+        <Setter Property="BorderThickness" Value="1"/>
+        <!-- Тонкая рамка -->
+        <Setter Property="CornerRadius" Value="6"/>
+        <!-- Лёгкие скругления -->
+        <Setter Property="Background" Value="#FFFFFF"/>
+        <!-- Белый фон (или подстрой под тему) -->
+    </Style>
+
+    <!-- Ячейка месяца: чуть светлее, чем панель, с отступом -->
+    <Style x:Key="ModernCell" TargetType="Border">
+        <Setter Property="BorderBrush" Value="#EEEEEE"/>
+        <!-- Очень светлый серый (почти белый) -->
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <!-- Чуть меньше скругление, чем у панели -->
+        <Setter Property="Background" Value="#F9F9F9"/>
+        <!-- Очень светло-серый фон ячейки -->
+        <Setter Property="Margin" Value="2"/>
+        <!-- Отступы между ячейками -->
+    </Style>
+
 
     <!--ДАТА ПИККЕР-->
     <Style x:Key="ModernDatePicker" TargetType="DatePicker">

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castor.gui.common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,11 +19,12 @@ namespace Castor.gui.force
     /// <summary>
     /// Логика взаимодействия для Page1.xaml
     /// </summary>
-    public partial class MonthsPanel : Page
+    public partial class MonthsPanel : Page, IStartablePage
     {
         public MonthsPanel()
         {
             InitializeComponent();
+            DataContext = new MonthsPanelViewModel();
         }
     }
 }
