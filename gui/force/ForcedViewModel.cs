@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Castor.gui.force
@@ -32,6 +33,7 @@ namespace Castor.gui.force
                 _selectedItem = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CanEdit));
+                OnPropertyChanged(nameof(IsNew));
                 LoadFormData();
             }
         }
@@ -99,6 +101,8 @@ namespace Castor.gui.force
             set { _month = value; OnPropertyChanged(); }
         }
 
+        public Visibility IsNew => (SelectedItem?.Id ?? 0) == 0 ? Visibility.Visible : Visibility.Collapsed;
+
         public ICommand SaveCommand { get; }
         public ICommand RefreshCommand { get; }
         public ICommand AddCommand { get; }
@@ -110,6 +114,12 @@ namespace Castor.gui.force
             RefreshCommand = new RelayCommand(LoadTree);
             AddCommand = new RelayCommand(AddItem);
             LoadTree();
+
+            // Если список пуст - добавление новой записи
+            if(TreeItems.Count==0)
+            {
+                AddItem();
+            }
         }
 
         private void AddItem()
@@ -121,7 +131,8 @@ namespace Castor.gui.force
                 {
                     Movebookid = _movebook.Id,
                     Patientid = _movebook.Patientid ?? 0,
-                    Visitid = _movebook.Visitid ?? 0
+                    Visitid = _movebook.Visitid ?? 0,
+                    Start = _movebook.Datein ?? DateOnly.FromDateTime(DateTime.Now)
                 };
             }
             else if(_movebook!=null)
@@ -136,6 +147,7 @@ namespace Castor.gui.force
                     Patientid = _movebook.Patientid ?? 0,
                     Visitid = _movebook.Visitid ?? 0,
                     RootId = root?.Data.Id ?? 0,
+                    Start = root?.Data.End ?? DateOnly.FromDateTime(DateTime.Now)
                 };
             }
             LoadFormData();

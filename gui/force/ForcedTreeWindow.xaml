@@ -68,18 +68,26 @@
                 BorderThickness="1"
                 CornerRadius="6"
                 Margin="0,0,0,0">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
-                <StackPanel>
+            <Grid  Margin="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0">
                     <!-- Блок с данными пациента (акцентный фон) -->
                     <Border Background="{StaticResource Brush.AccentLight}"
                             CornerRadius="4"
                             Padding="12"
                             Margin="0,0,0,16">
-                        <TextBlock Text="{Binding PatientInfo, FallbackValue='Выберите запись для отображения данных пациента'}"
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding PatientInfo, FallbackValue='Выберите запись для отображения данных пациента'}"
                                    Foreground="{StaticResource Brush.TextDark}"
                                    FontWeight="SemiBold"
                                    TextWrapping="Wrap"
                                    Style="{StaticResource BaseText}"/>
+                            <TextBlock Text="НОВАЯ" 
+                                       Foreground="Green" FontWeight="SemiBold" Style="{StaticResource BaseText}" Visibility="{Binding IsNew}" HorizontalAlignment="Right" Margin="30,0,0,0" />
+                        </StackPanel>
                     </Border>
 
                     <TextBlock Text="Редактирование постановления"
@@ -174,30 +182,31 @@
                                  TextAlignment="Center"/>
                     </StackPanel>
 
-                    <!-- Кнопки действий -->
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0">
-                       
-                        <Button Content="Добавить"
+                </StackPanel>
+                <!-- Кнопки действий -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0" Grid.Row="1" IsEnabled="{Binding CanEdit}">
+
+                    <Button Content="Добавить"
                             Command="{Binding AddCommand}"
                             Style="{StaticResource AccentButton}"
                             Padding="16,6"
                             Margin="0,0,8,0"/>
 
-                        <!-- Акцентная кнопка "Сохранить" -->
-                        <Button Content="Сохранить"
+                    <!-- Акцентная кнопка "Сохранить" -->
+                    <Button Content="Сохранить"
                                 Command="{Binding SaveCommand}"
                                 Style="{StaticResource AccentButton}"
                                 Padding="16,6"
                                 Margin="0,0,8,0"/>
 
-                        <!-- Нейтральная кнопка "Отмена" -->
-                        <Button Content="Отмена"
+                    <!-- Нейтральная кнопка "Отмена" -->
+                    <Button Content="Закрыть"
                                 Click="Cancel_Click"
                                 Style="{StaticResource HardButton}"
                                 Padding="16,6"/>
-                    </StackPanel>
                 </StackPanel>
-            </ScrollViewer>
+
+            </Grid>
         </Border>
     </Grid>
 </Window>

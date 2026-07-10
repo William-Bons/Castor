@@ -26,17 +26,13 @@ public class Movebook
     public DateOnly? Date_Lastout { get; set; }
     public bool Closed { get; set; }
     public bool Deceased { get; set; }
-    public long? Fssid { get; set; }
-    public long? Unvoluntaryid { get; set; }
     public virtual int? Agein => CalculateAge(Datein);
     public virtual int? Ageout => CalculateAge(Dateout);
     public int? Days => (Datein.HasValue && Dateout.HasValue) ? (Dateout.Value.ToDateTime(TimeOnly.MinValue) - Datein.Value.ToDateTime(TimeOnly.MinValue)).Days : null;
     public int? DaysToday => Datein.HasValue && !Dateout.HasValue ? (DateTime.Today - Datein.Value.ToDateTime(TimeOnly.MinValue)).Days : null;
     public bool? InControl => string.IsNullOrWhiteSpace(Dsin) ? null : calc0(Dsin).Take(5).Count(x => x) == 1;
     public bool? OutControl => string.IsNullOrWhiteSpace(Dsout) ? null : calc0(Dsout).Take(5).Count(x => x) == 1;
-    public virtual Fss? FssControl {  get; set; }
     public virtual ICollection<Forced>? Forceds { get; set; }
-    public virtual Unvoluntary? UnvoluntaryControl { get; set; }
     public virtual ICollection<Commity> Commities { get; set; }
 
 

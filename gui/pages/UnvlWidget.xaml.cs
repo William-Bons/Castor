@@ -23,7 +23,7 @@ namespace Castor.gui.pages
             };
         }
 
-        public ICollection<Movebook> UnvlList { get; set; }
+        public List<Movebook> UnvlList { get; set; } = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event common.RefreshEventHandler RefreshNotify;
@@ -39,11 +39,11 @@ namespace Castor.gui.pages
             {
                 using (CastorContext castor = new CastorContext())
                 {
-                    UnvlList = castor.Movebooks
-                        .Where(m => m.Unvoluntaryid.HasValue)
-                        .Include(m => m.UnvoluntaryControl)
-                        .Where(f => f.UnvoluntaryControl.Nextvk.Value <= DateOnly.FromDateTime(DateTime.Today))
-                        .ToList();
+                    //UnvlList = castor.Movebooks
+                    //    .Where(m => m.Unvoluntaryid.HasValue)
+                    //    .Include(m => m.UnvoluntaryControl)
+                    //    .Where(f => f.UnvoluntaryControl.Nextvk.Value <= DateOnly.FromDateTime(DateTime.Today))
+                    //    .ToList();
                         
                 }
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UnvlList)));
@@ -59,7 +59,7 @@ namespace Castor.gui.pages
             try
             {
                 Movebook? movebook = (sender as DataGrid)?.SelectedItem as Movebook;
-                Unvoluntary? unvl = movebook?.UnvoluntaryControl;
+                Unvoluntary? unvl = new();// movebook?.UnvoluntaryControl; //todo temp 
                 UnvoluntaryControl control = new UnvoluntaryControl(unvl);
                 if (control.ShowDialog().Value)
                 {

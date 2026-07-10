@@ -69,8 +69,8 @@ namespace Castor.database.reports
                     create3(ordered.Where(m => m.Forceds.Any()), ordered.Where(m => m.Forceds.Any() && m.Agein < 18), "На принудительном лечении"),
                     create3(ordered.Where(m => m.Forceds.Any() && m.DaysToday > 365), ordered.Where(m => m.Forceds.Any() && m.Agein < 18 && m.DaysToday > 365), " - из них более года"),
 
-                    create3(movebooks.Where(m => m.Unvoluntaryid > 0), movebooks.Where(m => m.Unvoluntaryid > 0 && m.Agein < 18), "Поступило в порядке НГ"),
-                    create3(movebooks.Where(m => m.Unvoluntaryid > 0), movebooks.Where(m => m.Unvoluntaryid > 0 && m.Agein < 18), " - из них по решению суда"),
+                    //create3(movebooks.Where(m => m.Unvoluntaryid > 0), movebooks.Where(m => m.Unvoluntaryid > 0 && m.Agein < 18), "Поступило в порядке НГ"),
+                    //create3(movebooks.Where(m => m.Unvoluntaryid > 0), movebooks.Where(m => m.Unvoluntaryid > 0 && m.Agein < 18), " - из них по решению суда"),
 
                     create4("Оформлено документов МСЭ, ИПР, восстановление справок"),
                     create4("Наличие  ЧП,  побеги")

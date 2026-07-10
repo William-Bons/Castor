@@ -25,7 +25,7 @@ namespace Castor.gui.pages
             };
         }
 
-        public ICollection<Movebook> FssList { get; set; }
+        public List<Movebook> FssList { get; set; } = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event common.RefreshEventHandler RefreshNotify;
@@ -41,11 +41,11 @@ namespace Castor.gui.pages
             {
                 using (CastorContext castor = new CastorContext())
                 {
-                    FssList = castor.Movebooks
-                        .Where(x => x.Fssid.HasValue)
-                        .Include(x => x.FssControl)
-                        .Where(f => f.FssControl.Nextvk <= DateOnly.FromDateTime(DateTime.Today) && !f.FssControl.End.HasValue)
-                        .ToList();
+                    //FssList = castor.Movebooks
+                    //    .Where(x => x.Fssid.HasValue)
+                    //    .Include(x => x.FssControl)
+                    //    .Where(f => f.FssControl.Nextvk <= DateOnly.FromDateTime(DateTime.Today) && !f.FssControl.End.HasValue)
+                    //    .ToList();
                 }
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FssList)));
             }
@@ -60,7 +60,7 @@ namespace Castor.gui.pages
             try
             {
                 Movebook? movebook = (sender as DataGrid)?.SelectedItem as Movebook;
-                Fss? fss = movebook?.FssControl;
+                Fss? fss = new(); // movebook?.FssControl; //todo
                 FssControl control = new FssControl(fss);
                 if (control.ShowDialog().Value)
                 {
