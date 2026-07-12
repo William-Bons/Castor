@@ -1,5 +1,6 @@
 ﻿using Castor.database.tab_medis;
 using Castor.gui.commities;
+using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.ObjectModel;

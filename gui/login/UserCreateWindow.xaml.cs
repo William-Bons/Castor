@@ -2,6 +2,7 @@
 using Castor.database;
 using Castor.database.tab_medis;
 using Castor.database.tables; // Твой namespace с классом User
+using Castor.gui.common;
 using Castor.gui.movebook;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;

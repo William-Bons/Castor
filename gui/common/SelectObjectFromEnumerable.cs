@@ -5,7 +5,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Castor.gui.movebook
+namespace Castor.gui.common
 {
     /// <summary>
     /// </summary>

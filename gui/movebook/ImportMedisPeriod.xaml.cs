@@ -16,7 +16,7 @@ namespace Castor.gui.movebook
     /// <summary>
     /// Логика взаимодействия для ImportMedisPeriod.xaml
     /// </summary>
-    public partial class ImportMedisPeriod : Page, IRefresh, INotifyPropertyChanged, IConsoleMessage
+    public partial class ImportMedisPeriod : Page, IRefresh, INotifyPropertyChanged, IConsoleMessage, IStartablePage
     {
         public ImportMedisPeriod()
         {
@@ -38,6 +38,8 @@ namespace Castor.gui.movebook
         public DateTime ControlDate { get; set; } = DateTime.Now.AddDays(-30); // стандарт - за месяц до сегодня
         public IEnumerable<Movebook> DataRowSource { get; private set; } = new List<Movebook>();
         public object SelectedDataItem { get; set; }
+
+        public bool CanStart => MedisContext.IsMedisonnectionEnable;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event common.RefreshEventHandler RefreshNotify;
@@ -192,7 +194,9 @@ namespace Castor.gui.movebook
             }
         }
 
-
+        public void SaveOnCloseApplication()
+        {
+        }
     }
 
 }

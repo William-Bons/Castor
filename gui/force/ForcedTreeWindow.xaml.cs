@@ -23,7 +23,7 @@ namespace Castor.gui.force
     {
         private readonly ForcedViewModel _viewModel;
 
-        public ForcedTreeWindow(Movebook movebook)
+        public ForcedTreeWindow(Movebook? movebook)
         {
             InitializeComponent();
             _viewModel = new ForcedViewModel(movebook);

@@ -21,7 +21,7 @@ namespace Castor.gui.movebook
         public event PropertyChangedEventHandler? PropertyChanged;
         public event ConsoleMessageHandler? ConsoleMessage;
 
-        public CreateNew(object sender)
+        public CreateNew(object? sender)
         {
             if(sender is Movebook) Movebook= (Movebook)sender;
 

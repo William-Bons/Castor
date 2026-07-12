@@ -1,18 +1,6 @@
-﻿using Castor.gui.common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using Castor.database.tab_medis;
+using Castor.gui.common;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Castor.gui.force
 {
@@ -24,7 +12,16 @@ namespace Castor.gui.force
         public MonthsPanel()
         {
             InitializeComponent();
-            DataContext = new MonthsPanelViewModel();
+
+            // нужно так чтобы класс модели вызывался только если страница загрузилась т.к. там подключение к медис 
+            Loaded += (a, b) =>
+                DataContext = new MonthsPanelViewModel();
+        }
+
+        public bool CanStart => MedisContext.IsMedisonnectionEnable;
+
+        public void SaveOnCloseApplication()
+        {
         }
     }
 }

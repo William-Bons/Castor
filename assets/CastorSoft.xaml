@@ -22,6 +22,24 @@
     <SolidColorBrush x:Key="Brush.TextMain" Color="#2D333B"/>
     <SolidColorBrush x:Key="Brush.TextSecondary" Color="#8C949D"/>
 
+    <!-- Фон поверхности (светлый, нейтральный) -->
+    <Color x:Key="Color.Surface">#F9F9F9</Color>
+    <SolidColorBrush x:Key="Brush.Surface" Color="{StaticResource Color.Surface}"/>
+
+    <!-- Цвет границы (серый, спокойный) -->
+    <Color x:Key="Color.Border">#D1D1D1</Color>
+    <SolidColorBrush x:Key="Brush.Border" Color="{StaticResource Color.Border}"/>
+
+    <!-- Основной текст (тёмный, высокая контрастность) -->
+    <Color x:Key="Color.TextPrimary">#212121</Color>
+    <SolidColorBrush x:Key="Brush.TextPrimary" Color="{StaticResource Color.TextPrimary}"/>
+
+    <!-- Цвет текста при наведении/выделении -->
+    <Color x:Key="Color.TextAccent">#0D47A1</Color>
+    <SolidColorBrush x:Key="Brush.TextAccent" Color="{StaticResource Color.TextAccent}"/>
+
+
+
     <System:Double x:Key="GlobalControlMinHeight">32</System:Double>
 
     <!-- Рамка всей панели: тонкая, нейтральная, скруглённая -->
@@ -336,6 +354,43 @@
         </Setter>
     </Style>
 
+    <Style x:Key="DataGridNoHoverButton" TargetType="Button">
+        <!-- Базовые свойства -->
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+
+        <!-- ГЛАВНОЕ: Переопределяем шаблон, чтобы игнорировать IsMouseOver -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      Margin="{TemplateBinding Padding}"
+                                      TextElement.Foreground="{TemplateBinding Foreground}"/>
+                    </Border>
+
+                    <!-- Триггеры здесь НЕТ. IsMouseOver игнорируется. -->
+                    <ControlTemplate.Triggers>
+                        <!-- Опционально: можно оставить реакцию на нажатие, если нужно -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#EFEFEF"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5"/>
+                            <Setter Property="Cursor" Value="No"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- ========================================== -->
     <!-- ТАБЛИЦЫ (DataGrid) — ПОЛНЫЙ ВАРИАНТ       -->
@@ -549,6 +604,115 @@
             <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{StaticResource Color.Graphite}" />
 
         </Style.Resources>
+    </Style>
+
+    <!-- ========================================== -->
+    <!-- СТИЛЬ ПУНКТА МЕНЮ (MenuItemStyle) -->
+    <!-- Имитирует стандартный MenuItem, но без лишних рамок и с нашим цветом -->
+    <!-- ========================================== -->
+    <Style x:Key="MenuItemStyle" TargetType="MenuItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource Brush.TextPrimary}"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Border x:Name="RootBorder"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            CornerRadius="3">
+                        <Grid>
+                            <ContentPresenter ContentSource="Header"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <!-- Наведение мыши -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource Brush.Accent}"/>
+                            <Setter Property="Foreground" Value="{StaticResource Brush.TextAccent}"/>
+                        </Trigger>
+
+                        <!-- Отключённый пункт -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="#AAAAAA"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <!-- ========================================== -->
+    <!-- СТИЛЬ РАЗДЕЛИТЕЛЯ (SeparatorStyle) -->
+    <!-- Тонкая линия между пунктами меню -->
+    <!-- ========================================== -->
+    <Style x:Key="SeparatorStyle" TargetType="Separator">
+        <Setter Property="Margin" Value="8,4"/>
+        <Setter Property="Height" Value="1"/>
+        <Setter Property="Background" Value="{StaticResource Brush.Border}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Separator">
+                    <Border Background="{TemplateBinding Background}" 
+                            Height="{TemplateBinding Height}" 
+                            Margin="{TemplateBinding Margin}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <!-- ========================================== -->
+    <!-- УЛУЧШЕННЫЙ СТИЛЬ КНОПКИ (ModernButton для Dropdown) -->
+    <!-- Делает кнопку аккуратной, без «тяжёлого» вида -->
+    <!-- ========================================== -->
+    <Style x:Key="ModernDropdownButton" TargetType="ToggleButton">
+        <Setter Property="Background" Value="#FFFFFF"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Brush.Border}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Foreground" Value="{StaticResource Brush.TextPrimary}"/>
+        <Setter Property="Padding" Value="10,6"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="MainBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="Center"
+                                          Margin="{TemplateBinding Padding}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="MainBorder" Property="BorderBrush" Value="#BBBBBB"/>
+                            <Setter TargetName="MainBorder" Property="Background" Value="#F5F5F5"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="MainBorder" Property="Background" Value="#EFEFEF"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <!-- Кнопка «нажата» (меню открыто) -->
+                            <Setter TargetName="MainBorder" Property="BorderBrush" Value="{StaticResource Brush.Accent}"/>
+                            <Setter TargetName="MainBorder" Property="Background" Value="#E3F2FC"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>

@@ -1,0 +1,305 @@
+﻿<Window x:Class="Castor.gui.movebook.MovebookEdit"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Castor.gui.movebook"
+        xmlns:comm="clr-namespace:Castor.gui.common"
+        mc:Ignorable="d"
+        Title="Движение пациента"
+        Height="620" Width="840"
+        WindowStartupLocation="CenterScreen"
+        Topmost="True"
+        Background="{StaticResource Brush.Surface}"
+        FontFamily="Segoe UI" FontSize="14">
+
+    <Window.Resources>
+        <comm:DateOnlyConverter x:Key="DateOnlyConverter"/>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок-предупреждение в стиле Castor -->
+        <Border Grid.Row="0"
+                Background="{StaticResource Brush.AccentLight}"
+                BorderBrush="{StaticResource Brush.Border}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="12"
+                Margin="0,0,0,16">
+            <TextBlock Text="Проверьте правильность заполнения всех полей перед сохранением."
+                       Foreground="{StaticResource Brush.TextPrimary}"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+        </Border>
+        
+        <!--История-->
+        <Border Grid.Row="1" Background="{StaticResource Brush.Surface}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,16">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="№ ИБ" VerticalAlignment="Center" Padding="5"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Movebook.Card_Id}" VerticalAlignment="Center" Padding="5" Foreground="{StaticResource Brush.TextSecondary}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Пациент" VerticalAlignment="Center" Padding="5"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Movebook.Fio}" VerticalAlignment="Center" Padding="5" Foreground="{StaticResource Brush.TextPrimary}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Отделение" VerticalAlignment="Center" Padding="5"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Dep.text}" VerticalAlignment="Center" Padding="5" Foreground="{StaticResource Brush.TextSecondary}"/>
+
+                <Button Content="..." Width="23" Height="23" Margin="8,0,0,0" 
+                        Command="{Binding SelectPatient}" 
+                        Style="{StaticResource AccentButton}" Grid.Column="1" HorizontalAlignment="Right"/>
+            </Grid>
+        </Border>
+
+        <!-- Вкладки: Выписка / Поступление -->
+        <TabControl Grid.Row="2" x:Name="MainTabControl"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource Brush.Border}"
+                    BorderThickness="1">
+
+            <TabItem Header="Поступление">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Поступил из" VerticalAlignment="Center" Padding="5"/>
+                    <ComboBox Grid.Row="2" Grid.Column="1" Margin="3" SelectedValuePath="Tag"
+                                SelectedValue="{Binding Movebook.Ordered}"
+                                Style="{StaticResource ModernComboBox}">
+                        <ComboBoxItem Tag="0">Дома</ComboBoxItem>
+                        <ComboBoxItem Tag="1">Стацонара</ComboBoxItem>
+                        <ComboBoxItem Tag="2">ПНИ</ComboBoxItem>
+                    </ComboBox>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Дата поступления" VerticalAlignment="Center" Padding="5"/>
+                    <DatePicker Grid.Row="3" Grid.Column="1" Margin="3"
+                                SelectedDate="{Binding Movebook.Datein, Converter={StaticResource DateOnlyConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Style="{StaticResource ModernDatePicker}"/>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Диагноз поступления" VerticalAlignment="Center" Padding="5"/>
+                    <Grid Grid.Row="4" Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Margin="3" Padding="6"
+                                    Style="{StaticResource ModernTextBox}"
+                                    Grid.Column="0">
+                            <Binding Path="Movebook.Dsin" UpdateSourceTrigger="LostFocus">
+                                <Binding.ValidationRules>
+                                    <local:FCodeValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox>
+                        <Button Content=".." Width="23" Height="23" Margin="3,0,0,0"
+                                Command="{Binding SelectDiagnosis}"
+                                Style="{StaticResource AccentButton}"
+                                Grid.Column="1"/>
+                    </Grid>
+
+                    <!-- Блок: статусы и ранний возврат -->
+                    <Border Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                            Background="{StaticResource Brush.Surface}"
+                            BorderBrush="{StaticResource Brush.Border}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="8"
+                            Margin="0,8,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <CheckBox Grid.Row="0" Grid.Column="0" Content="Городской"
+                                        IsChecked="{Binding Movebook.City}"
+                                        Margin="0,2" ToolTip="Прописан в городе"/>
+                            <CheckBox Grid.Row="0" Grid.Column="2" Content="Впервые в жизни"
+                                        IsChecked="{Binding Movebook.First}"
+                                        Margin="0,2" ToolTip="Никогда ранее не лечился"/>
+
+                            <CheckBox Grid.Row="1" Grid.Column="0" Content="Повторно в году"
+                                        IsChecked="{Binding Movebook.Second}"
+                                        Margin="0,2" ToolTip="Повторно в этом году"/>
+                            <CheckBox Grid.Row="1" Grid.Column="2" Content="Недобровольно"
+                                        IsChecked="{Binding Movebook.Unvoluntary}"
+                                        Margin="0,2" ToolTip="По ст. 29"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Блок: ранний возврат и ЭЛН -->
+                    <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
+                            Background="{StaticResource Brush.Surface}"
+                            BorderBrush="{StaticResource Brush.Accent}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="10"
+                            Margin="0,12,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Ранний возврат" VerticalAlignment="Center" Padding="5"/>
+                            <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding Movebook.Early}" VerticalAlignment="Center" Margin="0,2"/>
+
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Нужен ЭЛН" VerticalAlignment="Center" Padding="5"/>
+                            <CheckBox x:Name="FssEnable" Grid.Row="0" Grid.Column="3" IsChecked="{Binding Movebook.NeedFss}" VerticalAlignment="Center" Margin="0,2"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="Дата начала нетрудоспособности" VerticalAlignment="Center" Padding="5"/>
+                            <DatePicker Grid.Row="1" Grid.Column="3" Margin="3"
+                                        SelectedDate="{Binding Movebook.Fss, Converter={StaticResource DateOnlyConverter}}"
+                                        IsEnabled="{Binding IsChecked, ElementName=FssEnable}"
+                                        Style="{StaticResource ModernDatePicker}"
+                                        VerticalAlignment="Center"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Дата пред. выписки" VerticalAlignment="Center" Padding="5"/>
+                            <DatePicker Grid.Row="1" Grid.Column="1" Margin="3"
+                                        SelectedDate="{Binding Movebook.Date_lastout, Converter={StaticResource DateOnlyConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{StaticResource ModernDatePicker}"
+                                        VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Выписка">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Дата выписки" VerticalAlignment="Center" Padding="5"/>
+                        <DatePicker Grid.Row="2" Grid.Column="1" Margin="3"
+                                    SelectedDate="{Binding Movebook.Dateout, Converter={StaticResource DateOnlyConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{StaticResource ModernDatePicker}"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Диагноз выписки" VerticalAlignment="Center" Padding="5"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Margin="3" Padding="6"
+                                 Text="{Binding Movebook.Dsout}"
+                                 Style="{StaticResource ModernTextBox}"/>
+
+                        <!-- Блок: статусные флаги -->
+                        <Border Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                                Background="{StaticResource Brush.Surface}"
+                                BorderBrush="{StaticResource Brush.Border}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="8"
+                                Margin="0,8,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <CheckBox Grid.Row="0" Grid.Column="0" Content="Городской"
+                                         IsChecked="{Binding Movebook.City}"
+                                         Margin="0,2" ToolTip="Пациент прописан в городе"/>
+                                <CheckBox Grid.Row="0" Grid.Column="2" Content="Впервые в жизни"
+                                         IsChecked="{Binding Movebook.First}"
+                                         Margin="0,2" ToolTip="Ранее никогда не лечился в психиатрических стационарах"/>
+
+                                <CheckBox Grid.Row="1" Grid.Column="0" Content="Повторно в году"
+                                         IsChecked="{Binding Movebook.Second}"
+                                         Margin="0,2" ToolTip="Повторное поступление в этом календарном году"/>
+                                <CheckBox Grid.Row="1" Grid.Column="2" Content="Недобровольно"
+                                         IsChecked="{Binding Movebook.Unvoluntary}"
+                                         Margin="0,2" ToolTip="Поступил по ст. 29"/>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Выбыл в" VerticalAlignment="Center" Padding="5"/>
+                        <ComboBox Grid.Row="5" Grid.Column="1" Margin="3"
+                                  ItemsSource="{Binding OuttoOptions}"
+                                  SelectedValue="{Binding Movebook.Outto}"
+                                  DisplayMemberPath="Display"
+                                  Style="{StaticResource ModernComboBox}"/>
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="История сдана" VerticalAlignment="Center" Padding="5"/>
+                        <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding Movebook.Closed}" VerticalAlignment="Center" Margin="3"/>
+
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Скончался" VerticalAlignment="Center" Padding="5"/>
+                        <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding Movebook.Deceased}" VerticalAlignment="Center" Margin="3"/>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+        </TabControl>
+
+        <!-- Кнопки действий -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="Отмена" Width="100" Margin="0,0,10,0"
+                    Command="{Binding CancelCommand}"
+                    Style="{StaticResource  HardButton}"/>
+            <Button Content="Сохранить" Width="100"
+                    Command="{Binding SaveCommand}"
+                    Style="{StaticResource AccentButton}"/>
+        </StackPanel>
+    </Grid>
+</Window>

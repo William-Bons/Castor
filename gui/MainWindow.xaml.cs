@@ -29,18 +29,6 @@ namespace Castor
             DataContext = this;
             InitializeComponent();
             
-
-            // проверка сущестования файла БД для текущего отделения
-            if (!File.Exists(Settings.Default.sqliteConnection))
-            {
-                // если file не существует, запрос отделения и пользователя
-                new SelectUser().ShowDialog();
-            }
-
-            // предстартовые проверки схемы и бэкап, загрузка стандартного меню
-            // бэкап только если успешны проверка и update
-            using CastorContext castorContext = new CastorContext();
-            castorContext.Backup();
             new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
             
             // инициализация MainWindow and ExtraWidgets
@@ -102,13 +90,21 @@ namespace Castor
                     _class.GetConstructor([typeof(MainWindow)]) != null ? Activator.CreateInstance(_class, this) :
                     Activator.CreateInstance(_class);
 
-                if (activeCreatedObject is IConsoleMessage obj) obj.ConsoleMessage += (message) => ConsoleMessage.Text = message;
-                if (activeCreatedObject is IRun _objectIRun) _objectIRun.Run();
-                if (activeCreatedObject is IDialog _objectDialog) _objectDialog.Show();
-                if (activeCreatedObject is Page) CentralFrame.Content = activeCreatedObject;
-                if (activeCreatedObject is ISwithPage swp) swp.SwitchPage += SwitchFramePage;
-                if (activeCreatedObject is IMainStatusBar msb) msb.PrintStatusMessage += PrintStatusMessage;
-                if (activeCreatedObject is IRefresh refh) refh.RefreshNotify += Refh_RefreshNotify;
+                if (activeCreatedObject is IConsoleMessage obj) obj.ConsoleMessage += (message) => ConsoleMessage.Text = message;   //todo оценить необходимость
+                if (activeCreatedObject is IDialog _objectDialog) _objectDialog.Show();                                             // открывает как окно надо добавить вариант как диалог
+                if (activeCreatedObject is ISwithPage swp) swp.SwitchPage += SwitchFramePage;                                       // позволяет переключить на другую страницу
+                if (activeCreatedObject is IMainStatusBar msb) msb.PrintStatusMessage += PrintStatusMessage;                        // позволяет вывести сообщение на StatusBar
+                if (activeCreatedObject is IRefresh refh) refh.RefreshNotify += Refh_RefreshNotify;                                 // позволяет обновить другой дочерний элемент MainFrame
+
+                // служебные 
+                if (activeCreatedObject is IRun _objectIRun) _objectIRun.Run();                                                     // тест интерфейс запускает функцию Run
+
+                // основная загрузка страницы
+                if (activeCreatedObject is IStartablePage isp && isp.CanStart)
+                {
+                    CentralFrame.Content = activeCreatedObject;
+                }
+
             }
         }
 

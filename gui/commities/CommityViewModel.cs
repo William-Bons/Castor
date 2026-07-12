@@ -72,7 +72,7 @@ public class CommityViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
     public CommityViewModel()
     {
         // Передаем CanExecute предикат, проверяющий отсутствие ошибок
-        SaveCommand = new RelayCommand(SaveData, () => !HasErrors && IsFormFilled());
+        SaveCommand = new RelayCommand(SaveData);
         
         // Первичная валидация пустых полей при запуске
         ValidateId(MovebookIdInput, nameof(MovebookIdInput));

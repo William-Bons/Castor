@@ -39,6 +39,7 @@ namespace Castor.gui.pages
             get => depList != null && depList?.Count > 0 ? depList?.First<dep>() : null;
         }
 
+        public bool CanStart => MedisContext.IsMedisonnectionEnable;
 
         private void LoadFromMedis()
         {
@@ -75,6 +76,10 @@ namespace Castor.gui.pages
         }
 
         private void CurrentDocdepFilter(object sender, System.Windows.RoutedEventArgs e)
+        {
+        }
+
+        public void SaveOnCloseApplication()
         {
         }
     }

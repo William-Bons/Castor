@@ -1,12 +1,14 @@
-﻿<Page
+﻿<Page x:Class="Castor.gui.movebook.Thebook"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Castor.gui.pages"
-      xmlns:common="clr-namespace:Castor.gui.common" xmlns:local1="clr-namespace:Castor.gui.movebook" x:Class="Castor.gui.movebook.Thebook"
+      xmlns:common="clr-namespace:Castor.gui.common" 
+      xmlns:local1="clr-namespace:Castor.gui.movebook" 
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="1191.778"
+      Background="#FAFBFC"
       x:Name="ThebookElement">
 
     <Page.Resources>
@@ -14,79 +16,94 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/assets/Style.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <local1:MovefilterHeaderItemConverter x:Key="MovefilterHeaderItemConverter"/>
             <common:EnabledBoolConverter x:Key="EnabledBoolConverter"/>
             <common:FssLogoConverter x:Key="FssLogoConverter"/>
             <common:ObjectToVisibleConverter x:Key="ObjectToVisibleConverter"/>
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid>
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ToolBar Grid.Row="0" Background="Transparent">
-            <Button ToolTip="Импортировать из Медис" Click="ImportNewby" Style="{DynamicResource Castor.Toolbarbutton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/log_logout_door_1563.ico" />
-                    <TextBlock Text="Поступление" FontSize="16" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button ToolTip="Импортировать из Медис" Click="ImportList" Style="{DynamicResource Castor.Toolbarbutton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/Patient_Female_icon-icons.com_75052.png" />
-                    <TextBlock Text="Загрузить" FontSize="16" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button ToolTip="Добавить пациента в книгу движения" Click="LoadPatient" Style="{DynamicResource Castor.Toolbarbutton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/add-icon.png" />
-                    <TextBlock Text="Добавить" FontSize="16" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button ToolTip="Выписать пациента" Click="DisorderPatient" Style="{DynamicResource Castor.Toolbarbutton}" IsEnabled="{Binding SelectedItem, Converter={StaticResource EnabledBoolConverter}, ElementName=PatientsTable}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/fire_exit_emergency_door_icon_196783.ico" />
-                    <TextBlock Text="Выписать" FontSize="16" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button ToolTip="Отчет ДВИЖЕНИЕ" Click="ShowReportInPage"  Style="{DynamicResource Castor.Toolbarbutton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/business_table_order_report_history_2332.ico" />
-                    <TextBlock Text="Отчет Движение" FontSize="14" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button ToolTip="Фильтр"  Style="{DynamicResource Castor.Toolbarbutton}" Click="OpenHideContextMenu">
-                <Button.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Скрыть сданные истории" IsCheckable="True" Click="HideShowClosedCards"  x:Name="Hideclosed"/>
-                        <MenuItem Header="Скрыть выписанные истории" IsCheckable="True" Click="HideShowDisordered" x:Name="Hidedisordered"/>
-                        <MenuItem Header="Фильтр дат" IsCheckable="True" Click="FilterByDatePeriod" />
-                    </ContextMenu>
-                </Button.ContextMenu>
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/filter.png" />
-                    <TextBlock Text="Фильтр" FontSize="14" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button Visibility="{Binding SaveButtonVisible}" Click="NeedRefreshTable" Style="{DynamicResource Castor.Toolbarbutton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/floppy_mount.png"/>
-                    <TextBlock Text="Сохранить" FontSize="16" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
+        <!-- Панель действий вместо ToolBar -->
+        <!-- Заголовок и кнопка добавления (мягкий вариант) -->
+        <Border Grid.Row="0"
+            Background="#FFFFFF"
+            BorderBrush="{StaticResource Brush.Steel}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="12,8"
+            Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        </ToolBar>
+                <TextBlock Grid.Column="0"
+                   Text="Список пациентов отделения"
+                   Foreground="{StaticResource Brush.TextMain}"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"/>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="False" x:Name="PatientsTable" Language="RU" CellEditEnding="PatientsTable_CellEditEnding" CurrentCellChanged="PatientsTable_CellEditEnding" FontFamily="Courier New" FontSize="16" SelectionMode="Single" MouseDoubleClick="PatientsTable_MouseDoubleClick" CanUserAddRows="False">
+                <Grid Grid.Column="1">
+                    <!-- Основной ToggleButton -->
+                    <ToggleButton x:Name="DropdownToggle"
+                          Content="Действия ▼" IsChecked="{Binding IsMenuOpen}"
+                          Style="{StaticResource ModernDropdownButton}"/>
+
+                    <!-- Popup с меню -->
+                    <Popup PlacementTarget="{Binding ElementName=DropdownToggle}"
+                       IsOpen="{Binding IsChecked, ElementName=DropdownToggle, Mode=OneWay}"
+                       AllowsTransparency="True"
+                       StaysOpen="False"
+                       Margin="0,28,0,0">
+                        <!-- отступ сверху под кнопку -->
+
+                        <Border Background="{StaticResource Brush.Surface}"
+                            BorderBrush="{StaticResource Brush.Border}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+
+                            <StackPanel Margin="8">
+                                <MenuItem Header="{Binding FilterPeriod.IsHideClosedCards, ConverterParameter=Скрыть сданные истории, Converter={StaticResource MovefilterHeaderItemConverter}}"
+                                  Command="{Binding FilterCommand}" CommandParameter="C"
+                                  Style="{StaticResource MenuItemStyle}"/>
+
+                                <MenuItem Header="{Binding FilterPeriod.IsHideDisordered, ConverterParameter=Скрыть выписанные истории, Converter={StaticResource MovefilterHeaderItemConverter}}" 
+                                  Command="{Binding FilterCommand}" CommandParameter="D"
+                                  Style="{StaticResource  MenuItemStyle}"/>
+
+                                <Separator Style="{StaticResource  SeparatorStyle}"/>
+
+                                <MenuItem Header="Фильтр дат"
+                                  Command="{Binding FilterCommand}" CommandParameter="P"
+                                  Style="{StaticResource MenuItemStyle}"/>
+
+                                <MenuItem Header="Выписать"
+                                  Command="{Binding DisorderPatientCommand}" 
+                                  Style="{StaticResource MenuItemStyle}"/>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+                </Grid>
+
+            </Grid>
+        </Border>
+
+
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="False" Language="RU" FontFamily="Courier New" FontSize="16" SelectionMode="Single" MouseDoubleClick="PatientsTable_MouseDoubleClick" CanUserAddRows="False" SelectedItem="{Binding Selected}" x:Name="MovebookDataGrid" >
             <DataGrid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Click="LoadPatient" Header="Редактировать" />
-                    <MenuItem Click="DeleteRow" Header="Удалить запись"/>
-                    <MenuItem Click="ShowStatGroup" Header="Показатели" />
-                    <MenuItem Click="HideAutoColumns" Header="Показывать все колонки" IsCheckable="True"/>
+                    <MenuItem Header="Редактировать запись" Command="{Binding EditCommand}" Style="{StaticResource MenuItemStyle}"/>
+                    <MenuItem Header="Выписать" Command="{Binding DisorderPatientCommand}"  Style="{StaticResource MenuItemStyle}"/>
+                    <MenuItem Header="Удалить запись" Command="{Binding DeleteCommand}" Style="{StaticResource MenuItemStyle}"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
 
@@ -114,15 +131,27 @@
                 <DataGridTemplateColumn Header="ПММХ">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="/img/jail-icon.png" Width="25" Height="25" Visibility="{Binding Forceds, Converter={StaticResource ObjectToVisibleConverter}}"/>
+                            <Button Style="{StaticResource DataGridNoHoverButton}" Click="OpenPMMCommand">
+                                <Image Source="/img/jail-icon.png" Width="25" Height="25" Visibility="{Binding Forceds, Converter={StaticResource ObjectToVisibleConverter}}"/>
+                            </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-
+                
+                <DataGridTemplateColumn Header="ВК">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource DataGridNoHoverButton}" Click="OpenCMCommand">
+                                <Image Source="/img/fsslogo.png" Width="25" Height="25" Visibility="{Binding Commities, Converter={StaticResource ObjectToVisibleConverter}}"/>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
                 <DataGridTextColumn Header="№ карты" Binding="{Binding Card_Id}"/>
                 <DataGridTextColumn Header="Пациент" Binding="{Binding Fio}"/>
                 <DataGridTextColumn Header="Дата пост" Binding="{Binding Datein}" />
-                <DataGridTextColumn Header="Дата выб" Binding="{Binding Dateout}" />
+                <DataGridTextColumn Header="Дата выбытия" Binding="{Binding Dateout}" />
                 <DataGridTextColumn Header="Дз пост" Binding="{Binding Dsin}" />
                 <DataGridTextColumn Header="Дз выб" Binding="{Binding Dsout}" />
                 <DataGridCheckBoxColumn Header="Первично" Binding="{Binding First}" />
@@ -130,18 +159,10 @@
                 <DataGridCheckBoxColumn Header="Возврат" Binding="{Binding Early}" />
                 <DataGridCheckBoxColumn Header="История сдана" Binding="{Binding Closed}" />
                 <DataGridCheckBoxColumn Header="Скончался" Binding="{Binding Deceased}" />
-                <DataGridTemplateColumn Header="ВК">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="/img/policeman-icon.png" Width="25" Height="25" Visibility="{Binding Commities, Converter={StaticResource ObjectToVisibleConverter}}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                
                 
             </DataGrid.Columns>
         </DataGrid>
-
-
 
     </Grid>
 

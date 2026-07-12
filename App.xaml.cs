@@ -67,20 +67,28 @@ namespace Castor
                 connString = dialog.ConnectionString;
             }
 
+            // проверка сущестования файла БД для текущего отделения
+            if (!File.Exists(Settings.Default.sqliteConnection))
+            {
+                // если file не существует, запрос отделения и пользователя
+                new SelectUser().ShowDialog();
+            }
+
+            // бэкап только если успешны проверка и update
+            using CastorContext castorContext = new CastorContext();
+            castorContext.Backup();
+
             // Проверка версии приложения по наличию таблицы Users 
-            using CastorContext _db = new CastorContext();
-            if(!MetaTable.TableUsersExistsAsync(_db))
+            if(!MetaTable.TableUsersExistsAsync(castorContext))
             {
                 // если Users нет - база данных старая
                 MessageBox.Show("СТАРАЯ");
             }
 
-
             // Миграции
             try
             {
-                using var context = new CastorContext();
-                context.Database.Migrate();
+                castorContext.Database.Migrate();
             }
             catch (Exception ex)
             {

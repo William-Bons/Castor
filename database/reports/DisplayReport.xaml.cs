@@ -68,7 +68,7 @@ namespace Castor.database.reports
 
         private void ReselectPeriod(object sender, RoutedEventArgs e)
         {
-            DatePeriod datePeriod = SelectDatePeriod.Show();
+            DatePeriod datePeriod = new DatePeriod(); //SelectDatePeriod.Show();
             MonthReportHtml monthReportHtml = new MonthReportHtml(datePeriod);
             Browser.NavigateToString(monthReportHtml.HtmlReport);
         }
