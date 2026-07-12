@@ -44,7 +44,7 @@ namespace Castor.gui.movebook
             if (scaff is visit v && v.num>0)    MoveVisitToBook(v);
 
             SaveCommand = new RelayCommand(Save);
-            SelectDiagnosis = new RelayCommand(SelectDiagnosFromList);
+            SelectDiagnosis = new RelayCommand(execute: param => SelectDiagnosFromList(param));
             SelectPatient = new RelayCommand(SelectPatientFromMedis);
             CancelCommand = new RelayCommand(CancelChanges);
         }
@@ -60,20 +60,12 @@ namespace Castor.gui.movebook
 
         private void Save()
         {
-            //if (!Validate())
-            //{
-            //    MessageBox.Show("Не все необходимые данные введены", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-            //    return;
-            //}
-            using (CastorContext castor = new CastorContext())
-            {
-                //PatientRecord.Dateout = DateOnly.FromDateTime(DateInControl.SelectedDate.Value);
-                //FormattableString fstr = $@"UPDATE Movebooks set dsout={PatientRecord.Dsout}, dateout={PatientRecord.Dateout}, city={PatientRecord.City}, early={PatientRecord.Early}, unvoluntary={PatientRecord.Unvoluntary}, first={PatientRecord.First}, second={PatientRecord.Second}, closed={PatientRecord.Closed}, outto={PatientRecord.Outto}, deceased={PatientRecord.Deceased}
-                //  where Id={PatientRecord.Id}";
-                //castor.Database.ExecuteSql(fstr);
-                castor.Update(Movebook);
-                castor.SaveChanges();
-            }
+            //todo if (!Validate())
+
+
+            CastorContext castor = new CastorContext();
+            castor.Update(Movebook);
+            castor.SaveChanges();
             RequestClose?.Invoke(this, EventArgs.Empty);
         }
 
@@ -142,7 +134,11 @@ namespace Castor.gui.movebook
             OnPropertyChanged(nameof(Movebook));
         }
 
-        private void SelectDiagnosFromList()
+        /// <summary>
+        /// выводит попап с диагнозами установленными на визит. при выборе заполняет соответсвующее параметру поле Movebook
+        /// </summary>
+        /// <param name="param">Название поля Movebook</param>
+        private void SelectDiagnosFromList(object? param)
         {
             try
             {
@@ -166,7 +162,9 @@ namespace Castor.gui.movebook
                         var DS = medisContext.diagnos
                             .Where(d => d.keyid == (sel as patdiag).Diagnos.rootid)?.First();
 
-                        Movebook.Dsin = DS.code;
+                        if (param?.ToString() == "Dsout") Movebook.Dsout = DS?.code ?? string.Empty;
+                        else if (param?.ToString() == "Dsin") Movebook.Dsin = DS?.code ?? string.Empty;
+
                         OnPropertyChanged(nameof(Movebook));
                     }
                 };
@@ -174,7 +172,7 @@ namespace Castor.gui.movebook
             catch { }
         }
 
-        private void PrepareDisorder()
+        public void PrepareDisorder()
         {
             //PRELOAD
             try

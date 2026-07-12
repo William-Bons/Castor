@@ -28,6 +28,7 @@ namespace Castor.gui.movebook
             Loaded += (a, b) =>
             {
                 var model = new MovebookEditModel(scaff);
+                if (selectedControl == 1) model.PrepareDisorder(); // подготовка данныз под выписку
                 DataContext = model;
                 model.RequestClose += (a,b) => Close();
                 MainTabControl.SelectedIndex = selectedControl;
