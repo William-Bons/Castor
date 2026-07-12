@@ -35,6 +35,9 @@ namespace Castor.database.tab_medis
         public DbSet<lu> lu => Set<lu>();
         #endregion
 
+        public static bool IsMedisonnectionEnable =>
+            PingHost();
+             
         /// <summary>
         /// Constructor. Checks database to exsists, and creates it if not
         /// </summary>
@@ -69,22 +72,19 @@ namespace Castor.database.tab_medis
             }
         }
 
-        public PingReply PingHost()
+        public static bool PingHost()
         {
             var address = Regex.Match(Decrypt(Settings.Default.postgreeConnection),
                         @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b").Value;
 
             using Ping pinger = new Ping();
             PingReply status = pinger.Send(address, Settings.Default.HostPingLatency);
-            if (status.Status != IPStatus.Success)
-                throw new Exception("Host cannot be reached!");
-
-            return status;
+            return status.Status == IPStatus.Success;
         }
 
         
 
-        public string Decrypt(string cipherText, string password = null)
+        public static string Decrypt(string cipherText, string password = null)
         {
             var cipher = Convert.FromBase64String(cipherText);
             var pwd = !string.IsNullOrEmpty(password) ? Encoding.Default.GetBytes(password) : Array.Empty<byte>();
