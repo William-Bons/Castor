@@ -78,13 +78,6 @@ namespace Castor
             using CastorContext castorContext = new CastorContext();
             castorContext.Backup();
 
-            // Проверка версии приложения по наличию таблицы Users 
-            if(!MetaTable.TableUsersExistsAsync(castorContext))
-            {
-                // если Users нет - база данных старая
-                MessageBox.Show("СТАРАЯ");
-            }
-
             // Миграции
             try
             {

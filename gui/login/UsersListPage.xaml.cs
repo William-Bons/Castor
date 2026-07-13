@@ -1,6 +1,7 @@
 ﻿using Castor.database;
 using Castor.database.tab_medis;
 using Castor.database.tables;
+using Castor.gui.common;
 using Castor.gui.login;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
@@ -16,19 +17,19 @@ using System.Windows.Media;
 
 namespace Castor.gui.login
 {
-    public partial class UsersListPage : Page
+    public partial class UsersListPage : Page, IStartablePage
     {
-        private readonly CastorContext _db;
+        public bool CanStart => MedisContext.IsMedisonnectionEnable;
 
         public UsersListPage()
         {
             InitializeComponent();
-            _db = new CastorContext();
             LoadUsers();
         }
 
         private void LoadUsers()
         {
+            using CastorContext _db = new CastorContext();
             var users = _db.Users.ToList();
             UsersDataGrid.ItemsSource = users;
         }
@@ -85,7 +86,9 @@ namespace Castor.gui.login
             {
                 try
                 {
+                    using CastorContext _db = new CastorContext();
                     user.IsActive = !user.IsActive;
+                    _db.Update(user);
                     _db.SaveChanges();
 
                     // Обновляем весь список, чтобы пересчитались статусы и надписи на кнопках

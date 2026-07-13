@@ -2,17 +2,11 @@
 using Castor.database.tab_medis;
 using Castor.database.tables;
 using Castor.gui.common;
-using Castor.gui.dialogs;
 using Castor.Properties;
-using EfSchemaCompare;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using System.Net.Http;
 using System.Reflection;
-using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Castor.test
 {
@@ -67,7 +61,7 @@ namespace Castor.test
                                      C = p.diagform
 
                                  };
-                                 
+
 
                         re.Distinct().ToList(); // здесь точка останова для анализа и сохранения результата
 
@@ -103,7 +97,7 @@ namespace Castor.test
 
                         // select those visits where fio match movebook and date out empty
                         IEnumerable<visit> vv = visits
-                            .Where(m => fios.Contains(m.Patient?.fullname) && m.dat1==null);
+                            .Where(m => fios.Contains(m.Patient?.fullname) && m.dat1 == null);
 
                         foreach (var mb in movebooks)
                         {
@@ -125,17 +119,15 @@ namespace Castor.test
 
         public async Task TTestSelectTable2()
         {
-            DateTime start = new DateTime(2026, 5, 25);
-            for (int i = 0; i < 10; i++)
-            {
-                Debug.WriteLine($"{start.ToString()} : {CachedCalendarCalculator.Get15thDayCorrectedAsync(start).Result.ToString()}");
-                start = start.AddDays(1);
-            }
+
+
+
+
         }
 
         public async Task TTestSelectTable3()
         {
-            
+
             await Task.Run(() =>
             {
                 string input = "DIFFERENT: Bandbook->PrimaryKey 'PK_Bandbooks', constraint name. Expected = PK_Bandbooks, found =\r\nDIFFERENT: Entity 'Bandbook', constraint name. Expected = PK_Bandbooks, found =\r\nNOT CHECKED: Entity 'Bandbook', constraint name. Expected = <null>\r\n\t, found = Bandbook\r\n\tDIFFERENT: Forced->PrimaryKey 'PK_Forced', constraint name. Expected = PK_Forced, found =\r\n\tDIFFERENT: Forced->Property 'Courtname', column type. Expected = TEXT, found = NUMERIC\r\n\tNOT IN DATABASE: Forced->Property 'Movebookid', column name. Expected = Movebookid\r\n\tDIFFERENT: Forced->Property 'Patientid', column type. Expected = INTEGER, found = NUMERIC\r\n\tNOT IN DATABASE: Forced->ForeignKey 'FK_Forced_Movebooks_Movebookid', constraint name. Expected = FK_Forced_Movebooks_Movebookid\r\n\tNOT IN DATABASE: Forced->Index 'Movebookid', index constraint name. Expected = IX_Forced_Movebookid\r\n\tDIFFERENT: Entity 'Forced', constraint name. Expected = PK_Forced, found =\r\n\tDIFFERENT: Fss->PrimaryKey 'PK_Fss', constraint name. Expected = PK_Fss, found =\r\n\tDIFFERENT: Entity 'Fss', constraint name. Expected = PK_Fss, found =\r\n\tDIFFERENT: PatientRecord->PrimaryKey 'PK_Movebooks', constraint name. Expected = PK_Movebooks, found =\r\n\tDIFFERENT: Entity 'PatientRecord', constraint name. Expected = PK_Movebooks, found =\r\n\tNOT CHECKED: Entity 'PatientRecord', constraint name. Expected = <null>, found = PatientRecord\r\nDIFFERENT: Reports->PrimaryKey 'PK_Reports', constraint name. Expected = PK_Reports, found = \r\nDIFFERENT: Entity 'Reports', constraint name. Expected = PK_Reports, found = \r\nDIFFERENT: Unvoluntary->PrimaryKey 'PK_Unvoluntaries', constraint name. Expected = PK_Unvoluntaries, found = \r\nDIFFERENT: Entity 'Unvoluntary', constraint name. Expected = PK_Unvoluntaries, found = ";
@@ -144,7 +136,7 @@ namespace Castor.test
                     .Where(l => Regex.IsMatch(l, @"^NOT IN DATABASE:"))
                     .Select(l => Regex.Match(l, @"(?<=Expected =\s+)\w+").Value)
                     .ToList();
-                    
+
 
                 string wordAfter = Regex.Match(input, @"(?<=Expected =\s+)\w+").Value;
 
