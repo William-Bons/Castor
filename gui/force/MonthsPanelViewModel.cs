@@ -8,10 +8,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
+using System.Windows.Media;
 
 namespace Castor.gui.force
 {
@@ -23,6 +26,7 @@ namespace Castor.gui.force
         }
 
         // --- Свойства для биндинга (ровно те, что в XAML) ---
+        public ObservableCollection<CombinedRow> PatientsMonth0 { get; private set; } = new(); // ошибочно загруженные
         public ObservableCollection<CombinedRow> PatientsMonth1 { get; private set; } = new();
         public ObservableCollection<CombinedRow> PatientsMonth2 { get; private set; } = new();
         public ObservableCollection<CombinedRow> PatientsMonth3 { get; private set; } = new();
@@ -30,7 +34,7 @@ namespace Castor.gui.force
         public ObservableCollection<CombinedRow> PatientsMonth5 { get; private set; } = new();
         public ObservableCollection<CombinedRow> PatientsMonth6 { get; private set; } = new();
         public ObservableCollection<CombinedRow> PatientsMonth7 { get; private set; } = new();
-        public ObservableCollection<CombinedRow> PatientsMonth8 { get; private set; } = new();   
+        public ObservableCollection<CombinedRow> PatientsMonth8 { get; private set; } = new();
         public ObservableCollection<CombinedRow> PatientsMonth9 { get; private set; } = new();
         public ObservableCollection<CombinedRow> PatientsMonth10 { get; private set; } = new();
         public ObservableCollection<CombinedRow> PatientsMonth11 { get; private set; } = new();
@@ -48,38 +52,43 @@ namespace Castor.gui.force
                 ClearAllMonths();
 
                 using CastorContext _context = new CastorContext();
-                var data = _context.Forced
+                var ForcesList = _context.Forced
                     .Include(f => f.RootForced)
                     .Include(f => f.Movebook)           // Важно: подгружаем связанного пациента
-                    .Where(f => f.RootId==null)         // Только записи ROOT
+                    .Include(f => f.AllForces)
+                    .Where(f => f.RootId == null)         // Только записи ROOT
                     .ToList();
 
 
                 // список визитов пациентов нваходящихся в настоящее время в отделении исключая номера историй уже заруженных в базу (по castorIds)
                 using MedisContext medisContext = new MedisContext();
-                var __DataRowSource = medisContext.visit
+                var visitsNDoctors = medisContext.visit
                     .Where(v => v.depid == Settings.Default.LastSelectedDepId && !v.dat1.HasValue) // Только находящиеся в отделении
                     .Include(v => v.Doctor)
                     .Include(v => v.Patient)
                     .ToList()
-                    .Select(v => (pid: v.Patient.num, doc: v.Doctor.text))
+                    .Select(v => (pid: v.Patient.num, doc: v.Doctor.text, docid:v.Doctor.keyid))
                     .ToList();
 
-                var result = data.Join(
-                    __DataRowSource,
-                    a => a.Patientid,
-                    b => b.pid,
-                    (a, b) => new CombinedRow
+                // объединение двух массивов данных ForcesList и visitsNDoctors ключи объединения ForcesList.Patientid, visitsNDoctors.pid результат в масив объектов CombinedRow
+                IEnumerable<CombinedRow> result = ForcesList.Join(
+                    visitsNDoctors,
+                    _force => _force.Patientid,     // PK1
+                    _visit => _visit.pid,           // PK2
+                    (f, v) => new CombinedRow
                     {
-                        Key = a.Patientid,
-                        Force = a,
-                        Doctor = b.doc ?? string.Empty
+                        Key = f.Patientid,
+                        Force = f,
+                        Doctor = v.doc ?? string.Empty,
+                        Color = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString(_context.Users.Where(u => u.DocdepId == v.docid).Select(u => u.Color).First() ?? "#000000")
+                            )
                     });
 
                 foreach (CombinedRow item in result)
                 {
-                    string prop0 = $"PatientsMonth{item.Force.Month[0]}";
-                    string prop1 = $"PatientsMonth{item.Force.Month[1]}";
+                    string prop0 = $"PatientsMonth{item.Force.Month?[0] ?? 1/*0*/}";
+                    string prop1 = $"PatientsMonth{item.Force.Month?[1] ?? 1/*0*/}";
 
                     (GetType().GetProperty(prop0).GetValue(this) as ObservableCollection<CombinedRow>)?
                         .Add(item);
@@ -92,7 +101,7 @@ namespace Castor.gui.force
                 }
                 ;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex);
             }
@@ -118,5 +127,9 @@ namespace Castor.gui.force
         public long Key { get; set; } // PatientID
         public Forced? Force { get; set; } // Pat name
         public string? Doctor { get; set; } // Doc name
+        public Brush? Color { get; set; } = Brushes.Black;
     }
+
+
+
 }

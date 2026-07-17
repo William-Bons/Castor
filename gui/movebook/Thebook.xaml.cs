@@ -66,12 +66,12 @@ namespace Castor.gui.movebook
         public void SaveOnCloseApplication(object sender, EventArgs e)
         {
             MovebookDataGrid.CommitEdit(DataGridEditingUnit.Row, true);
-            ((ThebookViewModel)DataContext).Save();
+            ((ThebookViewModel)DataContext)?.Save();
         }
 
         private void PatientsTable_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ((ThebookViewModel)DataContext).EditMovebookItemWindowAsync();
+            ((ThebookViewModel)DataContext)?.EditMovebookItemWindowAsync();
 
         }
 
@@ -87,7 +87,7 @@ namespace Castor.gui.movebook
 
         private void OpenOUTCommand(object sender, RoutedEventArgs e)
         {
-            ((ThebookViewModel)DataContext).DisorderPatient();
+            ((ThebookViewModel)DataContext)?.DisorderPatient();
         }
     }
 }

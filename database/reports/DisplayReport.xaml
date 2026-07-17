@@ -4,47 +4,80 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Castor.gui.movebook"
+        Background="#FAFBFC"
         mc:Ignorable="d" d:DesignHeight="322.953" d:DesignWidth="424.482">
 
-    <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/assets/Style.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Page.Resources>
+   
 
-    
-
-    <Grid>
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <ToolBar Grid.Row="0" Background="Transparent">
-            <Button ToolTip="Назад"  Click="BrowseBack"  Style="{DynamicResource Castor.Toolbarbutton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/restart_back_left_arrow_6022.ico" />
-                    <TextBlock Text="Назад" FontSize="16" VerticalAlignment="Center" />
-                </StackPanel>
-            </Button>
-            <Button ToolTip="Сменить период отчета" Click="ReselectPeriod" Style="{DynamicResource Castor.Toolbarbutton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/img/acroread.png"/>
-                    <TextBlock Text="Период отчета" FontSize="16" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            
-            <Button ToolTip="Фильтровать" Click="SaveToDisk"  Width="32" Height="32">
-                <Image Source="/img/floppy_mount.png" />
-            </Button>
-            <Button ToolTip="Фильтровать" Click="Print"  Width="32" Height="32">
-                <Image Source="/img/acroread.png" />
-            </Button>
-        </ToolBar>
 
+        <Border Grid.Row="0"
+            Background="#FFFFFF"
+            BorderBrush="{StaticResource Brush.Steel}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="12,8"
+            Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                   Foreground="{StaticResource Brush.TextMain}"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center">
+                    <Run Text="Отчет: "/>
+                    <Run Text="{Binding ReportTitle, Mode=OneWay}"/>
+                </TextBlock>
+
+                <Grid Grid.Column="1">
+                    <!-- Основной ToggleButton -->
+                    <ToggleButton x:Name="DropdownToggle"
+                          Content="Действия ▼" IsChecked="{Binding IsMenuOpen}"
+                          Style="{StaticResource ModernDropdownButton}"/>
+
+                    <!-- Popup с меню -->
+                    <Popup PlacementTarget="{Binding ElementName=DropdownToggle}"
+                       IsOpen="{Binding IsChecked, ElementName=DropdownToggle, Mode=OneWay}"
+                       AllowsTransparency="True"
+                       StaysOpen="False"
+                       Margin="0,28,0,0">
+                        <!-- отступ сверху под кнопку -->
+
+                        <Border Background="{StaticResource Brush.Surface}"
+                            BorderBrush="{StaticResource Brush.Border}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+
+                            <StackPanel Margin="8">
+
+                                <MenuItem Header="Сменить период отчета"
+                                    Click="ReselectPeriod" Style="{StaticResource MenuItemStyle}"/>
+
+                                <MenuItem Header="Сохранить"
+                                    Click="SaveToDisk"  Style="{StaticResource MenuItemStyle}"/>
+
+                                <MenuItem Header="Печать" 
+                                    Click="Print" Style="{StaticResource MenuItemStyle}"/>
+
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+                </Grid>
+
+            </Grid>
+        </Border>
+
+        
         <WebBrowser Grid.Row="2" x:Name="Browser">
         </WebBrowser>
 

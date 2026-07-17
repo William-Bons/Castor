@@ -23,6 +23,9 @@
 		<Separator/>
 		<MenuItem Header="Console"   />
 	</MenuItem>
+	<MenuItem Header="Отчеты" >
+		<MenuItem Header="Движение за месяц"  ClassName="Castor.database.reports.DisplayReport" Parameter="Castor.database.reports.MonthReportHtml"/>
+	</MenuItem>
 	<MenuItem Header="Пациент" >
 		<MenuItem Header="Поиск"  ClassName="Castor.gui.find.PatientSearchWindow" />
 		<MenuItem Header="Протокол ВК" ClassName="Castor.gui.medicalcomission.ProtocolWindow"/>

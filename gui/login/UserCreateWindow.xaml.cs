@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Castor.gui.login
 {
@@ -41,6 +42,21 @@ namespace Castor.gui.login
             {
                 Title = "Создание пользователя";
             }
+
+            var colors = typeof(Brushes)
+            .GetProperties()
+            .Select(p => new
+            {
+                Name = p.Name,
+                Brush = (SolidColorBrush)p.GetValue(null)
+            })
+            .OrderBy(x => x.Name)
+            .ToList();
+
+            UserColorComboBox.ItemsSource = colors;
+            UserColorComboBox.DisplayMemberPath = "Name";
+            UserColorComboBox.SelectedValuePath = "Brush";
+
         }
 
         /// <summary>
@@ -89,6 +105,10 @@ namespace Castor.gui.login
             var roleItem = RoleComboBox.SelectedItem as ComboBoxItem;
             var password = PasswordBox.Password;
             var confirm = ConfirmPasswordBox.Password;
+
+            var selected = UserColorComboBox.SelectedItem;
+            // Если нужно именно SolidColorBrush:
+            var brush = (SolidColorBrush)((dynamic)selected).Brush;
 
             // Базовые проверки
             if (string.IsNullOrEmpty(fullName))
@@ -144,6 +164,7 @@ namespace Castor.gui.login
                     _editingUser.FullName = fullName;
                     _editingUser.Login = login;
                     _editingUser.Role = role;
+                    _editingUser.Color = brush.ToString();
 
                     // Обновляем пароль только если пользователь ввёл новый
                     if (!string.IsNullOrEmpty(password))
@@ -179,7 +200,8 @@ namespace Castor.gui.login
                         PasswordHash = hash,
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow,
-                        DocdepId = 0
+                        DocdepId = 0,
+                        Color = brush.ToString()
                     };
 
                     localDb.Users.Add(newUser);

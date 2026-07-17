@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Windows.Media;
 
 namespace Castor.database.tables
 {
@@ -25,7 +26,7 @@ namespace Castor.database.tables
         public string Role { get; set; } = "Врач"; // Врач / Медсестра / Администратор
 
         public bool IsActive { get; set; } = true;
-
+        public string? Color { get; set; } = Brushes.Black.ToString();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Опционально: если понадобится отслеживание последнего входа

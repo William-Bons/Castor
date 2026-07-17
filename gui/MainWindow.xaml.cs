@@ -1,16 +1,9 @@
-﻿using Castor.database;
-using Castor.database.tab_medis;
-using Castor.database.tables;
-using Castor.gui;
+﻿using Castor.gui;
 using Castor.gui.common;
-using Castor.gui.dialogs;
-using Castor.gui.pages;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -28,9 +21,9 @@ namespace Castor
             Instance = this;
             DataContext = this;
             InitializeComponent();
-            
+
             new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
-            
+
             // инициализация MainWindow and ExtraWidgets
             WidgetsExtraInitialize();
 
@@ -53,13 +46,13 @@ namespace Castor
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        public static MainWindow Instance { get; private set; }
+        public static MainWindow Instance { get; private set; } = null!;
         public string CurrentDbName => $"Data Source={Settings.Default.sqliteConnection}";
         public string Depname => Settings.Default.LastSelectedDepName;
 
         private void WidgetsExtraInitialize()
         {
-            var _ExtraStack = new StackPanel() { Orientation  = Orientation.Vertical };
+            var _ExtraStack = new StackPanel() { Orientation = Orientation.Vertical };
             Grid.SetColumn(_ExtraStack, 0);
             MainFrameGrid.Children.Add(_ExtraStack);
 
@@ -67,7 +60,7 @@ namespace Castor
             var interfaces = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes())
                 .Where(t => t.FullName.Contains("Widget") && !t.IsNested);
-            
+
 
             // create objects Wodgets from Parameter ExtraWidgets and add they into _ExtraStack
             foreach (var _widget in interfaces)
@@ -139,7 +132,7 @@ namespace Castor
         private void PrintStatusMessage(string message, string barName)
         {
             MainStatusBar.Items.OfType<TextBlock>()
-                .First(t =>  t.Name==barName)
+                .First(t => t.Name == barName)
                 .Text = message;
         }
 
@@ -148,12 +141,12 @@ namespace Castor
             MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = className, Parameter = param });
         }
 
-        public static void Wait(bool wait=false)
+        public static void Wait(bool wait = false)
         {
             if (wait) Instance.Cursor = Cursors.Wait;
             else Instance.Cursor = Cursors.Arrow;
         }
-       
+
 
 
     }

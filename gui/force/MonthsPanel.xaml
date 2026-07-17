@@ -1,13 +1,68 @@
 ﻿<Page x:Class="Castor.gui.force.MonthsPanel"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:local="clr-namespace:Castor.gui.force"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="#FAFBFC" >
 
-    <Border Style="{StaticResource ModernBorder}" Margin="8" Padding="8">
-        <Border.Resources>
-            <!-- Шаблон строки: ФИО + перенос строки + врач -->
-            <DataTemplate x:Key="PatientMonthItemTemplate">
-                <TextBlock Style="{StaticResource BaseText}" Margin="0,2">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+            Background="#FFFFFF"
+            BorderBrush="{StaticResource Brush.Steel}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="12,8"
+            Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                   Text="Освидетельствование по месяцам"
+                   Foreground="{StaticResource Brush.TextMain}"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"/>
+
+                <Grid Grid.Column="1">
+                    <!-- Основной ToggleButton -->
+                    <ToggleButton x:Name="DropdownToggle"
+                          Content="Действия ▼" IsChecked="{Binding IsMenuOpen}"
+                          Style="{StaticResource ModernDropdownButton}"/>
+
+                    <!-- Popup с меню -->
+                    <Popup PlacementTarget="{Binding ElementName=DropdownToggle}"
+                       IsOpen="{Binding IsChecked, ElementName=DropdownToggle, Mode=OneWay}"
+                       AllowsTransparency="True"
+                       StaysOpen="False"
+                       Margin="0,28,0,0">
+                        <!-- отступ сверху под кнопку -->
+                        <Border Background="{StaticResource Brush.Surface}"
+                            BorderBrush="{StaticResource Brush.Border}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <StackPanel Margin="8">
+                                <!--<MenuItem Header="Выписать"  Command="{Binding DisorderPatientCommand}" Style="{StaticResource MenuItemStyle}"/>-->
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+                </Grid>
+
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1" Style="{StaticResource ModernBorder}" Padding="8">
+            <Border.Resources>
+                <!-- Шаблон строки: ФИО + перенос строки + врач -->
+                <DataTemplate x:Key="PatientMonthItemTemplate">
+                    <TextBlock Style="{StaticResource BaseText}" Margin="0,2" Foreground="{Binding Color}">
                     <Run Text="{Binding Force.Movebook.Fio}" FontSize="15"/>
                     <LineBreak/>
                     <Run Text="     >"/>
@@ -15,187 +70,187 @@
                     <LineBreak/>
                     <Run Text="     >"/>
                     <Run Text="{Binding Doctor}"/>
-                </TextBlock>
-            </DataTemplate>
+                    </TextBlock>
+                </DataTemplate>
 
-            <!-- Стиль ListViewItem с выделением (из прошлых ответов) -->
-            <Style x:Key="MonthListViewItemStyle" TargetType="ListViewItem">
-                <Setter Property="Padding" Value="0"/>
-                <Setter Property="Margin" Value="0,2,0,0"/>
-                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="ListViewItem">
-                            <Grid x:Name="RootGrid"  Background="{TemplateBinding Background}"  Margin="{TemplateBinding Margin}">
-                                <!-- Контент строки (текст) -->
-                                <ContentPresenter x:Name="ContentPresenter"
+                <!-- Стиль ListViewItem с выделением (из прошлых ответов) -->
+                <Style x:Key="MonthListViewItemStyle" TargetType="ListViewItem">
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="0,2,0,0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Grid x:Name="RootGrid"  Background="{TemplateBinding Background}"  Margin="{TemplateBinding Margin}">
+                                    <!-- Контент строки (текст) -->
+                                    <ContentPresenter x:Name="ContentPresenter"
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                               Margin="{TemplateBinding Padding}"
                               TextElement.Foreground="{TemplateBinding Foreground}"/>
 
-                                <!-- Визуальные состояния (выделение и наведение) -->
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup x:Name="CommonStates">
-                                        <VisualState x:Name="Normal"/>
-                                        <VisualState x:Name="PointerOver">
-                                            <Storyboard>
-                                                <ColorAnimation Storyboard.TargetName="RootGrid" 
+                                    <!-- Визуальные состояния (выделение и наведение) -->
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal"/>
+                                            <VisualState x:Name="PointerOver">
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetName="RootGrid" 
                                             Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" 
                                             To="#FFE0E0E0" Duration="0"/>
-                                            </Storyboard>
-                                        </VisualState>
-                                        <VisualState x:Name="Pressed">
-                                            <Storyboard>
-                                                <ColorAnimation Storyboard.TargetName="RootGrid" 
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetName="RootGrid" 
                                             Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" 
                                             To="#FFD0D0D0" Duration="0"/>
-                                            </Storyboard>
-                                        </VisualState>
-                                        <VisualState x:Name="Selected">
-                                            <Storyboard>
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="Selected">
+                                                <Storyboard>
 
-                                                <!-- Используем AccentLight из твоей темы CASTOR -->
-                                                <ColorAnimation Storyboard.TargetName="RootGrid" 
+                                                    <!-- Используем AccentLight из твоей темы CASTOR -->
+                                                    <ColorAnimation Storyboard.TargetName="RootGrid" 
                                             Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" 
                                             To="{StaticResource Color.Accent}" Duration="0"/>
 
-                                            </Storyboard>
-                                        </VisualState>
-                                        <VisualState x:Name="SelectedUnfocused">
-                                            <Storyboard>
-                                                <ColorAnimation Storyboard.TargetName="RootGrid" 
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="SelectedUnfocused">
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetName="RootGrid" 
                                             Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" 
                                             To="{StaticResource Color.Accent}" Duration="0"/>
-                                            </Storyboard>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </Border.Resources>
+                                                </Storyboard>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Border.Resources>
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <!-- Заголовки 1–6 -->
-            <UniformGrid Grid.Row="0" Rows="1" Columns="6" Margin="0,0,0,8">
-                <TextBlock Text="Январь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                <TextBlock Text="Февраль" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                <TextBlock Text="Март" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                <TextBlock Text="Апрель" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                <TextBlock Text="Май" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                <TextBlock Text="Июнь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-            </UniformGrid>
+                <!-- Заголовки 1–6 -->
+                <UniformGrid Grid.Row="0" Rows="1" Columns="6" Margin="0,0,0,8">
+                    <TextBlock Text="Январь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Февраль" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Март" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Апрель" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Май" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Июнь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                </UniformGrid>
 
-            <!-- Ячейки 1–6: меняем только ItemsSource -->
-            <UniformGrid Grid.Row="1" Rows="1" Columns="6">
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth1}"
+                <!-- Ячейки 1–6: меняем только ItemsSource -->
+                <UniformGrid Grid.Row="1" Rows="1" Columns="6">
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth1}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
+                    </Border>
 
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth2}"
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth2}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
+                    </Border>
 
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth3}"
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth3}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
+                    </Border>
 
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth4}"
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth4}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
+                    </Border>
 
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth5}"
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth5}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
+                    </Border>
 
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth6}"
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth6}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
-            </UniformGrid>
+                    </Border>
+                </UniformGrid>
 
-            <!-- Заголовки 7–12 -->
-            <UniformGrid Grid.Row="2" Rows="1" Columns="6" Margin="0,0,0,8">
-                <TextBlock Text="Июль" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                <TextBlock Text="Август" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                <TextBlock Text="Сентябрь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                <TextBlock Text="Октябрь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                <TextBlock Text="Ноябрь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                <TextBlock Text="Декабрь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-            </UniformGrid>
+                <!-- Заголовки 7–12 -->
+                <UniformGrid Grid.Row="2" Rows="1" Columns="6" Margin="0,0,0,8">
+                    <TextBlock Text="Июль" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Август" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Сентябрь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Октябрь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Ноябрь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Декабрь" Style="{StaticResource LabelText}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                </UniformGrid>
 
-            <!-- Ячейки 7–12: меняем только ItemsSource -->
-            <UniformGrid Grid.Row="3" Rows="1" Columns="6">
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth7}"
+                <!-- Ячейки 7–12: меняем только ItemsSource -->
+                <UniformGrid Grid.Row="3" Rows="1" Columns="6">
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth7}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
-                <!-- и так далее до 12 -->
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth8}"
+                    </Border>
+                    <!-- и так далее до 12 -->
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth8}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth9}"
+                    </Border>
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth9}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth10}"
+                    </Border>
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth10}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth11}"
+                    </Border>
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth11}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
-                <Border Style="{StaticResource ModernCell}" Margin="2">
-                    <ListView ItemsSource="{Binding PatientsMonth12}"
+                    </Border>
+                    <Border Style="{StaticResource ModernCell}" Margin="2">
+                        <ListView ItemsSource="{Binding PatientsMonth12}"
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>
-                </Border>
-            </UniformGrid>
-        </Grid>
-    </Border>
-
+                    </Border>
+                </UniformGrid>
+            </Grid>
+        </Border>
+    </Grid>
 </Page>
 
 

@@ -12,6 +12,7 @@ namespace Castor.database.reports
     {
         public string HtmlReport { get; }
         public DatePeriod datePeriod { get; set; }
+        public string ReportTitle { get; }
         public void Calculate();
         public void RegisterInReports()
         {
