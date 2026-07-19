@@ -40,13 +40,40 @@ namespace Castor.database.tables
             
         private int[]? _preMonth()
         {
-            if(MonthFlag!=null)
+            if (MonthFlag != null)
                 return [Start.Month, ((Start.Month - 1 + 6) % 12) + 1];
-            else if(AllForces?.Count()>0 && AllForces.Any(f => f.MonthFlag!=null))
-                return AllForces?.First(f => f.MonthFlag != null)?._preMonth();
+            else if (AllForces?.Count() > 0 && AllForces.Any(f => f.MonthFlag != null))
+                return AllForces?.First(a => a.MonthFlag != null)?._preMonth();
+            else if (RootForced != null && RootForced.MonthFlag != null)
+                return RootForced._preMonth();
+            else if (RootForced != null)
+                return RootForced?.AllForces?.First(a => a.MonthFlag != null)?._preMonth();
             else
                 return null;
         }
-        
+
+        public virtual string DisplayText => ToString();
+        public override string ToString()
+        {
+            // Формируем читаемую строку для узла дерева
+            var parts = new System.Text.StringBuilder();
+
+            if (MonthFlag != null)
+                parts.Append("> ");
+
+            if (!string.IsNullOrEmpty(Number))
+                parts.Append($"№ {Number}");
+
+            if (parts.Length > 0)
+                parts.Append(" | ");
+
+            parts.Append($"Тип: {Type}");
+
+            if (Start != default)
+                parts.Append($" | {Start.ToString("dd.MM.yyyy")}");
+
+            return parts.ToString();
+        }
+
     }
 }

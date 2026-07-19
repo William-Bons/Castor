@@ -42,6 +42,7 @@
 
         <!--<gui:CastorConsole Grid.Row="3" MinHeight="120" x:Name="Console" d:Visibility="Visible"/>-->
         <StatusBar Grid.Row="4" Padding="0" x:Name="MainStatusBar">
+            <TextBlock Text=" • " FontSize="20" Foreground="{Binding MedisEnabled}"/>
             <TextBlock Padding="0" x:Name="main" Text="{Binding CurrentDbName}"/>
             <TextBlock Name="status" Padding="0" Text="{Binding Depname}" />
             <TextBlock Padding="0" x:Name="ConsoleMessage" />

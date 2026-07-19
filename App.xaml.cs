@@ -2,6 +2,7 @@
 using Castor.database.tables;
 using Castor.gui.dialogs;
 using Castor.gui.login;
+using Castor.gui.movebook;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -88,6 +89,9 @@ namespace Castor
                 LogError("Migrations", ex);
                 MessageBox.Show($"Ошибка обновления базы: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            // Синхронизация базы
+            Task.Run(() => new Synchronization().LoadExistsFromMedis());
 
 
             // Полноценный вход: показываем обычный MainWindow

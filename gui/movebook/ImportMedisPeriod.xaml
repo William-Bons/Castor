@@ -38,50 +38,73 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0"
-                   Text="Список пациентов отделения из БД"
+                   Text="{Binding Title}"
                    Foreground="{StaticResource Brush.TextMain}"
                    FontSize="18"
                    FontWeight="SemiBold"
                    VerticalAlignment="Center"/>
 
-                <Button Grid.Column="1"
-                    Content="Загрузить всех"
-                    Style="{StaticResource AccentButton}"
-                    Padding="14,6"
-                    Click="SaveSelectedInCastor"
-                    Margin="12,0,0,0"/>
+                <Grid Grid.Column="1">
+                    <!-- Основной ToggleButton -->
+                    <ToggleButton x:Name="DropdownToggle"
+                          Content="Действия ▼" IsChecked="{Binding IsMenuOpen}"
+                          Style="{StaticResource ModernDropdownButton}"/>
+
+                    <!-- Popup с меню -->
+                    <Popup PlacementTarget="{Binding ElementName=DropdownToggle}"
+                       IsOpen="{Binding IsChecked, ElementName=DropdownToggle, Mode=OneWay}"
+                       AllowsTransparency="True"
+                       StaysOpen="False"
+                       Margin="0,28,0,0">
+                        <!-- отступ сверху под кнопку -->
+
+                        <Border Background="{StaticResource Brush.Surface}"
+                            BorderBrush="{StaticResource Brush.Border}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+
+                            <StackPanel Margin="8">
+
+                                <MenuItem Header="Фильтр дат"
+                                  Command="{Binding FilterCommand}" CommandParameter="P"
+                                  Style="{StaticResource MenuItemStyle}"/>
+
+                                <MenuItem Header="Записать выделенных"
+                                  Command="{Binding SaveCommand}" 
+                                  Style="{StaticResource MenuItemStyle}"/>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+                </Grid>
+
+
             </Grid>
         </Border>
 
         <!-- DataGrid с явными колонками (пример структуры для мед. данных) -->
         <DataGrid Grid.Row="2" 
-                  x:Name="MedisDataGrid"
-                  Style="{StaticResource ModernDataGrid}"
+                  x:Name="MedisDataGrid" Style="{StaticResource MovebookDataGridStyle}"
                   ItemsSource="{Binding DataRowSource, Mode=OneWay}" 
                   SelectedItem="{Binding SelectedDataItem, UpdateSourceTrigger=PropertyChanged}"
                   Language="RU">
 
             <DataGrid.Columns>
                 <!-- Пример колонок. Замени на реальные поля твоей модели DataRowSource -->
-                <DataGridTextColumn Header="Пациент" Binding="{Binding Fio}" Width="200"/>
-                <DataGridTextColumn Header="Диагноз" Binding="{Binding Dsin}" Width="120"/>
-                <DataGridTextColumn Header="Дата визита" Binding="{Binding Datein, StringFormat=dd.MM.yyyy}" Width="110"/>
-                <DataGridTextColumn Header="Статус" Binding="{Binding Card_Id}" Width="100"/>
-                <DataGridTextColumn Header="Дней в стационаре" Binding="{Binding DaysToday}" Width="150"/>
+                <DataGridCheckBoxColumn Binding="{Binding IsSelected}" />
+                <DataGridTextColumn Header="№ и/б" Binding="{Binding Movebook.Card_Id}" Width="100"/>
+                <DataGridTextColumn Header="Пациент" Binding="{Binding Movebook.Fio}" />
+                <DataGridTextColumn Header="Диагноз" Binding="{Binding Movebook.Dsin}" Width="120"/>
+                <DataGridTextColumn Header="Дата пост" Binding="{Binding Movebook.Datein, StringFormat=dd.MM.yyyy}" Width="110"/>
+                <DataGridTextColumn Header="Дата выб" Binding="{Binding Movebook.Dateout, StringFormat=dd.MM.yyyy}" Width="110"/>
+                <DataGridTextColumn Header="Дней в стационаре" Binding="{Binding Movebook.Days}" Width="150"/>
             </DataGrid.Columns>
 
-            <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Все визиты пациента" Click="ShowAllVisistsForPatient"/>
-                    <MenuItem Header="Все диагнозы пациента" Click="ShowAllDiagnosis"/>
-                </ContextMenu>
-            </DataGrid.ContextMenu>
         </DataGrid>
 
         <!-- Опционально: строка статуса внизу -->
         <TextBlock Grid.Row="3" 
                    x:Name="StatusLabel"
-                   Text="Готов к импорту" 
+                   Text="{Binding StatusMessage}" 
                    Foreground="{StaticResource Brush.TextSecondary}"
                    Margin="0,10,0,0"
                    VerticalAlignment="Bottom"/>

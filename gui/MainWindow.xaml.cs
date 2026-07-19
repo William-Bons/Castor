@@ -1,13 +1,16 @@
-﻿using Castor.gui;
+﻿using Castor.database.tab_medis;
+using Castor.gui;
 using Castor.gui.common;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Castor
 {
@@ -45,10 +48,11 @@ namespace Castor
             };
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
         public static MainWindow Instance { get; private set; } = null!;
         public string CurrentDbName => $"Data Source={Settings.Default.sqliteConnection}";
         public string Depname => Settings.Default.LastSelectedDepName;
+        public Brush MedisEnabled =>
+            MedisContext.IsMedisonnectionEnable ? Brushes.Green : Brushes.Red;
 
         private void WidgetsExtraInitialize()
         {
@@ -71,6 +75,9 @@ namespace Castor
             }
         }
 
+        /// <summary>
+        /// создает объект класса по имени загруженного из параметра меню. активирует объект
+        /// </summary>
         private void MainWindow_MenuItemRise(CastorMenuItem _castorMenuItem)
         {
 
@@ -84,7 +91,7 @@ namespace Castor
                     Activator.CreateInstance(_class);
 
                 if (activeCreatedObject is IConsoleMessage obj) obj.ConsoleMessage += (message) => ConsoleMessage.Text = message;   //todo оценить необходимость
-                if (activeCreatedObject is IDialog _objectDialog) _objectDialog.Show();                                             // открывает как окно надо добавить вариант как диалог
+                if (activeCreatedObject is IDialog _objectDialog) _objectDialog.Show();                                             //todo открывает как окно надо добавить вариант как диалог
                 if (activeCreatedObject is ISwithPage swp) swp.SwitchPage += SwitchFramePage;                                       // позволяет переключить на другую страницу
                 if (activeCreatedObject is IMainStatusBar msb) msb.PrintStatusMessage += PrintStatusMessage;                        // позволяет вывести сообщение на StatusBar
                 if (activeCreatedObject is IRefresh refh) refh.RefreshNotify += Refh_RefreshNotify;                                 // позволяет обновить другой дочерний элемент MainFrame
@@ -99,6 +106,10 @@ namespace Castor
                 }
 
             }
+
+            // Обновление некоторых визуальных информационных знаков при переходах по меню
+            // -- знак досупности медис
+            OnPropertyChanged(nameof(MedisEnabled));
         }
 
         public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
@@ -148,6 +159,11 @@ namespace Castor
         }
 
 
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
     }
 }

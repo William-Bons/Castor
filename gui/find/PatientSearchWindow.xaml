@@ -4,7 +4,7 @@
         Title="Поиск пациента и визитов"
         Height="750" Width="1150"
         WindowStartupLocation="CenterScreen"
-        Background="#F5F7FA">
+        Background="#FAFBFC">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -13,7 +13,7 @@
         </Grid.RowDefinitions>
 
         <!-- Панель поиска -->
-        <Border Grid.Row="0" Style="{StaticResource PanelWithShadow}" Margin="0,0,0,20" Padding="20">
+        <Border Grid.Row="0" Style="{StaticResource ModernBorder}" Margin="0,0,0,20" Padding="20">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <!-- ФИО с поиском по Enter -->
                 <TextBlock Text="ФИО:" VerticalAlignment="Center" Foreground="{StaticResource Brush.TextSecondary}" FontSize="14" Margin="0,0,8,0"/>
@@ -54,7 +54,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Пациенты -->
-            <Border Grid.Column="0" Style="{StaticResource PanelWithShadow}" Margin="0">
+            <Border Grid.Column="0" Style="{StaticResource ModernBorder}" Margin="0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -87,7 +87,7 @@
                           Margin="0"/>
 
             <!-- Визиты -->
-            <Border Grid.Column="2" Style="{StaticResource PanelWithShadow}" Margin="0">
+            <Border Grid.Column="2" Style="{StaticResource ModernBorder}" Margin="0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

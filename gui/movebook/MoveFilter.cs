@@ -49,6 +49,12 @@ namespace Castor.gui.movebook
         {
         }
 
+        public MoveFilter(int DaysBefore)
+        {
+            End = DateTime.Now;
+            Start = DateTime.Now - TimeSpan.FromDays(DaysBefore);
+        }
+
         public static DateTime CalcStart()
         {
             return DateTime.Parse($"{21}.{(DateTime.Today.Month > 1 ? DateTime.Today.Month - 1 : 12)}.{DateTime.Today.Year}");

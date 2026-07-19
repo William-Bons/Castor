@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:converters="clr-namespace:Castor.gui.common"
         Title="Учёт постановлений (принудительное лечение)"
-        Width="1100" Height="720"
+        Width="800" Height="800"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -14,7 +14,7 @@
     <Grid Margin="12">
         <!-- ИСПРАВЛЕНИЕ: ColumnDefinitions как коллекция ColumnDefinition -->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="320"/>
+            <ColumnDefinition Width="300"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -25,40 +25,26 @@
                 BorderThickness="1"
                 CornerRadius="6"
                 Margin="0,0,8,0">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Margin="8">
-                    <!-- Стиль кнопки: AccentButton (акцентная) -->
-                    <Button Content="Обновить"
-                            Command="{Binding RefreshCommand}"
-                            Style="{StaticResource AccentButton}"
-                            Padding="10,4"/>
-                </StackPanel>
-
-                <TreeView Grid.Row="1"
-                          ItemsSource="{Binding TreeItems}"
-                          SelectedItemChanged="TreeView_OnSelectedItemChanged"
-                          Margin="4"
-                          BorderThickness="0">
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="TreeViewItem">
-                            <Setter Property="IsExpanded" Value="True"/>
-                        </Style>
-                    </TreeView.ItemContainerStyle>
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding DisplayText}"
-                                       Foreground="{StaticResource Brush.TextMain}"
-                                       FontSize="13"
-                                       Style="{StaticResource BaseText}"/>
-                        </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-                </TreeView>
-            </Grid>
+            <TreeView Grid.Row="1"
+                    ItemsSource="{Binding RootTreeItem}"
+                    SelectedItemChanged="TreeView_OnSelectedItemChanged"
+                    Margin="4"
+                    BorderThickness="0">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="IsExpanded" Value="True"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding AllForces}">
+                        <TextBlock Text="{Binding DisplayText}"
+                                    Foreground="{StaticResource Brush.TextMain}"
+                                    FontSize="13"
+                                    Style="{StaticResource BaseText}"/>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
         </Border>
 
         <!-- === ПРАВАЯ ЧАСТЬ: Форма === -->
@@ -70,25 +56,27 @@
                 Margin="0,0,0,0">
             <Grid  Margin="16">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0">
-                    <!-- Блок с данными пациента (акцентный фон) -->
-                    <Border Background="{StaticResource Brush.AccentLight}"
+                <!-- Блок с данными пациента (акцентный фон) -->
+                <Border Background="{StaticResource Brush.AccentLight}"
                             CornerRadius="4"
                             Padding="12"
                             Margin="0,0,0,16">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding PatientInfo, FallbackValue='Выберите запись для отображения данных пациента'}"
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding PatientInfo, Mode=OneWay, FallbackValue='Выберите запись для отображения данных пациента'}"
                                    Foreground="{StaticResource Brush.TextDark}"
                                    FontWeight="SemiBold"
                                    TextWrapping="Wrap"
                                    Style="{StaticResource BaseText}"/>
-                            <TextBlock Text="НОВАЯ" 
+                        <TextBlock Text="НОВАЯ" 
                                        Foreground="Green" FontWeight="SemiBold" Style="{StaticResource BaseText}" Visibility="{Binding IsNew}" HorizontalAlignment="Right" Margin="30,0,0,0" />
-                        </StackPanel>
-                    </Border>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Grid.Row="1" DataContext="{Binding SelectedItem}">
 
                     <TextBlock Text="Редактирование постановления"
                                FontWeight="SemiBold"
@@ -184,9 +172,9 @@
 
                 </StackPanel>
                 <!-- Кнопки действий -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0" Grid.Row="1" IsEnabled="{Binding CanEdit}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0" Grid.Row="2" >
 
-                    <Button Content="Рассчет"
+                    <Button Content="Активировать" IsEnabled="{Binding CanEdit}"
                             Command="{Binding SetBaseCommand}"
                             Style="{StaticResource AccentButton}"
                             Padding="16,6"
@@ -196,13 +184,11 @@
                             Style="{StaticResource AccentButton}"
                             Padding="16,6"
                             Margin="0,0,8,0"/>
-
-                    <!-- Акцентная кнопка "Сохранить" -->
                     <Button Content="Сохранить"
-                                Command="{Binding SaveCommand}"
-                                Style="{StaticResource AccentButton}"
-                                Padding="16,6"
-                                Margin="0,0,8,0"/>
+                            Command="{Binding SaveCommand}"
+                            Style="{StaticResource AccentButton}"
+                            Padding="16,6"
+                            Margin="0,0,8,0"/>
 
                     <!-- Нейтральная кнопка "Отмена" -->
                     <Button Content="Закрыть"

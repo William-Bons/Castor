@@ -54,7 +54,7 @@ namespace Castor.gui.movebook
                     SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", visitsWeek, PlacementMode.Center, "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");
                     soe.Selected += (a) =>
                     {
-                        CreateNew createNew = new CreateNew(a);
+                        MovebookEdit createNew = new MovebookEdit(a);
                         createNew.ShowDialog();
                     };
 
@@ -109,7 +109,7 @@ namespace Castor.gui.movebook
                     SelectObjectFromEnumerable soe = new SelectObjectFromEnumerable("Не загруженные", visits, PlacementMode.Center, "Patient.fullname", "Patient.age", "dat", "dat1", "Patient.CurrentDs.text");
                     soe.Selected += (a) =>
                     {
-                        CreateNew createNew = new CreateNew(a);
+                        MovebookEdit createNew = new MovebookEdit(a);
                         createNew.ShowDialog();
                     };
 
@@ -138,7 +138,7 @@ namespace Castor.gui.movebook
             FindPatient findPatient = new FindPatient();
             if (findPatient.ShowDialog().Value)
             {
-                new CreateNew(findPatient.Visit).ShowDialog();
+                new MovebookEdit(findPatient.Visit).ShowDialog();
             }
         }
     }

@@ -98,12 +98,14 @@
         </Border>
 
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" AutoGenerateColumns="False" Language="RU" FontFamily="Courier New" FontSize="16" SelectionMode="Single" MouseDoubleClick="PatientsTable_MouseDoubleClick" CanUserAddRows="False" SelectedItem="{Binding Selected}" x:Name="MovebookDataGrid" >
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" MouseDoubleClick="PatientsTable_MouseDoubleClick" SelectedItem="{Binding Selected}" x:Name="MovebookDataGrid" Style="{StaticResource MovebookDataGridStyle}" >
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Редактировать запись" Command="{Binding EditCommand}" Style="{StaticResource MenuItemStyle}"/>
                     <MenuItem Header="Выписать" Command="{Binding DisorderPatientCommand}"  Style="{StaticResource MenuItemStyle}"/>
                     <MenuItem Header="Удалить запись" Command="{Binding DeleteCommand}" Style="{StaticResource MenuItemStyle}"/>
+                    <MenuItem Header="Все визиты пациента" Command="{Binding ShowVisitsCommand}" Style="{StaticResource MenuItemStyle}"/>
+                    <MenuItem Header="Все диагнозы пациента" Command="{Binding ShowDsCommand}" Style="{StaticResource MenuItemStyle}"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
 

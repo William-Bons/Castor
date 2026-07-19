@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
 
         <!-- Шапка: основные реквизиты -->
-        <Border Grid.Row="0" Style="{StaticResource PanelWithShadow}" Margin="0,0,0,20" Padding="20">
+        <Border Grid.Row="0" Style="{StaticResource ModernBorder}" Margin="0,0,0,20" Padding="20">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -49,7 +49,7 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="1" Style="{StaticResource PanelWithShadow}" Padding="20">
+        <Border Grid.Row="1" Style="{StaticResource ModernBorder}" Padding="20">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <!-- Место и тип заседания -->
@@ -92,7 +92,7 @@
 
                     <!-- Состав комиссии (DataGrid) -->
                     <!-- Состав комиссии (редактируемый блок) -->
-                    <Border Style="{StaticResource PanelWithShadow}" Margin="0,0,0,16" Padding="16">
+                    <Border Style="{StaticResource ModernBorder}" Margin="0,0,0,16" Padding="16">
                         <DockPanel LastChildFill="True">
                             <TextBlock DockPanel.Dock="Top"
                    Text="Состав комиссии"
@@ -159,7 +159,7 @@
 
 
                     <!-- Повестка дня -->
-                    <Border Style="{StaticResource PanelWithShadow}" Margin="0,0,0,16" Padding="10">
+                    <Border Style="{StaticResource ModernBorder}" Margin="0,0,0,16" Padding="10">
                         <DockPanel LastChildFill="True">
                             <TextBlock DockPanel.Dock="Top" Text="Повестка дня"
                                        Foreground="{StaticResource Brush.TextMain}"
@@ -180,7 +180,7 @@
                     </Border>
 
                     <!-- Голосование -->
-                    <Border Style="{StaticResource PanelWithShadow}" Margin="0,0,0,16" Padding="16">
+                    <Border Style="{StaticResource ModernBorder}" Margin="0,0,0,16" Padding="16">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>

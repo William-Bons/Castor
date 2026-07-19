@@ -1,4 +1,5 @@
 ﻿using Castor.database;
+using Castor.database.tab_medis;
 using Castor.database.tables;
 using Castor.gui.commities;
 using Castor.gui.common;
@@ -9,12 +10,15 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Markup;
 
 namespace Castor.gui.movebook
 {
@@ -26,6 +30,8 @@ namespace Castor.gui.movebook
             DeleteCommand = new RelayCommand(RemovePatient);
             FilterCommand = new RelayCommand(execute: param => PrepareFilter(param));
             EditCommand = new RelayCommandAsync(EditMovebookItemWindowAsync);
+            ShowVisitsCommand = new RelayCommand(ShowAllVisistsForPatient);
+            ShowDsCommand = new RelayCommand(ShowAllDiagnosis);
         }
 
         public Movebook? Selected {  get; set; }
@@ -35,6 +41,8 @@ namespace Castor.gui.movebook
         public ICommand FilterCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand EditCommand { get; }
+        public ICommand? ShowVisitsCommand { get; }
+        public ICommand? ShowDsCommand { get; }
 
         // Это свойство привязано к IsChecked ToggleButton (и тем самым закрывает Popup)
         public bool IsMenuOpen
@@ -110,7 +118,10 @@ namespace Castor.gui.movebook
                     LoadedData = LoadedData.Where(l => !l.Dateout.HasValue).ToList();
                 }
             }
-            catch { }
+            catch (Exception ex) 
+            { 
+                Debug.WriteLine(ex.Message);
+            }
 
             OnPropertyChanged(nameof(LoadedData));
 
@@ -127,6 +138,7 @@ namespace Castor.gui.movebook
             }
             catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
         }
 
@@ -143,13 +155,17 @@ namespace Castor.gui.movebook
                 using CastorContext context = new CastorContext();
                 context.Movebooks.Remove(_mbItem);
                 context.SaveChanges();
-                Task.Run(() => Load());
+                Task.Run(async () => await Load());
             }
         }
 
         public void OpenPMMWindow()
         {
-            new ForcedTreeWindow(Selected).ShowDialog();
+            if (Selected is Movebook _mbItem)
+            {
+                new ForcedTreeWindow(Selected).ShowDialog();
+                Task.Run(async () => await Load());
+            }
         }
 
         internal void OpenCommityWindow()
@@ -160,6 +176,61 @@ namespace Castor.gui.movebook
         {
             new MovebookEdit(Selected,0).ShowDialog();
             await Load();
+        }
+
+        private void ShowAllDiagnosis()
+        {
+            try
+            {
+                if (Selected is Movebook _row)
+                {
+                    using MedisContext medis = new MedisContext();
+                    ICollection<patdiag> dss = medis.patdiag
+                        .Where(p => p.patientid == _row.Patientid)
+                        .Include(p => p.Diagnos)
+                        .ToList();
+
+                    DataGrid dataGrid = new DataGrid() { Language = XmlLanguage.GetLanguage("ru-RU") };
+                    dataGrid.ItemsSource = dss;
+                    Window window = new Window();
+                    window.Content = dataGrid;
+                    window.Show();
+                }
+            }
+            catch (Exception ex)
+            {
+                Message.ShowPopup(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// отбирает все визиты пациента в указанное учреждение. Всключая закрытые истории и поступления в п/п
+        /// </summary>
+        private void ShowAllVisistsForPatient()
+        {
+            try
+            {
+                if (Selected is Movebook _row)
+                {
+                    using MedisContext medis = new MedisContext();
+
+                    ICollection<visit> dss = medis.visit
+                        .Where(v => v.patientid == _row.Patientid)
+                        .Include(v => v.Dep)
+                        //.Where(w => w.Dep.rootid == Settings.Default.RootDepartmentId)
+                        .ToList();
+
+                    DataGrid dataGrid = new DataGrid() { Language = XmlLanguage.GetLanguage("ru-RU") };
+                    dataGrid.ItemsSource = dss;
+                    Window window = new Window();
+                    window.Content = dataGrid;
+                    window.Show();
+                }
+            }
+            catch (Exception ex)
+            {
+                Message.ShowPopup(ex.Message);
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
