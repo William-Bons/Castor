@@ -15,13 +15,8 @@
 		<MenuItem Header="Движение пациентов"  ClassName="Castor.gui.movebook.Thebook" />
 		<MenuItem Header="Список пациентов в отделении" ClassName="Castor.gui.pages.LoadPatientsFromMedis"/>
 		<MenuItem Header="Загрузить находящихся в отделении" ClassName="Castor.gui.movebook.ImportMedisPeriod"/>
-		<MenuItem Header="Журнал ВК" ClassName="Castor.gui.commities.CommitiesPage"/>
 		<MenuItem Header="Properties" ClassName="Castor.gui.dialogs.SettingsCheet"/>
 		<MenuItem Header="Сменить отделение" ClassName="Castor.gui.dialogs.SelectUser"/>
-		<MenuItem Header="Обновление" ClassName="Castor.gui.dialogs.ManualUpdate" />
-		<MenuItem Header="Добавление пользователя" ClassName="Castor.gui.login.UserCreateWindow" />
-		<Separator/>
-		<MenuItem Header="Console"   />
 	</MenuItem>
 	<MenuItem Header="Отчеты" >
 		<MenuItem Header="Движение за месяц"  ClassName="Castor.database.reports.DisplayReport" Parameter="Castor.database.reports.MonthReportHtml"/>
@@ -29,11 +24,10 @@
 	<MenuItem Header="Пациент" >
 		<MenuItem Header="Поиск"  ClassName="Castor.gui.find.PatientSearchWindow" />
 		<MenuItem Header="Протокол ВК" ClassName="Castor.gui.medicalcomission.ProtocolWindow"/>
-		<MenuItem Header="Открыть последнего" ClassName="" Parameter="O" InputGestureText="F2"/>
 	</MenuItem>
 
 	<MenuItem Header="Журналы">
-		<MenuItem Header="Журнал ВК"  ClassName="Castor.gui.commities.CommityForm" />
+		<MenuItem Header="Журнал ВК" ClassName="Castor.gui.commities.CommitiesPage"/>
 		<MenuItem Header="Журнал пользователей"  ClassName="Castor.gui.login.UsersListPage"/>
 
 	</MenuItem>

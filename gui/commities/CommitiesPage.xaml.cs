@@ -1,5 +1,6 @@
 ﻿using Castor.database;
 using Castor.database.tables;
+using Castor.gui.common;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace Castor.gui.commities
     /// <summary>
     /// Логика взаимодействия для CommitiesPage.xaml
     /// </summary>
-    public partial class CommitiesPage : Page, INotifyPropertyChanged
+    public partial class CommitiesPage : Page, INotifyPropertyChanged, IStartablePage
     {
         private Movebook mb;
 
@@ -37,6 +38,8 @@ namespace Castor.gui.commities
 
         public IEnumerable<Commity>? Commities { get; set; }
         public Commity? SelectedCommity { get;  set; }
+
+        public bool CanStart => true;
 
         public CommitiesPage(Movebook mb)
         {

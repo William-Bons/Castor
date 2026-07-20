@@ -63,13 +63,16 @@
                 <!-- Шаблон строки: ФИО + перенос строки + врач -->
                 <DataTemplate x:Key="PatientMonthItemTemplate">
                     <TextBlock Style="{StaticResource BaseText}" Margin="0,2" Foreground="{Binding Color}">
-                    <Run Text="{Binding Force.Movebook.Fio}" FontSize="15"/>
-                    <LineBreak/>
-                    <Run Text="     >"/>
-                    <Run Text="{Binding Force.Section}"/>
-                    <LineBreak/>
-                    <Run Text="     >"/>
-                    <Run Text="{Binding Doctor}"/>
+                        <TextBlock.ToolTip>
+                            <TextBlock>
+                                <Run Text="     >"/>
+                                <Run Text="{Binding Force.Section}"/>
+                                <LineBreak/>
+                                <Run Text="     >"/>
+                                <Run Text="{Binding Doctor}"/>
+                            </TextBlock>
+                        </TextBlock.ToolTip>
+                        <Run Text="{Binding Force.Movebook.Fio}" FontSize="15"/>
                     </TextBlock>
                 </DataTemplate>
 
@@ -156,7 +159,7 @@
                 <!-- Ячейки 1–6: меняем только ItemsSource -->
                 <UniformGrid Grid.Row="1" Rows="1" Columns="6">
                     <Border Style="{StaticResource ModernCell}" Margin="2">
-                        <ListView ItemsSource="{Binding PatientsMonth1}"
+                        <ListView ItemsSource="{Binding PatientsMonth1}" 
                           BorderThickness="0" Background="Transparent"
                           ItemContainerStyle="{StaticResource MonthListViewItemStyle}"
                           ItemTemplate="{StaticResource PatientMonthItemTemplate}"/>

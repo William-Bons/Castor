@@ -1,6 +1,7 @@
 ﻿using Castor.database;
 using Castor.database.tables;
 using Castor.gui.common;
+using Castor.gui.dialogs;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -72,17 +73,26 @@ namespace Castor.gui.force
 
         private void SetBaseFlag()
         {
-            if (RootTreeItem.Count()>0 && SelectedItem != null)
+            int calcMonth = SelectedItem?.Start.Month ?? 1;
+            ReportSettingsWindow rsw = new ReportSettingsWindow();
+            rsw.SelectedRange = calcMonth;
+            if (rsw.ShowDialog()==true)
             {
-                RootTreeItem.FirstOrDefault().MonthFlag = null;
-                foreach (var item in RootTreeItem.FirstOrDefault().AllForces)
+
+                if (RootTreeItem.Count() > 0 && SelectedItem != null)
                 {
-                    item.MonthFlag = null;
+                    RootTreeItem.FirstOrDefault().MonthFlag = rsw.SelectedRange;
+                    if (RootTreeItem.FirstOrDefault()?.AllForces?.Count > 0)
+                    {
+                        foreach (var item in RootTreeItem.FirstOrDefault().AllForces)
+                        {
+                            item.MonthFlag = rsw.SelectedRange;
+                        }
+                    }
+                    LoadTree();
+                    OnPropertyChanged(nameof(SelectedItem));
+                    OnPropertyChanged(nameof(RootTreeItem));
                 }
-                SelectedItem.MonthFlag = 1;
-                LoadTree();
-                OnPropertyChanged(nameof(SelectedItem));
-                OnPropertyChanged(nameof(RootTreeItem));
             }
         }
 

@@ -64,7 +64,7 @@
         <!-- Таблица пользователей -->
         <DataGrid x:Name="UsersDataGrid"
                   Grid.Row="1"
-                  Style="{StaticResource ModernDataGrid}"
+                  Style="{StaticResource MovebookDataGridStyle}"
                   AutoGenerateColumns="False"
                   SelectionChanged="UsersDataGrid_SelectionChanged"
                   MouseDoubleClick="UsersDataGrid_MouseDoubleClick"

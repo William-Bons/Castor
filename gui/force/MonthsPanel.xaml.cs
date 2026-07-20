@@ -14,14 +14,15 @@ namespace Castor.gui.force
             InitializeComponent();
 
             // нужно так чтобы класс модели вызывался только если страница загрузилась т.к. там подключение к медис 
-            Loaded += (a, b) =>
+            Loaded += async (a, b) =>
+            {
                 DataContext = new MonthsPanelViewModel();
+                await ((MonthsPanelViewModel)DataContext).RefreshAsync();
+            };
         }
 
         public bool CanStart => MedisContext.IsMedisonnectionEnable;
 
-        public void SaveOnCloseApplication()
-        {
-        }
+
     }
 }

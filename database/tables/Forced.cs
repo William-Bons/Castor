@@ -22,35 +22,16 @@ namespace Castor.database.tables
         public string? Section { get; set; } // статья(и) уголовного кодекса с комментарием
         public string? Courtname { get; set; }// название суда
         public long? Movebookid { get; set; }// привязув к Id PatientRecord
-        public int? MonthFlag { get; set; }// отмечен для рассчетного постановления
+        public int? MonthFlag { get; set; }// номер месяца для рассчетного постановления обязательно уст у Root
 
 
         public virtual ICollection<Forced>? AllForces { get; set; }
 
         [ForeignKey(nameof(RootId))]
         public virtual Forced? RootForced { get; set; }
-
         public virtual Movebook? Movebook { get; set; }
-        public virtual int DaysTotal => End.HasValue ? (End.Value.ToDateTime(TimeOnly.MinValue) - Start.ToDateTime(TimeOnly.MinValue)).Days + 1 : 0;
-        public virtual int DaysToday => (DateTime.Today - Start.ToDateTime(TimeOnly.MinValue)).Days + 1;
-        public virtual int Months => (DateTime.Today.Month - Nextvk.Month) + 12 * (DateTime.Today.Year - Nextvk.Year);
-        public virtual DateOnly Nextvk => Start.AddMonths(6); // рассчетная дата окончания действия постановления
-        public virtual int[]? Month => _preMonth();
-            
-            
-        private int[]? _preMonth()
-        {
-            if (MonthFlag != null)
-                return [Start.Month, ((Start.Month - 1 + 6) % 12) + 1];
-            else if (AllForces?.Count() > 0 && AllForces.Any(f => f.MonthFlag != null))
-                return AllForces?.First(a => a.MonthFlag != null)?._preMonth();
-            else if (RootForced != null && RootForced.MonthFlag != null)
-                return RootForced._preMonth();
-            else if (RootForced != null)
-                return RootForced?.AllForces?.First(a => a.MonthFlag != null)?._preMonth();
-            else
-                return null;
-        }
+        public virtual int[]? Month => [(MonthFlag ?? 1), (((MonthFlag ?? 1) - 1 + 6) % 12) + 1];
+
 
         public virtual string DisplayText => ToString();
         public override string ToString()

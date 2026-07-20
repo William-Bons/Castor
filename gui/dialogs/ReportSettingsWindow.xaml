@@ -1,0 +1,40 @@
+﻿<Window x:Class="Castor.gui.dialogs.ReportSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Castor.gui.dialogs"
+        mc:Ignorable="d"
+        Title="Window1" Height="185" Width="358">
+    
+    <StackPanel Orientation="Vertical" Margin="20">
+        <TextBlock Text="Ручной выбор месяцев комиссии" 
+               Style="{StaticResource LabelText}" 
+               FontWeight="SemiBold" 
+               Margin="0,0,0,12"/>
+
+        <ComboBox x:Name="MonthRangeComboBox"
+              MinWidth="220"
+              Padding="8,4"
+              FontSize="13"
+              FontFamily="Segoe UI"
+              BorderBrush="#CCCCCC"
+              BorderThickness="1"
+              Margin="0,0,0,16"/>
+
+        <!-- Панель кнопок: стиль под Castor -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Применить"
+                Width="100"
+                Style="{StaticResource AccentButton}"
+                Click="Apply_Click"/>
+
+            <Button Content="Отмена"
+                Width="80"
+                Margin="10,0,0,0"
+                Style="{StaticResource HardButton}"
+                Click="Cancel_Click"/>
+        </StackPanel>
+    </StackPanel>
+
+</Window>

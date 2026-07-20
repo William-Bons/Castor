@@ -22,7 +22,6 @@ namespace Castor.gui.force
     {
         public MonthsPanelViewModel()
         {
-            RefreshAsync();
         }
 
         // --- Свойства для биндинга (ровно те, что в XAML) ---
@@ -44,7 +43,7 @@ namespace Castor.gui.force
         /// Загружает данные по месяцам и раскладывает по коллекциям.
         /// Вызывать асинхронно после загрузки страницы (например, в Page.Loaded).
         /// </summary>
-        public void RefreshAsync()
+        public async Task RefreshAsync()
         {
             try
             {
@@ -52,6 +51,7 @@ namespace Castor.gui.force
                 ClearAllMonths();
 
                 using CastorContext _context = new CastorContext();
+                // список постановлений внесенных в базу (только Root)
                 var ForcesList = _context.Forced
                     .Include(f => f.RootForced)
                     .Include(f => f.Movebook)           // Важно: подгружаем связанного пациента
@@ -80,9 +80,7 @@ namespace Castor.gui.force
                         Key = f.Patientid,
                         Force = f,
                         Doctor = v.doc ?? string.Empty,
-                        Color = new SolidColorBrush(
-                            (Color)ColorConverter.ConvertFromString(_context.Users.Where(u => u.DocdepId == v.docid).Select(u => u.Color).First() ?? "#000000")
-                            )
+                        Color = new SolidColorBrush((Color)ColorConverter.ConvertFromString(_context.Users.Where(u => u.DocdepId == v.docid).Select(u => u.Color).First() ?? "#000000"))
                     });
 
                 foreach (CombinedRow item in result)
