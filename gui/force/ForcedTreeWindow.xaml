@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:converters="clr-namespace:Castor.gui.common"
         Title="Учёт постановлений (принудительное лечение)"
-        Width="800" Height="800"
+        Width="1000" Height="800"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -18,33 +18,28 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- === ЛЕВАЯ ЧАСТЬ: Дерево === -->
+        <!-- === ЛЕВАЯ ЧАСТЬ: Список документов === -->
         <Border Grid.Column="0"
                 Background="{StaticResource Brush.BackgroundAlt}"
                 BorderBrush="{StaticResource Brush.Steel}"
                 BorderThickness="1"
                 CornerRadius="6"
                 Margin="0,0,8,0">
-
-            <TreeView Grid.Row="1"
-                    ItemsSource="{Binding RootTreeItem}"
-                    SelectedItemChanged="TreeView_OnSelectedItemChanged"
-                    Margin="4"
-                    BorderThickness="0">
-                <TreeView.ItemContainerStyle>
-                    <Style TargetType="TreeViewItem">
-                        <Setter Property="IsExpanded" Value="True"/>
-                    </Style>
-                </TreeView.ItemContainerStyle>
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding AllForces}">
-                        <TextBlock Text="{Binding DisplayText}"
-                                    Foreground="{StaticResource Brush.TextMain}"
-                                    FontSize="13"
-                                    Style="{StaticResource BaseText}"/>
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
+            <ListBox Grid.Row="1"
+                     ItemsSource="{Binding ForcedList}"
+                     SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                     Margin="4"
+                     BorderThickness="0"
+                     Background="Transparent"
+                     HorizontalContentAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="6" Margin="2" CornerRadius="4" Background="Transparent">
+                            <TextBlock Text="{Binding DisplayText}" Foreground="{StaticResource Brush.TextMain}" FontSize="13" Style="{StaticResource BaseText}"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Border>
 
         <!-- === ПРАВАЯ ЧАСТЬ: Форма === -->
@@ -174,7 +169,7 @@
                 <!-- Кнопки действий -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0" Grid.Row="2" >
 
-                    <Button Content="Активировать" IsEnabled="{Binding CanEdit}"
+                    <Button Content="Месяцы" IsEnabled="{Binding CanEdit}"
                             Command="{Binding SetBaseCommand}"
                             Style="{StaticResource AccentButton}"
                             Padding="16,6"
@@ -182,6 +177,12 @@
                     <Button Content="Добавить"
                             Command="{Binding AddCommand}"
                             Style="{StaticResource AccentButton}"
+                            Padding="16,6"
+                            Margin="0,0,8,0"/>
+                    <Button Content="Удалить"
+                            Command="{Binding DeleteCommand}"
+                            IsEnabled="{Binding CanEdit}"
+                            Style="{StaticResource HardButton}"
                             Padding="16,6"
                             Margin="0,0,8,0"/>
                     <Button Content="Сохранить"

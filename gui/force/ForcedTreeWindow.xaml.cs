@@ -17,18 +17,6 @@ namespace Castor.gui.force
             DataContext = _viewModel;
         }
 
-        private void TreeView_OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            if (e.NewValue is Forced node)
-            {
-                _viewModel.SelectedItem = node;
-            }
-            else
-            {
-                _viewModel.SelectedItem = null;
-            }
-        }
-
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             Close();

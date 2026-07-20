@@ -1,5 +1,6 @@
 ﻿using Castor.database;
 using Castor.database.tables;
+using Castor.gui.common;
 using Castor.gui.dialogs;
 using Castor.gui.login;
 using Castor.gui.movebook;
@@ -94,11 +95,14 @@ namespace Castor
             Task.Run(() => new Synchronization().LoadExistsFromMedis());
 
 
+            // Загружаем сохранённую тему перед отображением главного окна
+            ThemeManager.LoadSavedTheme();
+
             // Полноценный вход: показываем обычный MainWindow
             var mainWindow = new MainWindow();
             mainWindow.Title = "Castor — Режим администратора";
             mainWindow.Show();
-            
+
         }
 
 

@@ -30,7 +30,7 @@ namespace Castor.database.tables
         [ForeignKey(nameof(RootId))]
         public virtual Forced? RootForced { get; set; }
         public virtual Movebook? Movebook { get; set; }
-        public virtual int[]? Month => [(MonthFlag ?? 1), (((MonthFlag ?? 1) - 1 + 6) % 12) + 1];
+        public virtual int[]? Month => new int[] { (MonthFlag ?? 1), (((MonthFlag ?? 1) - 1 + 6) % 12) + 1 };
 
 
         public virtual string DisplayText => ToString();

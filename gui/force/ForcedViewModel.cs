@@ -18,7 +18,8 @@ namespace Castor.gui.force
 
         // Данные пациента (только для отображения вверху формы)
         public string? PatientInfo => $"Пациент: #{_movebook?.Fio ?? string.Empty} | Визит: #{SelectedItem?.Visitid ?? 0}";
-        public ObservableCollection<Forced> RootTreeItem { get; private set; } = new();
+        // Список документов (плоский список вместо дерева)
+        public ObservableCollection<Forced> ForcedList { get; private set; } = new();
         public Forced? SelectedItem
         {
             get => _selectedItem;
@@ -35,6 +36,7 @@ namespace Castor.gui.force
         public ICommand? RefreshCommand { get; }
         public ICommand? AddCommand { get; }
         public ICommand? SetBaseCommand { get; }
+        public ICommand? DeleteCommand { get; }
         public ICommand? SaveCommand { get; }
 
         public ForcedViewModel(Movebook mb)
@@ -45,27 +47,58 @@ namespace Castor.gui.force
             RefreshCommand = new RelayCommand(LoadTree);
             AddCommand = new RelayCommand(AddItem);
             SetBaseCommand = new RelayCommand(SetBaseFlag);
+            DeleteCommand = new RelayCommand(DeleteItem);
             SaveCommand = new RelayCommand(Save);
 
             LoadTree();
         }
 
+        private void DeleteItem()
+        {
+            if (SelectedItem == null) return;
+
+            if (MessageBox.Show("Удалить постановление?", "Удаление", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                // Если запись существует в БД — удалить
+                if (SelectedItem.Id > 0)
+                {
+                    using CastorContext context = new CastorContext();
+                    context.Forced.Remove(SelectedItem);
+                    context.SaveChanges();
+                }
+
+                // Удаляем из локальных коллекций
+                if (_movebook?.Forceds != null)
+                {
+                    _movebook.Forceds = _movebook.Forceds.Where(f => f != SelectedItem).ToList();
+                }
+
+                if (ForcedList.Contains(SelectedItem))
+                    ForcedList.Remove(SelectedItem);
+
+                // Установим следующий выбранный элемент
+                SelectedItem = ForcedList.FirstOrDefault();
+                OnPropertyChanged(nameof(ForcedList));
+                OnPropertyChanged(nameof(SelectedItem));
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
+        }
+
         private void Save()
         {
-            if(RootTreeItem.Count()>0)
+            if (ForcedList.Count > 0)
             {
                 using CastorContext context = new CastorContext();
-
-                context.Update(RootTreeItem.FirstOrDefault());
-
-                if (RootTreeItem.FirstOrDefault().AllForces != null)
+                foreach (var item in ForcedList)
                 {
-                    // ессли Id == 0 то запись добавлена, если Id уже есть то отредактирована
-                    foreach (var item in RootTreeItem.FirstOrDefault().AllForces)
-                    {
-                        if(item.Id>0) context.Update(item);
-                        else context.Add(item);
-                    }
+                    if (item.Id > 0) context.Update(item);
+                    else context.Add(item);
                 }
                 context.SaveChanges();
             }
@@ -78,20 +111,16 @@ namespace Castor.gui.force
             rsw.SelectedRange = calcMonth;
             if (rsw.ShowDialog()==true)
             {
-
-                if (RootTreeItem.Count() > 0 && SelectedItem != null)
+                if (ForcedList.Count > 0 && SelectedItem != null)
                 {
-                    RootTreeItem.FirstOrDefault().MonthFlag = rsw.SelectedRange;
-                    if (RootTreeItem.FirstOrDefault()?.AllForces?.Count > 0)
+                    // Если нужно установить отметку месяца для всех документов — применяем к каждому
+                    foreach (var f in ForcedList)
                     {
-                        foreach (var item in RootTreeItem.FirstOrDefault().AllForces)
-                        {
-                            item.MonthFlag = rsw.SelectedRange;
-                        }
+                        f.MonthFlag = rsw.SelectedRange;
                     }
                     LoadTree();
                     OnPropertyChanged(nameof(SelectedItem));
-                    OnPropertyChanged(nameof(RootTreeItem));
+                    OnPropertyChanged(nameof(ForcedList));
                 }
             }
         }
@@ -100,21 +129,38 @@ namespace Castor.gui.force
         {
             if(_movebook!=null)
             {
-                // добавление последующих
-                var _rootForced = RootTreeItem.FirstOrDefault();
+                // добавление нового постановления в список
+                // Если есть предыдущие постановления — копируем часть полей из последнего
+                var previous = _movebook.Forceds?.OrderByDescending(f => f.Start).FirstOrDefault();
+
                 SelectedItem = new Forced()
                 {
                     Movebookid = _movebook.Id,
                     Patientid = _movebook.Patientid ?? 0,
                     Visitid = _movebook.Visitid ?? 0,
-                    RootId = _rootForced?.Id ?? 0,
-                    Start = _rootForced?.End ?? DateOnly.FromDateTime(DateTime.Now),
-                    Courtname = _rootForced?.Courtname,
-                    Section = _rootForced?.Section,
-                    Type = _rootForced?.Type 
+                    MonthFlag = 1
                 };
-                if (_rootForced.AllForces == null) _rootForced.AllForces = new List<Forced>();
-                _rootForced?.AllForces?.Add(SelectedItem);
+
+                if (previous != null)
+                {
+                    // Корневой Id: если у предыдущего есть RootId — используем его, иначе используем Id предыдущего
+                    SelectedItem.RootId = previous.RootId ?? previous.Id;
+                    // Начало нового постановления — конец предыдущего если указан
+                    SelectedItem.Start = previous.End ?? DateOnly.FromDateTime(DateTime.Now);
+                    SelectedItem.Courtname = previous.Courtname;
+                    SelectedItem.Section = previous.Section;
+                    SelectedItem.Type = previous.Type;
+                }
+                else
+                {
+                    SelectedItem.Start = DateOnly.FromDateTime(DateTime.Now);
+                }
+
+                // добавляем во временный список Movebook чтобы LoadTree мог его увидеть
+                if (_movebook.Forceds == null) _movebook.Forceds = new List<Forced>();
+                _movebook.Forceds.Add(SelectedItem);
+
+                // Обновляем представление и выбор
                 LoadTree();
                 OnPropertyChanged(nameof(SelectedItem));
             }
@@ -125,26 +171,42 @@ namespace Castor.gui.force
         /// </summary>
         public void LoadTree()
         {
-            RootTreeItem.Clear();
-
-            // получает Root FORCED для пациента в ввиде списка только раз
-            if (RootTreeItem.Count()==0 && _movebook!=null)
+            ForcedList.Clear();
+            if (_movebook != null)
             {
-                RootTreeItem.Add(_movebook.Forceds
-                   .Where(f => f.RootId == null)
-                   .ToList().FirstOrDefault() ?? new Forced()
-                   {
-                       Movebookid = _movebook.Id,
-                       Patientid = _movebook.Patientid ?? 0,
-                       Visitid = _movebook.Visitid ?? 0,
-                       Start = _movebook.Datein ?? DateOnly.FromDateTime(DateTime.Now),
-                       MonthFlag = 1
-                   });
-                    
+                // Загружаем все постановления, относящиеся к текущему Movebook, упорядочиваем по дате начала
+                var list = _movebook.Forceds?.OrderBy(f => f.Start).ToList() ?? new List<Forced>();
+
+                // Если нет ни одного — создаём стартовое запись
+                if (list.Count == 0)
+                {
+                    list.Add(new Forced()
+                    {
+                        Movebookid = _movebook.Id,
+                        Patientid = _movebook.Patientid ?? 0,
+                        Visitid = _movebook.Visitid ?? 0,
+                        Start = _movebook.Datein ?? DateOnly.FromDateTime(DateTime.Now),
+                        MonthFlag = 1
+                    });
+                }
+
+                foreach (var f in list)
+                    ForcedList.Add(f);
+            }
+            // Восстановим/установим выбранный элемент: если ранее был выбран элемент с Id>0 - найдём его по Id,
+            // иначе выберем только что созданный (Id == 0) или первый в списке.
+            long? prevId = _selectedItem?.Id;
+            if (prevId != null && prevId > 0)
+            {
+                SelectedItem = ForcedList.FirstOrDefault(f => f.Id == prevId) ?? ForcedList.FirstOrDefault();
+            }
+            else
+            {
+                SelectedItem = ForcedList.FirstOrDefault(f => f.Id == 0) ?? ForcedList.FirstOrDefault();
             }
 
             OnPropertyChanged(nameof(PatientInfo));
-            OnPropertyChanged(nameof(RootTreeItem));
+            OnPropertyChanged(nameof(ForcedList));
         }
 
 

@@ -165,5 +165,6 @@ namespace Castor
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+
     }
 }
