@@ -1,5 +1,6 @@
 ﻿using Castor.database;
 using Castor.database.tables;
+using Castor.gui.movebook;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Castor.database.reports
     public interface ICastorHtmlReport
     {
         public string HtmlReport { get; }
-        public DatePeriod datePeriod { get; set; }
+        public MoveFilter datePeriod { get; set; }
         public string ReportTitle { get; }
         public void Calculate();
         public void RegisterInReports()

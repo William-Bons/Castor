@@ -1,4 +1,5 @@
 ﻿using Castor.database.tables;
+using Castor.gui.movebook;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -13,7 +14,7 @@ namespace Castor.database.reports
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string HtmlReport => _MainStringBuilding.ToString();
-        public DatePeriod datePeriod { get; set; } = new DatePeriod();
+        public MoveFilter datePeriod { get; set; } = new();
         public string ReportTitle => $"Движение {datePeriod.Start:d} - {datePeriod.End:d}";
 
         public MonthReportHtml()

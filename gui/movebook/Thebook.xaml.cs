@@ -1,21 +1,6 @@
-﻿using Castor.database;
-using Castor.database.reports;
-using Castor.database.tab_medis;
-using Castor.database.tables;
-using Castor.gui.commities;
-using Castor.gui.common;
-using Castor.gui.dialogs;
-using Castor.gui.find;
-using Castor.gui.force;
-using Castor.gui.pages;
-using Castor.Properties;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Text;
+﻿using Castor.gui.common;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace Castor.gui.movebook
@@ -25,17 +10,19 @@ namespace Castor.gui.movebook
     /// </summary>
     public partial class Thebook : Page, IRefresh, IStartablePage, IConsoleMessage
     {
+        private ThebookViewModel _model = null!;
         public Thebook()
         {
-            
+            _model = new ThebookViewModel();
+
             InitializeComponent();
 
             Loaded += async (a, b) =>
             {
                 MainWindow.Wait(true);
-                DataContext = new ThebookViewModel();
-                await ((ThebookViewModel)DataContext).Load();
-                ConsoleMessage?.Invoke($"    Загружено строк: {((ThebookViewModel)DataContext).LoadedData?.Count()}");
+                DataContext = _model;
+                await _model.Load();
+                ConsoleMessage?.Invoke($"    Загружено строк: {_model.LoadedData?.Count()}");
                 Application.Current.Exit += SaveOnCloseApplication;
                 MainWindow.Wait();
             };
@@ -45,19 +32,19 @@ namespace Castor.gui.movebook
                 // отписка от сохранения при выходе т.к. окно закрывается
                 Application.Current.Exit -= SaveOnCloseApplication;
                 MovebookDataGrid.CommitEdit(DataGridEditingUnit.Row, true);
-                await ((ThebookViewModel)DataContext).Save();
+                await _model.Save();
             };
         }
 
-       
-        
+
+
         public bool CanStart => true;
         public event common.RefreshEventHandler? RefreshNotify;
         public event ConsoleMessageHandler? ConsoleMessage;
 
-        public async  void Refresh()
+        public async void Refresh()
         {
-            await ((ThebookViewModel)DataContext).Load();
+            await _model.Load();
         }
 
         /// <summary>
@@ -66,28 +53,28 @@ namespace Castor.gui.movebook
         public void SaveOnCloseApplication(object sender, EventArgs e)
         {
             MovebookDataGrid.CommitEdit(DataGridEditingUnit.Row, true);
-            ((ThebookViewModel)DataContext)?.Save();
+            _model?.Save();
         }
 
         private void PatientsTable_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ((ThebookViewModel)DataContext)?.EditMovebookItemWindowAsync();
+            _model?.EditMovebookItemWindowAsync();
 
         }
 
         private void OpenPMMCommand(object sender, RoutedEventArgs e)
         {
-            ((ThebookViewModel)DataContext).OpenPMMWindow();
+            _model.OpenPMMWindow();
         }
 
         private void OpenCMCommand(object sender, RoutedEventArgs e)
         {
-            ((ThebookViewModel)DataContext).OpenCommityWindow();
+            _model.OpenCommityWindow();
         }
 
         private void OpenOUTCommand(object sender, RoutedEventArgs e)
         {
-            ((ThebookViewModel)DataContext)?.DisorderPatient();
+            _model?.DisorderPatient();
         }
     }
 }

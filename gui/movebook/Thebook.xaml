@@ -136,11 +136,11 @@
                 <DataGridTextColumn Header="Дата выбытия" Binding="{Binding Dateout}" />
                 <DataGridTextColumn Header="Дз пост" Binding="{Binding Dsin}" />
                 <DataGridTextColumn Header="Дз выб" Binding="{Binding Dsout}" />
-                <DataGridCheckBoxColumn Header="Первично" Binding="{Binding First}" />
-                <DataGridCheckBoxColumn Header="Повт в году" Binding="{Binding Second}" />
-                <DataGridCheckBoxColumn Header="Возврат" Binding="{Binding Early}" />
-                <DataGridCheckBoxColumn Header="История сдана" Binding="{Binding Closed}" />
-                <DataGridCheckBoxColumn Header="Скончался" Binding="{Binding Deceased}" />
+                <DataGridCheckBoxColumn Header="Первично" Binding="{Binding First}" ElementStyle="{StaticResource DataGridCheckBoxStyle}" CellStyle="{StaticResource DataGridCheckBoxCellStyle}"/>
+                <DataGridCheckBoxColumn Header="Повт в году" Binding="{Binding Second}" ElementStyle="{StaticResource DataGridCheckBoxStyle}" CellStyle="{StaticResource DataGridCheckBoxCellStyle}"/>
+                <DataGridCheckBoxColumn Header="Возврат" Binding="{Binding Early}" ElementStyle="{StaticResource DataGridCheckBoxStyle}" CellStyle="{StaticResource DataGridCheckBoxCellStyle}"/>
+                <DataGridCheckBoxColumn Header="История сдана" Binding="{Binding Closed}" ElementStyle="{StaticResource DataGridCheckBoxStyle}" CellStyle="{StaticResource DataGridCheckBoxCellStyle}"/>
+                <DataGridCheckBoxColumn Header="Скончался" Binding="{Binding Deceased}" ElementStyle="{StaticResource DataGridCheckBoxStyle}" CellStyle="{StaticResource DataGridCheckBoxCellStyle}"/>
                 
                 
             </DataGrid.Columns>

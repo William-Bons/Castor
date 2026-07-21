@@ -6,8 +6,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                
                 <!-- Сюда подключаем внешний файл стилей -->
                 <ResourceDictionary Source="/assets/CastorGreen.xaml"/>
+                <ResourceDictionary Source="/assets/Castor.xaml"/>
                 <!-- Если есть другие словари — тоже сюда -->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
