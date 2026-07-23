@@ -14,7 +14,7 @@ namespace Castor.gui.find
     /// <summary>
     /// Логика взаимодействия для FindPatient.xaml
     /// </summary>
-    public partial class FindPatient : Window, INotifyPropertyChanged
+    public partial class FindPatient : Window, INotifyPropertyChanged, IDialog
     {
         public FindPatient()
         {

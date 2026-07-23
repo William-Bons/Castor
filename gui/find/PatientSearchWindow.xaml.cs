@@ -12,12 +12,9 @@ namespace Castor.gui.find
         {
             InitializeComponent();
 
-            var context = new MedisContext(); // твой DbContext
-            var viewModel = new PatientSearchViewModel(context);
+            var viewModel = new PatientSearchViewModel();
             DataContext = viewModel;
 
-            // опционально: закрыть контекст при закрытии окна
-            this.Closed += (s, e) => context.Dispose();
         }
     }
 

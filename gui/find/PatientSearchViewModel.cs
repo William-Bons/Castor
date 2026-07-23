@@ -14,11 +14,9 @@ namespace Castor.gui.find
 {
     public class PatientSearchViewModel : INotifyPropertyChanged
     {
-        private readonly MedisContext _context; // замени на имя своего контекста
 
-        public PatientSearchViewModel(MedisContext context)
+        public PatientSearchViewModel()
         {
-            _context = context;
             SearchCommand = new RelayCommand(ExecuteSearch);
         }
 
@@ -67,6 +65,7 @@ namespace Castor.gui.find
 
         private void ExecuteSearch()
         {
+            using MedisContext _context = new MedisContext();
             var query = _context.Set<patient>().AsQueryable();
 
             bool hasFio = !string.IsNullOrWhiteSpace(SearchFio);
@@ -131,8 +130,14 @@ namespace Castor.gui.find
                 return;
             }
 
+            using MedisContext _context  = new MedisContext();
             var visits = _context.Set<visit>()
                 .Where(v => v.patientid == SelectedPatient.keyid)
+                .Include(v => v.Dep)
+                .ThenInclude(r => r.Root).ThenInclude(t => t.Root)
+                .Include(v => v.Patient)
+                .ThenInclude(p => p.Diagnoses.Where(g => g.Diagnos.code.StartsWith("F")))
+                .ThenInclude(d => d.Diagnos)
                 .OrderByDescending(v => v.dat)
                 .Take(100)
                 .ToList();
