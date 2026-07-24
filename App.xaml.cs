@@ -1,16 +1,13 @@
 ﻿using Castor.database;
-using Castor.database.tables;
 using Castor.gui.common;
 using Castor.gui.dialogs;
 using Castor.gui.login;
 using Castor.gui.movebook;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
-using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -23,11 +20,6 @@ namespace Castor
     {
         public App()
         {
-            System.Diagnostics.Debug.WriteLine($"App constructor called at {DateTime.Now}");
-            var st = new System.Diagnostics.StackTrace(true);
-            System.Diagnostics.Debug.WriteLine(st.ToString()); // покажет, кто вызвал конструктор
-
-
             // ЭТО САМОЕ ВАЖНОЕ: ловим ошибку ДО того, как WPF начнёт падать
             DispatcherUnhandledException += OnDispatcherUnhandledException;
         }
@@ -54,9 +46,14 @@ namespace Castor
         {
             base.OnStartup(e);
 
+#if RESET
+            Debug.WriteLine("🔄 ВЫПОЛНЯЕТСЯ СБРОС НАСТРОЕК (DebugReset)");
+            Settings.Default.Reset();
+            Settings.Default.Save();
+#endif
+
             // 1. Проверка наличия зашифрованной строки подключения к Medis, если нет - запрос строки
-            string connString = null;
-            connString = Settings.Default.postgreeConnection;
+            string connString = Settings.Default.postgreeConnection;
             if (string.IsNullOrWhiteSpace(connString))
             {
                 var dialog = new ConnectionDialog();
@@ -105,7 +102,51 @@ namespace Castor
 
         }
 
+        protected override void OnExit(ExitEventArgs e)
+        {
+            try
+            {
+                // Логируем состояние перед выходом
+                var count = ConnectionMonitorManager.Instance.ActiveConnectionsCount;
+                var contexts = ConnectionMonitorManager.Instance.GetActiveContexts();
+                var contextNames = string.Join(", ", contexts.Select(c => c.GetType().Name));
 
+                Debug.WriteLine(
+                    $"[{DateTime.Now:HH:mm:ss.fff}] ========================================");
+                Debug.WriteLine(
+                    $"[{DateTime.Now:HH:mm:ss.fff}] 🚪 ВЫХОД ИЗ ПРИЛОЖЕНИЯ");
+                Debug.WriteLine(
+                    $"[{DateTime.Now:HH:mm:ss.fff}] 📊 Активных соединений: {count}");
+
+                if (count > 0)
+                {
+                    Debug.WriteLine(
+                        $"[{DateTime.Now:HH:mm:ss.fff}] 📋 Активные контексты: {contextNames}");
+                    Debug.WriteLine(
+                        $"[{DateTime.Now:HH:mm:ss.fff}] ⚠️ ВНИМАНИЕ: Остались незакрытые соединения!");
+
+                    // Закрываем соединения принудительно
+                    ConnectionMonitorManager.SafeCloseAllConnections();
+                }
+                else
+                {
+                    Debug.WriteLine(
+                        $"[{DateTime.Now:HH:mm:ss.fff}] ✅ Все соединения закрыты корректно");
+                }
+
+                Debug.WriteLine(
+                    $"[{DateTime.Now:HH:mm:ss.fff}] ========================================");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(
+                    $"[{DateTime.Now:HH:mm:ss.fff}] ❌ Ошибка при выходе: {ex.Message}");
+                Debug.WriteLine(
+                    $"[{DateTime.Now:HH:mm:ss.fff}] StackTrace: {ex.StackTrace}");
+            }
+
+            base.OnExit(e);
+        }
         /// <summary>
         /// при необходимости вызывается эта процедура для установления пользователя и проверки пароля
         /// </summary>

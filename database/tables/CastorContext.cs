@@ -31,6 +31,8 @@ namespace Castor.database
 
         #endregion
 
+        private bool _isDisposed = false;
+
         /// <summary>
         /// Constructor. Checks database to exsists, and creates it if not
         /// </summary>
@@ -42,8 +44,11 @@ namespace Castor.database
                 {
                     Database.EnsureCreated();
                 }
+
+                // Регистрируем контекст в мониторе
+                ConnectionMonitorManager.Instance.RegisterContext(this);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 new SelectUser().ShowDialog();
             }
@@ -88,8 +93,21 @@ namespace Castor.database
                 default:
                     throw new ArgumentException("Property `contextValiant` not set correctly");
             }
-            ;
         }
 
+        public override void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                // >>> ДОБАВЛЕНО: Удаляем контекст из монитора
+                ConnectionMonitorManager.Instance.UnregisterContext(this);
+                _isDisposed = true;
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"[{DateTime.Now:HH:mm:ss.fff}] 🔓 CastorContext УДАЛЕН из монитора");
+            }
+
+            base.Dispose();
+        }
     }
 }

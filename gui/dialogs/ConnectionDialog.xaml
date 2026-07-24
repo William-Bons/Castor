@@ -4,7 +4,7 @@
         Title="Подключение к PostgreSQL" 
         Width="460" Height="450"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         Background="{StaticResource {x:Static SystemColors.WindowBrushKey}}" 
         Foreground="{StaticResource {x:Static SystemColors.WindowTextBrushKey}}">
 

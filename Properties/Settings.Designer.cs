@@ -12,7 +12,7 @@ namespace Castor.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "18.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "18.8.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -86,7 +86,7 @@ namespace Castor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAfvJm6wKQ20G8cjaXRUwHVQAAAAACAAAAAAAQZgAAAAEAACAAAAAhfOZU5fLkarUroq4TOO8ZagN5Pvp+LS/rKZtr8wYtGQAAAAAOgAAAAAIAACAAAACDuam1+4TdsSWhb/gh2ExJhQyD4/73k824309gRZkgxlAAAAA40lWZ2eJAGIUxF3TYokkgamBVEf6aDpqxqrviXwb5YUBSYdkwHgdI6n4WILh1ZUrRKu6und5fiOXP+t8/YsTeoJf6Q0f29/hsGkOJXbIXuEAAAACGUwpF8Pvs11LI+FENdVFFpTmtTdity0LPYHGeLWW+X2i/Hkv3uho8cm4D+2FuKD2dIHvVaGUSq8MRb4zZACNW")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string postgreeConnection {
             get {
                 return ((string)(this["postgreeConnection"]));
@@ -134,7 +134,7 @@ namespace Castor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\\\\Server-mis\\общая папка\\6 отделение")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string dbPrefix {
             get {
                 return ((string)(this["dbPrefix"]));
@@ -170,7 +170,7 @@ namespace Castor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2704;2712;2701")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string AllowedDepartments {
             get {
                 return ((string)(this["AllowedDepartments"]));
@@ -239,7 +239,7 @@ namespace Castor.Properties {
                 this["MessageShowLatency"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("CastorSoft")]

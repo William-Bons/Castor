@@ -1,16 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36221.1 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.8.12009.203 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castor", "Castor.csproj", "{BF079CF3-D47B-4254-AE00-CB4D1EEA7351}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Reset|Any CPU = Debug_Reset|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF079CF3-D47B-4254-AE00-CB4D1EEA7351}.Debug_Reset|Any CPU.ActiveCfg = Debug_Reset|Any CPU
+		{BF079CF3-D47B-4254-AE00-CB4D1EEA7351}.Debug_Reset|Any CPU.Build.0 = Debug_Reset|Any CPU
 		{BF079CF3-D47B-4254-AE00-CB4D1EEA7351}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BF079CF3-D47B-4254-AE00-CB4D1EEA7351}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF079CF3-D47B-4254-AE00-CB4D1EEA7351}.Release|Any CPU.ActiveCfg = Release|Any CPU

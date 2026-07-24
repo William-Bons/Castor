@@ -20,7 +20,6 @@ namespace Castor.database.tab_medis
     /// </summary>
     public class MedisContext : DbContext
     {
-
         #region TALBES
         /// <summary>
         /// Tables in database
@@ -35,21 +34,21 @@ namespace Castor.database.tab_medis
         public DbSet<lu> lu => Set<lu>();
         #endregion
 
-        public static bool IsMedisonnectionEnable =>
-            PingHost();
-             
+        public static bool IsMedisonnectionEnable => PingHost();
+
+        private bool _isDisposed = false;
+
         /// <summary>
         /// Constructor. Checks database to exsists, and creates it if not
         /// </summary>
         public MedisContext()
         {
-            // EnsureCreated - функция проверки существования базы и ее создания в случае отрицательной проверки
-            // для подключения к областной базе не нужна
+            // Регистрируем контекст в мониторе
+            ConnectionMonitorManager.Instance.RegisterContext(this);
 
-            // Сначала пингуется хост, задержка в настройках, по умолчанию 500 мс, если пинга нет выбрасывается Exeption
-            //PingHost();
+            System.Diagnostics.Debug.WriteLine(
+            $"[{DateTime.Now:HH:mm:ss.fff}] 🔌 MedisContext ЗАРЕГИСТРИРОВАН");
         }
-
 
         /// <summary>
         /// Real connecting to database, according Parameter contextVariant
@@ -60,13 +59,13 @@ namespace Castor.database.tab_medis
         {
             try
             {
-                optionsBuilder.UseNpgsql(Decrypt(Settings.Default.postgreeConnection));
+                optionsBuilder.UseNpgsql(new EncryptionHelper().Decrypt(Settings.Default.postgreeConnection));
             }
             catch (CryptographicException f_ex)
             {
                 new ConnectionDialog().ShowDialog();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Message.ShowPopup($"Rised exception:\n{ex.Message}");
             }
@@ -74,7 +73,7 @@ namespace Castor.database.tab_medis
 
         public static bool PingHost()
         {
-            var address = Regex.Match(Decrypt(Settings.Default.postgreeConnection),
+            var address = Regex.Match(new EncryptionHelper().Decrypt(Settings.Default.postgreeConnection),
                         @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b").Value;
 
             using Ping pinger = new Ping();
@@ -82,14 +81,20 @@ namespace Castor.database.tab_medis
             return status.Status == IPStatus.Success;
         }
 
-        
-
-        public static string Decrypt(string cipherText, string password = null)
+               
+        public override void Dispose()
         {
-            var cipher = Convert.FromBase64String(cipherText);
-            var pwd = !string.IsNullOrEmpty(password) ? Encoding.Default.GetBytes(password) : Array.Empty<byte>();
-            var data = ProtectedData.Unprotect(cipher, pwd, DataProtectionScope.CurrentUser);
-            return Encoding.Default.GetString(data);
+            if (!_isDisposed)
+            {
+                // >>> ДОБАВЛЕНО: Удаляем контекст из монитора
+                ConnectionMonitorManager.Instance.UnregisterContext(this);
+                _isDisposed = true;
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"[{DateTime.Now:HH:mm:ss.fff}] 🔓 MedisContext УДАЛЕН из монитора");
+            }
+
+            base.Dispose();
         }
     }
 }

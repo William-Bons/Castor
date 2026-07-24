@@ -1,8 +1,5 @@
-﻿using Castor.database;
-using Castor.database.tab_medis;
-using Castor.database.tables;
+﻿using Castor.database.tab_medis;
 using Castor.gui.common;
-using Castor.gui.movebook;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
@@ -39,7 +36,7 @@ namespace Castor.gui.dialogs
             {
                 Message.ShowPopup(ex.Message);
             }
-            
+
             // Стандартная инициализация диалога
             InitializeComponent();
             DataContext = this;
@@ -71,7 +68,7 @@ namespace Castor.gui.dialogs
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Departments)));
             }
         }
-      
+
 
         private void SaveDialogButton(object sender, RoutedEventArgs e)
         {
@@ -123,7 +120,7 @@ namespace Castor.gui.dialogs
             new SelectObjectFromEnumerable("Отделения", deps, PlacementMode.MousePoint, "keyid", "text")
                 .Selected += (o) =>
                 {
-                    if(o is dep _selDepartment)
+                    if (o is dep _selDepartment)
                     {
                         List<string> allowedSettings = Settings.Default.AllowedDepartments.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList();
                         allowedSettings.Add(_selDepartment.keyid.ToString());

@@ -1,4 +1,5 @@
-﻿using Castor.Properties;
+﻿using Castor.database;
+using Castor.Properties;
 using Npgsql;
 using System;
 using System.Security.Cryptography;
@@ -110,7 +111,7 @@ namespace Castor.gui.dialogs
             var connString = BuildConnectionString();
             if (connString == null) return;
 
-            Settings.Default.postgreeConnection = Encrypt(connString);
+            Settings.Default.postgreeConnection = new EncryptionHelper().Encrypt(connString);
             Settings.Default.Save();
             
             DialogResult = true;
@@ -123,12 +124,6 @@ namespace Castor.gui.dialogs
             Close();
         }
 
-        public string Encrypt(string plainText, string password = null)
-        {
-            var data = Encoding.Default.GetBytes(plainText);
-            var pwd = !string.IsNullOrEmpty(password) ? Encoding.Default.GetBytes(password) : Array.Empty<byte>();
-            var cipher = ProtectedData.Protect(data, pwd, DataProtectionScope.CurrentUser);
-            return Convert.ToBase64String(cipher);
-        }
+        
     }
 }

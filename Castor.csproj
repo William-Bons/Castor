@@ -7,6 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>img\beaver.ico</ApplicationIcon>
+    <Configurations>Debug;Release;Debug_Reset</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Reset|AnyCPU'">
+    <DefineConstants>$(DefineConstants);RESET;DEBUG</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

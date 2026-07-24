@@ -18,7 +18,7 @@
       <Value Profile="(Default)">2704</Value>
     </Setting>
     <Setting Name="postgreeConnection" Type="System.String" Scope="User">
-      <Value Profile="(Default)">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAfvJm6wKQ20G8cjaXRUwHVQAAAAACAAAAAAAQZgAAAAEAACAAAAAhfOZU5fLkarUroq4TOO8ZagN5Pvp+LS/rKZtr8wYtGQAAAAAOgAAAAAIAACAAAACDuam1+4TdsSWhb/gh2ExJhQyD4/73k824309gRZkgxlAAAAA40lWZ2eJAGIUxF3TYokkgamBVEf6aDpqxqrviXwb5YUBSYdkwHgdI6n4WILh1ZUrRKu6und5fiOXP+t8/YsTeoJf6Q0f29/hsGkOJXbIXuEAAAACGUwpF8Pvs11LI+FENdVFFpTmtTdity0LPYHGeLWW+X2i/Hkv3uho8cm4D+2FuKD2dIHvVaGUSq8MRb4zZACNW</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="StartLoadingPage" Type="System.String" Scope="User">
       <Value Profile="(Default)">Castor.gui.movebook.Thebook</Value>
@@ -30,7 +30,7 @@
       <Value Profile="(Default)">1482</Value>
     </Setting>
     <Setting Name="dbPrefix" Type="System.String" Scope="User">
-      <Value Profile="(Default)">\\Server-mis\общая папка\6 отделение</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="HideClosedCards" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -39,7 +39,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="AllowedDepartments" Type="System.String" Scope="User">
-      <Value Profile="(Default)">2704;2712;2701</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="LastSelectedDepName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
