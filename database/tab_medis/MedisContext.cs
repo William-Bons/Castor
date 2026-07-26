@@ -45,9 +45,6 @@ namespace Castor.database.tab_medis
         {
             // Регистрируем контекст в мониторе
             ConnectionMonitorManager.Instance.RegisterContext(this);
-
-            System.Diagnostics.Debug.WriteLine(
-            $"[{DateTime.Now:HH:mm:ss.fff}] 🔌 MedisContext ЗАРЕГИСТРИРОВАН");
         }
 
         /// <summary>
@@ -89,9 +86,6 @@ namespace Castor.database.tab_medis
                 // >>> ДОБАВЛЕНО: Удаляем контекст из монитора
                 ConnectionMonitorManager.Instance.UnregisterContext(this);
                 _isDisposed = true;
-
-                System.Diagnostics.Debug.WriteLine(
-                    $"[{DateTime.Now:HH:mm:ss.fff}] 🔓 MedisContext УДАЛЕН из монитора");
             }
 
             base.Dispose();

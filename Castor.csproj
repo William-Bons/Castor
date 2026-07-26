@@ -21,16 +21,20 @@
   <ItemGroup>
     <None Remove="gui\movebook\kurwa.jpg" />
     <None Remove="img\1749682654838.jpeg" />
+    <None Remove="img\2afb7fb.jpeg" />
+    <None Remove="img\4367894623867.png" />
+    <None Remove="img\a398.jpeg" />
     <None Remove="img\acroread.png" />
     <None Remove="img\add-icon.png" />
     <None Remove="img\business_table_order_report_history_2332.ico" />
     <None Remove="img\edit.png" />
+    <None Remove="img\f6f30_1.jpeg" />
     <None Remove="img\filter.png" />
     <None Remove="img\fire_exit_emergency_door_icon_196783.ico" />
     <None Remove="img\floppy_mount.png" />
+    <None Remove="img\fol-0.jpg" />
     <None Remove="img\fsslogo-2.png" />
     <None Remove="img\fsslogo.png" />
-    <None Remove="img\jail-icon.png" />
     <None Remove="img\log_logout_door_1563.ico" />
     <None Remove="img\Patient_Female_icon-icons.com_75052.png" />
     <None Remove="img\policeman-icon-2.png" />
@@ -61,24 +65,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="img\acroread.png" />
-    <Resource Include="img\add-icon.png" />
-    <Resource Include="img\business_table_order_report_history_2332.ico" />
-    <Resource Include="img\edit.png" />
-    <Resource Include="img\filter.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="img\2afb7fb.jpeg" />
+    <Resource Include="img\a398.jpeg" />
+    <Resource Include="img\f6f30_1.jpeg" />
+    <Resource Include="img\fol-0.jpg" />
+    <Resource Include="img\jail-icon.jpeg" />
+    <Resource Include="img\4367894623867.png" />
     <Resource Include="img\fire_exit_emergency_door_icon_196783.ico" />
-    <Resource Include="img\floppy_mount.png" />
-    <Resource Include="img\fsslogo-2.png" />
-    <Resource Include="img\fsslogo.png" />
-    <Resource Include="img\jail-icon.png" />
-    <Resource Include="img\Patient_Female_icon-icons.com_75052.png" />
-    <Resource Include="img\policeman-icon-2.png" />
-    <SplashScreen Include="img\1749682654838.jpeg" />
-    <Resource Include="img\log_logout_door_1563.ico" />
-    <Resource Include="img\policeman-icon.png" />
-    <Resource Include="img\restart_back_left_arrow_6022.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -123,6 +116,11 @@
     <None Update="assets\MonthReport.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="assets\ReportsList.html">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ReportsList.cs</LastGenOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="img\kurwa.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
@@ -142,6 +140,10 @@
     <Page Update="gui\commities\CommityForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>

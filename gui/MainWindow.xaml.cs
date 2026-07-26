@@ -1,6 +1,7 @@
 ﻿using Castor.database.tab_medis;
 using Castor.gui;
 using Castor.gui.common;
+using Castor.gui.login;
 using Castor.Properties;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -28,11 +29,13 @@ namespace Castor
             new MenuLoader(CentralMenu).MenuItemRise += MainWindow_MenuItemRise;
 
             // инициализация MainWindow and ExtraWidgets
-            WidgetsExtraInitialize();
+            //WidgetsExtraInitialize();
 
             // load page according SettingsCheet.Default.StartLoadedPage
-            if (!Settings.Default.StartLoadingPage.IsNullOrEmpty())
-                MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = Settings.Default.StartLoadingPage });
+            //if (!Settings.Default.StartLoadingPage.IsNullOrEmpty())
+            //    MainWindow_MenuItemRise(new CastorMenuItem() { ClassName = Settings.Default.StartLoadingPage });
+
+            CentralFrame.Navigate(new StartPage(this));
 
             Closed += (a, b) =>
             {
@@ -84,30 +87,34 @@ namespace Castor
             if (_castorMenuItem?.ClassName is string _className &&    // check CommandParameter is string
                 Type.GetType(_className) is Type _class)             // try get Type from string
             {
+                ActivateByName(_className, _castorMenuItem.Parameter);
+            }
+        }
 
-                object? activeCreatedObject =
-                    _class.GetConstructor([typeof(object)]) != null ? Activator.CreateInstance(_class, _castorMenuItem.Parameter) :
+        public void ActivateByName(string className, object? param=null)
+        {
+            Type _class = Type.GetType(className) ?? throw new ArgumentException($"Class {className} not found");
+
+            object? activeCreatedObject =
+                    _class.GetConstructor([typeof(object)]) != null ? Activator.CreateInstance(_class, param) :
                     _class.GetConstructor([typeof(MainWindow)]) != null ? Activator.CreateInstance(_class, this) :
                     Activator.CreateInstance(_class);
 
-                if (activeCreatedObject is IConsoleMessage obj) obj.ConsoleMessage += (message) => ConsoleMessage.Text = message;   //todo оценить необходимость
-                if (activeCreatedObject is IDialog _objectDialog) _objectDialog.Show();                                             //todo открывает как окно надо добавить вариант как диалог
-                if (activeCreatedObject is ISwithPage swp) swp.SwitchPage += SwitchFramePage;                                       // позволяет переключить на другую страницу
-                if (activeCreatedObject is IMainStatusBar msb) msb.PrintStatusMessage += PrintStatusMessage;                        // позволяет вывести сообщение на StatusBar
-                if (activeCreatedObject is IRefresh refh) refh.RefreshNotify += Refh_RefreshNotify;                                 // позволяет обновить другой дочерний элемент MainFrame
+            if (activeCreatedObject is IConsoleMessage obj) obj.ConsoleMessage += (message) => ConsoleMessage.Text = message;   //todo оценить необходимость
+            if (activeCreatedObject is IDialog _objectDialog) _objectDialog.Show();                                             //todo открывает как окно надо добавить вариант как диалог
+            if (activeCreatedObject is ISwithPage swp) swp.SwitchPage += SwitchFramePage;                                       // позволяет переключить на другую страницу
+            if (activeCreatedObject is IMainStatusBar msb) msb.PrintStatusMessage += PrintStatusMessage;                        // позволяет вывести сообщение на StatusBar
+            if (activeCreatedObject is IRefresh refh) refh.RefreshNotify += Refh_RefreshNotify;                                 // позволяет обновить другой дочерний элемент MainFrame
 
-                // служебные 
-                if (activeCreatedObject is IRun _objectIRun) _objectIRun.Run();                                                     // тест интерфейс запускает функцию Run
+            // служебные 
+            if (activeCreatedObject is IRun _objectIRun) _objectIRun.Run();                                                     // тест интерфейс запускает функцию Run
 
-                // основная загрузка страницы
-                if (activeCreatedObject is IStartablePage isp && isp.CanStart)
-                {
-                    CentralFrame.Content = activeCreatedObject;
-                }
-
+            // основная загрузка страницы
+            if (activeCreatedObject is IStartablePage isp && isp.CanStart)
+            {
+                CentralFrame.Content = activeCreatedObject;
             }
 
-            // Обновление некоторых визуальных информационных знаков при переходах по меню
             // -- знак досупности медис
             OnPropertyChanged(nameof(MedisEnabled));
         }

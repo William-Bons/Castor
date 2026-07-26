@@ -1,4 +1,5 @@
 ﻿using Castor.database;
+using Castor.gui;
 using Castor.gui.common;
 using Castor.gui.dialogs;
 using Castor.gui.login;
@@ -18,6 +19,8 @@ namespace Castor
     /// </summary>
     public partial class App : Application
     {
+        private SplashWindow _splashWindow;
+
         public App()
         {
             // ЭТО САМОЕ ВАЖНОЕ: ловим ошибку ДО того, как WPF начнёт падать
@@ -51,55 +54,143 @@ namespace Castor
             Settings.Default.Reset();
             Settings.Default.Save();
 #endif
+            // Создаем и показываем Splash
+            _splashWindow = new SplashWindow();
+            _splashWindow.Show();
 
-            // 1. Проверка наличия зашифрованной строки подключения к Medis, если нет - запрос строки
-            string connString = Settings.Default.postgreeConnection;
-            if (string.IsNullOrWhiteSpace(connString))
-            {
-                var dialog = new ConnectionDialog();
-                if (dialog.ShowDialog() != true)
-                {
-                    // Пользователь нажал "Отмена" при вводе данных
-                    Application.Current.Shutdown();
-                    return;
-                }
-                connString = dialog.ConnectionString;
-            }
+            // Запускаем инициализацию в отдельном потоке
+            Task.Run(() => InitializeApplication());
 
-            // проверка сущестования файла БД для текущего отделения
-            if (!File.Exists(Settings.Default.sqliteConnection))
-            {
-                // если file не существует, запрос отделения и пользователя
-                new SelectUser().ShowDialog();
-            }
+        }
 
-            // бэкап только если успешны проверка и update
-            using CastorContext castorContext = new CastorContext();
-            castorContext.Backup();
-
-            // Миграции
+        private async Task InitializeApplication()
+        {
             try
             {
-                castorContext.Database.Migrate();
+                // 1. Проверка наличия зашифрованной строки подключения к Medis
+                _splashWindow.UpdateProgress("Инициализация базы данных Medis...", 10);
+
+                string connString = Settings.Default.postgreeConnection;
+                if (string.IsNullOrWhiteSpace(connString))
+                {
+                    // Важно: ShowDialog должен выполняться в UI потоке
+                    string dialogResult = null;
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        var dialog = new ConnectionDialog();
+                        if (dialog.ShowDialog() == true)
+                        {
+                            dialogResult = dialog.ConnectionString;
+                        }
+                    });
+
+                    if (string.IsNullOrEmpty(dialogResult))
+                    {
+                        // Пользователь нажал "Отмена"
+                        await Dispatcher.InvokeAsync(() => Application.Current.Shutdown());
+                        return;
+                    }
+                    connString = dialogResult;
+                }
+
+                // 2. Проверка существования файла БД для текущего отделения
+                _splashWindow.UpdateProgress("Инициализация базы данных Castor...", 20);
+
+                if (!File.Exists(Settings.Default.sqliteConnection))
+                {
+                    // SelectUser должен выполняться в UI потоке
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        new SelectUser().ShowDialog();
+                    });
+                }
+
+                // 3. Бэкап (выполняется синхронно, но в фоновом потоке)
+                _splashWindow.UpdateProgress("Backup базы данных...", 40);
+                await Task.Run(() =>
+                {
+                    using (CastorContext castorContext = new CastorContext())
+                    {
+                        castorContext.Backup();
+                    }
+                });
+
+                // 4. Миграции
+                _splashWindow.UpdateProgress("Миграции базы данных...", 60);
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        using (CastorContext castorContext = new CastorContext())
+                        {
+                            castorContext.Database.Migrate();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("Migrations", ex);
+                        throw new Exception($"Ошибка обновления базы: {ex.Message}", ex);
+                    }
+                });
+
+                // 5. Синхронизация базы (запускаем асинхронно, не дожидаясь завершения)
+                _splashWindow.UpdateProgress("Синхронизация базы данных...", 80);
+
+                // Запускаем синхронизацию в фоне, но не ждем ее завершения
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        new Synchronization().LoadExistsFromMedis();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("Synchronization", ex);
+                        // Можно показать уведомление, но не прерывать запуск
+                        Dispatcher.InvokeAsync(() =>
+                        {
+                            MessageBox.Show($"Ошибка синхронизации: {ex.Message}",
+                                          "Предупреждение",
+                                          MessageBoxButton.OK,
+                                          MessageBoxImage.Warning);
+                        });
+                    }
+                });
+
+                // 6. Загружаем сохранённую тему
+                _splashWindow.UpdateProgress("Загрузка темы...", 90);
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    ThemeManager.LoadSavedTheme();
+                });
+
+                // 7. Открываем главное окно
+                _splashWindow.UpdateProgress("Запуск главного окна...", 100);
+
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    var mainWindow = new MainWindow();
+                    mainWindow.Show();
+
+                    // Закрываем Splash
+                    _splashWindow.Close();
+                });
             }
             catch (Exception ex)
             {
-                LogError("Migrations", ex);
-                MessageBox.Show($"Ошибка обновления базы: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Обработка критических ошибок
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    LogError("Initialization", ex);
+                    MessageBox.Show($"Критическая ошибка при инициализации:\n{ex.Message}",
+                                  "Ошибка",
+                                  MessageBoxButton.OK,
+                                  MessageBoxImage.Error);
+
+                    _splashWindow.Close();
+                    Application.Current.Shutdown();
+                });
             }
-
-            // Синхронизация базы
-            Task.Run(() => new Synchronization().LoadExistsFromMedis());
-
-
-            // Загружаем сохранённую тему перед отображением главного окна
-            ThemeManager.LoadSavedTheme();
-
-            // Полноценный вход: показываем обычный MainWindow
-            var mainWindow = new MainWindow();
-            mainWindow.Title = "Castor — Режим администратора";
-            mainWindow.Show();
-
         }
 
         protected override void OnExit(ExitEventArgs e)

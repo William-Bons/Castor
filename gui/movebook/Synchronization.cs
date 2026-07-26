@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -26,6 +27,19 @@ namespace Castor.gui.movebook
         /// </summary>
         public async Task LoadExistsFromMedis()
         {
+            try
+            {
+                if (!MedisContext.IsMedisonnectionEnable)
+                {
+                    Debug.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] ⚠️ ВНИМАНИЕ: Medis соединение недоступно. Синхронизация не выполнена");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
             try
             {
                 

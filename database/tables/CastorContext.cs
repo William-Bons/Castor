@@ -102,9 +102,6 @@ namespace Castor.database
                 // >>> ДОБАВЛЕНО: Удаляем контекст из монитора
                 ConnectionMonitorManager.Instance.UnregisterContext(this);
                 _isDisposed = true;
-
-                System.Diagnostics.Debug.WriteLine(
-                    $"[{DateTime.Now:HH:mm:ss.fff}] 🔓 CastorContext УДАЛЕН из монитора");
             }
 
             base.Dispose();

@@ -61,13 +61,13 @@
                             <StackPanel Margin="8">
 
                                 <MenuItem Header="Сменить период отчета"
-                                    Click="ReselectPeriod" Style="{StaticResource MenuItemStyle}"/>
+                                    Command="{Binding ReselectPeriodCommand}" Style="{StaticResource MenuItemStyle}"/>
 
                                 <MenuItem Header="Сохранить"
-                                    Click="SaveToDisk"  Style="{StaticResource MenuItemStyle}"/>
+                                    Command="{Binding SaveCommand}" Style="{StaticResource MenuItemStyle}"/>
 
                                 <MenuItem Header="Печать" 
-                                    Click="Print" Style="{StaticResource MenuItemStyle}"/>
+                                    Command="{Binding PrintCommand}" Style="{StaticResource MenuItemStyle}"/>
 
                             </StackPanel>
                         </Border>

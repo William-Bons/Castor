@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список отчетов системы</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f2f5;
+        }
+
+            .header h1 {
+                font-size: 24px;
+                font-weight: 600;
+                color: #1a1a2e;
+                margin-bottom: 4px;
+            }
+
+            .header .subtitle {
+                color: #6b7280;
+                font-size: 14px;
+            }
+
+        .report-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+            margin-bottom: 4px;
+            text-decoration: none;
+        }
+
+            .report-item:hover {
+                background: #f8fafc;
+                border-color: #e5e7eb;
+            }
+
+            .report-item:active {
+                transform: scale(0.99);
+            }
+
+        .report-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #eef2ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+
+            .report-icon svg {
+                width: 20px;
+                height: 20px;
+                fill: #4f46e5;
+            }
+
+        .report-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .report-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1a1a2e;
+            display: block;
+            transition: color 0.2s;
+            word-break: break-all;
+        }
+
+        .report-item:hover .report-name {
+            color: #4f46e5;
+        }
+
+        .report-class {
+            font-size: 12px;
+            color: #9ca3af;
+            font-family: 'Courier New', monospace;
+            margin-top: 2px;
+            display: block;
+        }
+
+        .report-arrow {
+            color: #9ca3af;
+            margin-left: 12px;
+            flex-shrink: 0;
+            transition: transform 0.2s, color 0.2s;
+        }
+
+        .report-item:hover .report-arrow {
+            color: #4f46e5;
+            transform: translateX(2px);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: 10px;
+        }
+
+        .footer {
+            margin-top: 28px;
+            padding-top: 16px;
+            border-top: 1px solid #f0f2f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .footer .count {
+                font-size: 13px;
+                color: #6b7280;
+            }
+
+                .footer .count span {
+                    font-weight: 600;
+                    color: #1a1a2e;
+                }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .report-item {
+                padding: 12px 14px;
+            }
+
+            .report-name {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>📋 Список отчетов</h1>
+            <div class="subtitle">Доступные отчеты системы Castor</div>
+        </div>
+
+        <div class="report-list">
+
+            <!-- Отчет 1 -->
+            <div class="report-item" onclick="selectReport('Castor.database.reports.MonthReportHtml')">
+                <div class="report-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19,3H5C3.9,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.9 20.1,3 19,3M9,17H7V10H9V17M13,17H11V7H13V17M17,17H15V13H17V17Z" />
+                    </svg>
+                </div>
+                <div class="report-info">
+                    <span class="report-name">Отчет за месяц</span>
+                    <span class="report-class">Castor.database.reports.MonthReportHtml</span>
+                </div>
+                <span class="report-arrow">→</span>
+            </div>
+
+            <!-- Отчет 2 -->
+            <div class="report-item" onclick="selectReport('Castor.database.reports.YearReportHtml')">
+                <div class="report-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19,3H5C3.9,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.9 20.1,3 19,3M9,17H7V10H9V17M13,17H11V7H13V17M17,17H15V13H17V17Z" />
+                    </svg>
+                </div>
+                <div class="report-info">
+                    <span class="report-name">Годовой отчет</span>
+                    <span class="report-class">Castor.database.reports.YearReportHtml</span>
+                </div>
+                <span class="report-arrow">→</span>
+            </div>
+
+            <!-- Отчет 3 -->
+            <div class="report-item" onclick="selectReport('Castor.database.reports.QuarterReportHtml')">
+                <div class="report-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19,3H5C3.9,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.9 20.1,3 19,3M9,17H7V10H9V17M13,17H11V7H13V17M17,17H15V13H17V17Z" />
+                    </svg>
+                </div>
+                <div class="report-info">
+                    <span class="report-name">Квартальный отчет</span>
+                    <span class="report-class">Castor.database.reports.QuarterReportHtml</span>
+                </div>
+                <span class="report-arrow">→</span>
+            </div>
+
+            <!-- Отчет 4 -->
+            <div class="report-item" onclick="selectReport('Castor.database.reports.DailyReportHtml')">
+                <div class="report-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19,3H5C3.9,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.9 20.1,3 19,3M9,17H7V10H9V17M13,17H11V7H13V17M17,17H15V13H17V17Z" />
+                    </svg>
+                </div>
+                <div class="report-info">
+                    <span class="report-name">Дневной отчет</span>
+                    <span class="report-class">Castor.database.reports.DailyReportHtml</span>
+                </div>
+                <span class="report-arrow">→</span>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <div class="count">Всего отчетов: <span>4</span></div>
+            <div style="display: flex; gap: 12px;">
+                <span class="badge">HTML</span>
+                <span class="badge" style="background:#f3f4f6; color:#6b7280;">Castor</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectReport(reportClassName) {
+            // Пробуем вызвать метод несколькими способами
+            try {
+                // Способ 1: Прямой вызов через window.external (для WPF WebBrowser)
+                if (window.external && window.external.SelectReport) {
+                    window.external.SelectReport(reportClassName);
+                    return;
+                }
+
+                // Способ 2: Если не сработало, пробуем через eval
+                if (window.external) {
+                    window.external.SelectReport(reportClassName);
+                    return;
+                }
+
+                // Способ 3: Запасной вариант через URL
+                window.location.href = 'report:' + reportClassName;
+
+            } catch (e) {
+                // Если ошибка, пробуем через URL
+                window.location.href = 'report:' + reportClassName;
+            }
+        }
+    </script>
+
+</body>
+</html>

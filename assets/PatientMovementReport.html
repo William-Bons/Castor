@@ -1,0 +1,358 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчет по движению пациентов</title>
+    <style>
+        /* Стили для лучшего отображения */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+            .header h1 {
+                margin: 0 0 10px 0;
+            }
+
+            .header .info {
+                display: flex;
+                gap: 30px;
+                flex-wrap: wrap;
+                font-size: 14px;
+                opacity: 0.9;
+            }
+
+                .header .info label {
+                    font-weight: bold;
+                }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .footer {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .sql-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #2d2d2d;
+            border-radius: 10px;
+            color: #f8f8f8;
+        }
+
+            .sql-section h3 {
+                color: #f1c40f;
+                margin-top: 0;
+            }
+
+            .sql-section .query-block {
+                background: #1a1a1a;
+                padding: 10px;
+                border-radius: 5px;
+                margin: 10px 0;
+                overflow-x: auto;
+            }
+
+                .sql-section .query-block pre {
+                    margin: 0;
+                    color: #a8d8a8;
+                    font-size: 13px;
+                }
+
+                .sql-section .query-block .query-title {
+                    color: #f39c12;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                }
+
+        .trend-up {
+            color: #27ae60;
+        }
+
+        .trend-down {
+            color: #e74c3c;
+        }
+
+        .trend-neutral {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Заголовок -->
+    <div class="header">
+        <h1>📊 Отчет по движению пациентов</h1>
+        <p style="margin: 0 0 15px 0; opacity: 0.9;">Статистика за выбранный период</p>
+        <div class="info">
+            <div>
+                <label>📅 Период:</label>
+                <span id="periodDisplay">Загрузка...</span>
+            </div>
+            <div>
+                <label>🏥 Отделение:</label>
+                <span id="departmentDisplay">Все отделения</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Таблица -->
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Показатель</th>
+                    <th>Значение</th>
+                    <th>Динамика</th>
+                </tr>
+            </thead>
+            <tbody id="reportBody">
+                <!-- Данные будут заполнены через JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Итого -->
+    <div class="footer">
+        <div>
+            <strong>👥 Всего пациентов:</strong>
+            <span id="totalPatients">--</span>
+        </div>
+        <div>
+            <strong>🔄 Обновлено:</strong>
+            <span id="updateTime">--</span>
+        </div>
+    </div>
+
+    <!-- SQL Запросы -->
+    <div class="sql-section">
+        <h3>📝 SQL-запросы</h3>
+
+        <div class="query-block">
+            <div class="query-title">📥 Поступило:</div>
+            <pre><![CDATA[
+SELECT COUNT(*) 
+FROM Patients 
+WHERE AdmissionDate >= DATEADD(month, -1, GETDATE()) 
+  AND AdmissionDate <= GETDATE()
+            ]]></pre>
+        </div>
+
+        <div class="query-block">
+            <div class="query-title">📤 Выбыло:</div>
+            <pre><![CDATA[
+SELECT COUNT(*) 
+FROM Patients 
+WHERE DischargeDate >= DATEADD(month, -1, GETDATE()) 
+  AND DischargeDate <= GETDATE()
+  AND DischargeReason = 'Выбыл'
+            ]]></pre>
+        </div>
+
+        <div class="query-block">
+            <div class="query-title">🔄 Сдано (переведено):</div>
+            <pre><![CDATA[
+SELECT COUNT(*) 
+FROM Patients 
+WHERE DischargeDate >= DATEADD(month, -1, GETDATE()) 
+  AND DischargeDate <= GETDATE()
+  AND DischargeReason = 'Переведен'
+            ]]></pre>
+        </div>
+
+        <div class="query-block">
+            <div class="query-title">⚰️ Умерло:</div>
+            <pre><![CDATA[
+SELECT COUNT(*) 
+FROM Patients 
+WHERE DeathDate >= DATEADD(month, -1, GETDATE()) 
+  AND DeathDate <= GETDATE()
+            ]]></pre>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <div class="query-title">📈 Динамика (предыдущий период):</div>
+
+            <div class="query-block">
+                <div>Поступило (предыдущий период):</div>
+                <pre><![CDATA[
+SELECT COUNT(*) 
+FROM Patients 
+WHERE AdmissionDate >= DATEADD(month, -2, GETDATE()) 
+  AND AdmissionDate < DATEADD(month, -1, GETDATE())
+                ]]></pre>
+            </div>
+
+            <div class="query-block">
+                <div>Выбыло (предыдущий период):</div>
+                <pre><![CDATA[
+SELECT COUNT(*) 
+FROM Patients 
+WHERE DischargeDate >= DATEADD(month, -2, GETDATE()) 
+  AND DischargeDate < DATEADD(month, -1, GETDATE())
+  AND DischargeReason = 'Выбыл'
+                ]]></pre>
+            </div>
+
+            <div class="query-block">
+                <div>Сдано (предыдущий период):</div>
+                <pre><![CDATA[
+SELECT COUNT(*) 
+FROM Patients 
+WHERE DischargeDate >= DATEADD(month, -2, GETDATE()) 
+  AND DischargeDate < DATEADD(month, -1, GETDATE())
+  AND DischargeReason = 'Переведен'
+                ]]></pre>
+            </div>
+
+            <div class="query-block">
+                <div>Умерло (предыдущий период):</div>
+                <pre><![CDATA[
+SELECT COUNT(*) 
+FROM Patients 
+WHERE DeathDate >= DATEADD(month, -2, GETDATE()) 
+  AND DeathDate < DATEADD(month, -1, GETDATE())
+                ]]></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Структура данных: массив значений
+        // Индексы:
+        // 0 - период, 1 - отделение,
+        // 2 - поступило, 3 - выбыло, 4 - переведено, 5 - умерло,
+        // 6 - тренд поступило, 7 - тренд выбыло, 8 - тренд переведено, 9 - тренд умерло
+        let reportValues = [];
+
+        // Конфигурация строк таблицы
+        const ROW_CONFIG = [
+            { id: 'admitted', icon: '📥', label: 'Поступило', valueIndex: 2, trendIndex: 6 },
+            { id: 'discharged', icon: '📤', label: 'Выбыло', valueIndex: 3, trendIndex: 7 },
+            { id: 'transferred', icon: '🔄', label: 'Сдано (переведено)', valueIndex: 4, trendIndex: 8 },
+            { id: 'deceased', icon: '⚰️', label: 'Умерло', valueIndex: 5, trendIndex: 9 }
+        ];
+
+        // Функция для получения данных из C#
+        function loadReportData() {
+            if (window.external && window.external.GetReportData) {
+                window.external.GetReportData();
+            } else {
+                // Демо-данные для тестирования (массив)
+                setTimeout(function () {
+                    const demoData = [
+                        "Январь 2026",              // 0 - период
+                        "Все отделения",            // 1 - отделение
+                        42,                         // 2 - поступило
+                        38,                         // 3 - выбыло
+                        5,                          // 4 - переведено
+                        2,                          // 5 - умерло
+                        "▲ +8.2%",                  // 6 - тренд поступило
+                        "▼ -3.1%",                  // 7 - тренд выбыло
+                        "→ +0.5%",                  // 8 - тренд переведено
+                        "▼ -12.5%"                  // 9 - тренд умерло
+                    ];
+                    updateReport(demoData);
+                }, 500);
+            }
+        }
+
+        // Функция обновления отчета (вызывается из C#)
+        function updateReport(values) {
+            // Сохраняем массив значений
+            reportValues = values || [];
+
+            // Обновляем заголовок
+            if (values[0]) {
+                document.getElementById('periodDisplay').textContent = values[0];
+            }
+            if (values[1]) {
+                document.getElementById('departmentDisplay').textContent = values[1];
+            }
+
+            // Строим строки таблицы
+            const tbody = document.getElementById('reportBody');
+            tbody.innerHTML = '';
+
+            let totalPatients = 0;
+
+            ROW_CONFIG.forEach((row, index) => {
+                const value = values[row.valueIndex] || 0;
+                const trend = values[row.trendIndex] || '→ 0%';
+
+                // Для подсчета общего количества (поступило + переведено)
+                if (row.id === 'admitted' || row.id === 'transferred') {
+                    totalPatients += value;
+                }
+
+                // Определяем класс для тренда
+                let trendClass = '';
+                if (trend.includes('▲')) trendClass = 'trend-up';
+                else if (trend.includes('▼')) trendClass = 'trend-down';
+                else trendClass = 'trend-neutral';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                        <td>${row.icon} ${row.label}</td>
+                        <td><strong>${value}</strong></td>
+                        <td class="${trendClass}">${trend}</td>
+                    `;
+                tbody.appendChild(tr);
+            });
+
+            // Обновляем итого
+            document.getElementById('totalPatients').textContent = totalPatients;
+
+            // Обновляем время
+            const now = new Date();
+            document.getElementById('updateTime').textContent = now.toLocaleString('ru-RU');
+        }
+
+        // Загружаем данные при загрузке страницы
+        document.addEventListener('DOMContentLoaded', loadReportData);
+    </script>
+
+</body>
+</html>
