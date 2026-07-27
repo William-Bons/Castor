@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Castor.database.tables;
 public class Movebook
@@ -44,6 +43,9 @@ public class Movebook
     public virtual ICollection<Forced>? Forceds { get; set; }
     [JsonIgnore]
     public virtual ICollection<Commity> Commities { get; set; }
+    [JsonIgnore]
+    public virtual string? Section => Forceds?.Count>0 ? 
+        Forceds.Where(f => f.Section!=null).Select(f => f.Section).FirstOrDefault() : null;
 
 
     /// <summary>

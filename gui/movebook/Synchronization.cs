@@ -63,6 +63,29 @@ namespace Castor.gui.movebook
                     .ExceptBy(castorIds, v => v.num)
                     .ToList();
 
+                // список выписанных вннеснных в castor
+                List<visit> __Outed = medisContext.visit
+                    .Where(v => v.depid == Settings.Default.LastSelectedDepId
+                                && v.resultid > 0 // показывает что выписан а не смена врача
+                                && v.dat1.HasValue
+                                && castorIds.Contains(v.num)) // фильтрация в БД
+                    .ToList();
+
+                List<long> outedIds = __Outed.Select(o => o.keyid).ToList();
+
+                // список записей из movebook выписанных по medis Но не выписанных по castor
+                List<Movebook> __UpdateOut = castorContext.Movebooks
+                    .Where(m => !m.Dateout.HasValue
+                                && outedIds.Contains((long)m.Visitid))
+                    .ToList();
+
+                // выписка
+                __UpdateOut.ForEach(mb =>
+                {
+                    mb.Dateout = DateOnly.FromDateTime(
+                        __Outed.Where(o => o.keyid == mb.Visitid).Select(o => o.dat1).FirstOrDefault().Value);
+                });
+
                 // для каждого полученного визита создается запись в movebook
                 LoadedMovebooks.Clear();
                 foreach (visit vis in __DataRowSource)
@@ -89,6 +112,7 @@ namespace Castor.gui.movebook
                 }
 
                 // отобранные пациенты загружаются в базу Castor
+                castorContext.UpdateRange(__UpdateOut);
                 castorContext.Movebooks.AddRange(LoadedMovebooks);
                 castorContext.SaveChanges();
 
