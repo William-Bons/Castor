@@ -1,9 +1,11 @@
 ﻿using Castor.gui.common;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using System.Windows;
 
 namespace Castor.database.reports
 {
@@ -13,70 +15,65 @@ namespace Castor.database.reports
     public partial class DisplayReport : Page, IStartablePage
     {
         public bool CanStart => true;
+        private readonly ReportCalculator _calculator;
 
         public DisplayReport(object reportClassName = null)
         {
             InitializeComponent();
 
             // Настраиваем WebBrowser для взаимодействия с JavaScript
-            Browser.ObjectForScripting = this;
-            Browser.Navigating += Browser_Navigating;
+            //Browser.ObjectForScripting = this;
+            //Browser.Navigating += Browser_Navigating;
 
-            if (reportClassName != null && !string.IsNullOrEmpty(reportClassName.ToString()))
-            {
-                LoadReport(reportClassName.ToString());
-            }
-            else
-            {
-                LoadReportList();
-            }
+            //if (reportClassName != null && !string.IsNullOrEmpty(reportClassName.ToString()))
+            //{
+            //    LoadReport(reportClassName.ToString());
+            //}
+            //else
+            //{
+            //    LoadReportList();
+            //}
+            _calculator = new ReportCalculator();
+            LoadReport();
         }
 
 
-        /// <summary>
-        /// Загружает конкретный отчет по имени класса
-        /// </summary>
-        private void LoadReport(string reportClassName)
+        private async void LoadReport()
         {
             try
             {
-                // Получаем тип отчета по имени
-                Type reportType = Type.GetType(reportClassName);
+                _calculator.SetParameter("StartDate", DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd"));
+                _calculator.SetParameter("EndDate", DateTime.Now.ToString("yyyy-MM-dd"));
 
-                if (reportType != null)
-                {
-                    // Создаем экземпляр отчета
-                    var report = (ICastorHtmlReport)Activator.CreateInstance(reportType);
+                // Вычисляем данные
+                var (data, period, department) = await _calculator.CalculateAsync(@"assets\PatientMovementReport.html");
 
-                    // Вычисляем отчет
-                    report?.Calculate();
+                // Загружаем HTML
+                var html = File.ReadAllText(GetFullPath(@"assets\PatientMovementReport.html"));
+                Browser.NavigateToString(html);
 
-                    // Отображаем HTML отчет
-                    string htmlContent = report?.HtmlReport ?? "<h1>Отчет не содержит данных</h1>";
-                    Browser.NavigateToString(htmlContent);
+                // Ждем загрузки и вызываем функцию updateReport
+                await Task.Delay(500);
 
-                    // Устанавливаем DataContext
-                    DataContext = report;
-                }
-                else
-                {
-                    Browser.NavigateToString($"<h1>Ошибка: Тип '{reportClassName}' не найден</h1>");
-                }
+                var dataJson = JsonConvert.SerializeObject(data);
+                var script = $"updateReport({dataJson}, '{period}', '{department}');";
+                Browser.InvokeScript("eval", script);
             }
             catch (Exception ex)
             {
-                Browser.NavigateToString($@"
-                <html>
-                <head><style>body{{font-family:'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;background:#f8f9fa;margin:0;}}</style></head>
-                <body>
-                    <div style='text-align:center;color:#dc3545;'>
-                        <h1>❌ Ошибка загрузки отчета</h1>
-                        <p>{ex.Message}</p>
-                        <p style='font-size:12px;color:#6c757d;'>{ex.StackTrace}</p>
-                    </div>
-                </body>
-                </html>");
+                MessageBox.Show($"Ошибка: {ex.Message}");
             }
+        }
+
+        private string GetFullPath(string relativePath)
+        {
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            return System.IO.Path.Combine(baseDirectory, relativePath);
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadReport();
         }
 
         /// <summary>
@@ -115,7 +112,7 @@ namespace Castor.database.reports
                 if (!string.IsNullOrEmpty(reportClassName))
                 {
                     // Загружаем выбранный отчет
-                    LoadReport(reportClassName);
+                    //LoadReport(reportClassName);
                 }
             });
         }

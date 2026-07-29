@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Отчет по движению пациентов</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <style>
-        /* Стили для лучшего отображения */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 900px;
@@ -106,23 +106,10 @@
                     font-weight: bold;
                     margin-bottom: 5px;
                 }
-
-        .trend-up {
-            color: #27ae60;
-        }
-
-        .trend-down {
-            color: #e74c3c;
-        }
-
-        .trend-neutral {
-            color: #f39c12;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Заголовок -->
     <div class="header">
         <h1>📊 Отчет по движению пациентов</h1>
         <p style="margin: 0 0 15px 0; opacity: 0.9;">Статистика за выбранный период</p>
@@ -138,23 +125,39 @@
         </div>
     </div>
 
-    <!-- Таблица -->
     <div>
         <table>
             <thead>
                 <tr>
                     <th>Показатель</th>
                     <th>Значение</th>
-                    <th>Динамика</th>
                 </tr>
             </thead>
             <tbody id="reportBody">
-                <!-- Данные будут заполнены через JavaScript -->
+                <tr>
+                    <td>📥 Поступило</td>
+                    <td><strong id="admitted">--</strong></td>
+                </tr>
+                <tr>
+                    <td>📤 Выбыло</td>
+                    <td><strong id="discharged">--</strong></td>
+                </tr>
+                <tr>
+                    <td>🔄 Переведено</td>
+                    <td><strong id="transferred">--</strong></td>
+                </tr>
+                <tr>
+                    <td>⚰️ Умерло</td>
+                    <td><strong id="deceased">--</strong></td>
+                </tr>
+                <tr>
+                    <td>📋 Активные</td>
+                    <td><strong id="active">--</strong></td>
+                </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Итого -->
     <div class="footer">
         <div>
             <strong>👥 Всего пациентов:</strong>
@@ -166,193 +169,94 @@
         </div>
     </div>
 
-    <!-- SQL Запросы -->
     <div class="sql-section">
         <h3>📝 SQL-запросы</h3>
 
         <div class="query-block">
-            <div class="query-title">📥 Поступило:</div>
+            <div class="query-title">📥 Поступило (Datein):</div>
             <pre><![CDATA[
 SELECT COUNT(*) 
-FROM Patients 
-WHERE AdmissionDate >= DATEADD(month, -1, GETDATE()) 
-  AND AdmissionDate <= GETDATE()
+FROM Movebooks 
+WHERE Datein >= @{StartDate} 
+  AND Datein <= @{EndDate}
             ]]></pre>
         </div>
 
         <div class="query-block">
-            <div class="query-title">📤 Выбыло:</div>
+            <div class="query-title">📤 Выбыло (Dateout):</div>
             <pre><![CDATA[
 SELECT COUNT(*) 
-FROM Patients 
-WHERE DischargeDate >= DATEADD(month, -1, GETDATE()) 
-  AND DischargeDate <= GETDATE()
-  AND DischargeReason = 'Выбыл'
+FROM Movebooks 
+WHERE Dateout >= @{StartDate} 
+  AND Dateout <= @{EndDate}
+  AND Dateout IS NOT NULL
+  AND Closed = 1
             ]]></pre>
         </div>
 
         <div class="query-block">
-            <div class="query-title">🔄 Сдано (переведено):</div>
+            <div class="query-title">🔄 Переведено (Outto IS NOT NULL):</div>
             <pre><![CDATA[
 SELECT COUNT(*) 
-FROM Patients 
-WHERE DischargeDate >= DATEADD(month, -1, GETDATE()) 
-  AND DischargeDate <= GETDATE()
-  AND DischargeReason = 'Переведен'
+FROM Movebooks 
+WHERE Dateout >= @{StartDate} 
+  AND Dateout <= @{EndDate}
+  AND Dateout IS NOT NULL
+  AND Outto IS NOT NULL
             ]]></pre>
         </div>
 
         <div class="query-block">
-            <div class="query-title">⚰️ Умерло:</div>
+            <div class="query-title">⚰️ Умерло (Deceased = 1):</div>
             <pre><![CDATA[
 SELECT COUNT(*) 
-FROM Patients 
-WHERE DeathDate >= DATEADD(month, -1, GETDATE()) 
-  AND DeathDate <= GETDATE()
+FROM Movebooks 
+WHERE Dateout >= @{StartDate} 
+  AND Dateout <= @{EndDate}
+  AND Dateout IS NOT NULL
+  AND Deceased = 1
             ]]></pre>
         </div>
 
-        <div style="margin-top: 20px;">
-            <div class="query-title">📈 Динамика (предыдущий период):</div>
-
-            <div class="query-block">
-                <div>Поступило (предыдущий период):</div>
-                <pre><![CDATA[
+        <div class="query-block">
+            <div class="query-title">📋 Активные (не закрыты):</div>
+            <pre><![CDATA[
 SELECT COUNT(*) 
-FROM Patients 
-WHERE AdmissionDate >= DATEADD(month, -2, GETDATE()) 
-  AND AdmissionDate < DATEADD(month, -1, GETDATE())
-                ]]></pre>
-            </div>
-
-            <div class="query-block">
-                <div>Выбыло (предыдущий период):</div>
-                <pre><![CDATA[
-SELECT COUNT(*) 
-FROM Patients 
-WHERE DischargeDate >= DATEADD(month, -2, GETDATE()) 
-  AND DischargeDate < DATEADD(month, -1, GETDATE())
-  AND DischargeReason = 'Выбыл'
-                ]]></pre>
-            </div>
-
-            <div class="query-block">
-                <div>Сдано (предыдущий период):</div>
-                <pre><![CDATA[
-SELECT COUNT(*) 
-FROM Patients 
-WHERE DischargeDate >= DATEADD(month, -2, GETDATE()) 
-  AND DischargeDate < DATEADD(month, -1, GETDATE())
-  AND DischargeReason = 'Переведен'
-                ]]></pre>
-            </div>
-
-            <div class="query-block">
-                <div>Умерло (предыдущий период):</div>
-                <pre><![CDATA[
-SELECT COUNT(*) 
-FROM Patients 
-WHERE DeathDate >= DATEADD(month, -2, GETDATE()) 
-  AND DeathDate < DATEADD(month, -1, GETDATE())
-                ]]></pre>
-            </div>
+FROM Movebooks 
+WHERE Closed = 0
+  AND Dateout IS NULL
+            ]]></pre>
         </div>
     </div>
 
     <script>
-        // Структура данных: массив значений
-        // Индексы:
-        // 0 - период, 1 - отделение,
-        // 2 - поступило, 3 - выбыло, 4 - переведено, 5 - умерло,
-        // 6 - тренд поступило, 7 - тренд выбыло, 8 - тренд переведено, 9 - тренд умерло
-        let reportValues = [];
+        // Универсальная функция обновления отчета
+        function updateReport(data, period, department) {
+            try {
+                // Обновляем заголовок
+                var periodDisplay = document.getElementById('periodDisplay');
+                if (periodDisplay) periodDisplay.innerText = period || 'Неизвестно';
 
-        // Конфигурация строк таблицы
-        const ROW_CONFIG = [
-            { id: 'admitted', icon: '📥', label: 'Поступило', valueIndex: 2, trendIndex: 6 },
-            { id: 'discharged', icon: '📤', label: 'Выбыло', valueIndex: 3, trendIndex: 7 },
-            { id: 'transferred', icon: '🔄', label: 'Сдано (переведено)', valueIndex: 4, trendIndex: 8 },
-            { id: 'deceased', icon: '⚰️', label: 'Умерло', valueIndex: 5, trendIndex: 9 }
-        ];
+                var departmentDisplay = document.getElementById('departmentDisplay');
+                if (departmentDisplay) departmentDisplay.innerText = department || 'Все отделения';
 
-        // Функция для получения данных из C#
-        function loadReportData() {
-            if (window.external && window.external.GetReportData) {
-                window.external.GetReportData();
-            } else {
-                // Демо-данные для тестирования (массив)
-                setTimeout(function () {
-                    const demoData = [
-                        "Январь 2026",              // 0 - период
-                        "Все отделения",            // 1 - отделение
-                        42,                         // 2 - поступило
-                        38,                         // 3 - выбыло
-                        5,                          // 4 - переведено
-                        2,                          // 5 - умерло
-                        "▲ +8.2%",                  // 6 - тренд поступило
-                        "▼ -3.1%",                  // 7 - тренд выбыло
-                        "→ +0.5%",                  // 8 - тренд переведено
-                        "▼ -12.5%"                  // 9 - тренд умерло
-                    ];
-                    updateReport(demoData);
-                }, 500);
-            }
-        }
+                // Обновляем значения
+                if (data && data.length >= 5) {
+                    document.getElementById('admitted').innerText = data[0] || '0';
+                    document.getElementById('discharged').innerText = data[1] || '0';
+                    document.getElementById('transferred').innerText = data[2] || '0';
+                    document.getElementById('deceased').innerText = data[3] || '0';
+                    document.getElementById('active').innerText = data[4] || '0';
 
-        // Функция обновления отчета (вызывается из C#)
-        function updateReport(values) {
-            // Сохраняем массив значений
-            reportValues = values || [];
-
-            // Обновляем заголовок
-            if (values[0]) {
-                document.getElementById('periodDisplay').textContent = values[0];
-            }
-            if (values[1]) {
-                document.getElementById('departmentDisplay').textContent = values[1];
-            }
-
-            // Строим строки таблицы
-            const tbody = document.getElementById('reportBody');
-            tbody.innerHTML = '';
-
-            let totalPatients = 0;
-
-            ROW_CONFIG.forEach((row, index) => {
-                const value = values[row.valueIndex] || 0;
-                const trend = values[row.trendIndex] || '→ 0%';
-
-                // Для подсчета общего количества (поступило + переведено)
-                if (row.id === 'admitted' || row.id === 'transferred') {
-                    totalPatients += value;
+                    var total = (parseInt(data[0] || 0) + parseInt(data[1] || 0));
+                    document.getElementById('totalPatients').innerText = total;
                 }
 
-                // Определяем класс для тренда
-                let trendClass = '';
-                if (trend.includes('▲')) trendClass = 'trend-up';
-                else if (trend.includes('▼')) trendClass = 'trend-down';
-                else trendClass = 'trend-neutral';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                        <td>${row.icon} ${row.label}</td>
-                        <td><strong>${value}</strong></td>
-                        <td class="${trendClass}">${trend}</td>
-                    `;
-                tbody.appendChild(tr);
-            });
-
-            // Обновляем итого
-            document.getElementById('totalPatients').textContent = totalPatients;
-
-            // Обновляем время
-            const now = new Date();
-            document.getElementById('updateTime').textContent = now.toLocaleString('ru-RU');
+                document.getElementById('updateTime').innerText = new Date().toLocaleString('ru-RU');
+            } catch (e) {
+                // Ошибка игнорируется
+            }
         }
-
-        // Загружаем данные при загрузке страницы
-        document.addEventListener('DOMContentLoaded', loadReportData);
     </script>
-
 </body>
 </html>

@@ -116,6 +116,9 @@
     <None Update="assets\MonthReport.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="assets\PatientMovementReport.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="assets\ReportsList.html">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ReportsList.cs</LastGenOutput>

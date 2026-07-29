@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -150,7 +151,6 @@ namespace Castor.gui.movebook
                         .Include(v => v.Patient)
                         .ThenInclude(p => p.Diagnoses)
                         .ThenInclude(d => d.Diagnos)
-                        .ToList()
                         .First();
                 }
 
@@ -169,7 +169,10 @@ namespace Castor.gui.movebook
                     }
                 };
             }
-            catch { }
+            catch  (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         public void PrepareDisorder()
