@@ -1,30 +1,35 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+using System.Windows.Controls;
 
 namespace Castor.database.reports
 {
+    public class ReportParameter
+    {
+        public ReportParameter() { }
+        public string Name { get; set; } = string.Empty;
+        public Type Type { get; set; } = typeof(string);
+        public object? Value { get; set; } = null;
+    }
     public class ReportCalculator
     {
-        private readonly Dictionary<string, object> _parameters = new Dictionary<string, object>();
+        private readonly Dictionary<string, ReportParameter> _parameters = new Dictionary<string, ReportParameter>();
 
         public ReportCalculator()
         {
         }
 
-        public void SetParameter(string name, object value)
-        {
-            _parameters[name] = value;
-        }
-
         public async Task<(string[] data, string period, string department)> CalculateAsync(string htmlPath)
         {
             var html = File.ReadAllText(GetFullPath(htmlPath));
+            ParseParameters(html);
             var queries = ExtractQueries(html);
             var results = new List<string>();
 
@@ -51,27 +56,102 @@ namespace Castor.database.reports
             return (results.ToArray(), DateTime.Now.ToString("MMMM yyyy"), "Все отделения");
         }
 
-        private string GetFullPath(string relativePath)
-        {
-            if (Path.IsPathRooted(relativePath))
-                return relativePath;
+        
 
-            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            return Path.Combine(baseDirectory, relativePath);
+        private void ParseParameters(string html)
+        {
+            // Clean First!
+            _parameters.Clear();
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+
+            // Ищем все блоки параметров
+            var parameterBlocks = doc.DocumentNode.SelectNodes("//div[contains(@class, 'parameter-block')]");
+
+            if (parameterBlocks == null || parameterBlocks.Count == 0)
+                return;
+
+            foreach (var block in parameterBlocks)
+            {
+                var param = new ReportParameter();
+
+                // Извлекаем имя параметра
+                var nameNode = block.SelectSingleNode(".//div[contains(@class, 'parameter-name')]");
+                if (nameNode != null)
+                {
+                    param.Name = nameNode.InnerText.Trim();
+                }
+
+                // Извлекаем тип параметра
+                var typeNode = block.SelectSingleNode(".//div[contains(@class, 'parameter-type')]");
+                if (typeNode != null)
+                {
+                    var typeName = typeNode.InnerText.Trim().ToUpper();
+                    param.Type = typeName switch
+                    {
+                        "DATE" => typeof(DateTime),
+                        "DATETIME" => typeof(DateTime),
+                        "STRING" => typeof(string),
+                        "INT" => typeof(int),
+                        "INTEGER" => typeof(int),
+                        "BOOL" => typeof(bool),
+                        "BOOLEAN" => typeof(bool),
+                        "DECIMAL" => typeof(decimal),
+                        "DOUBLE" => typeof(double),
+                        "FLOAT" => typeof(float),
+                        "GUID" => typeof(Guid),
+                        _ => typeof(string)
+                    };
+                }
+
+                // Извлекаем значение (по умолчанию)
+                var preNode = block.SelectSingleNode(".//pre");
+                if (preNode != null)
+                {
+                    var valueStr = preNode.InnerText.Trim();
+                    param.Value = ConvertValue(valueStr, param.Type);
+                }
+
+                // Добавляем в словарь
+                if (!string.IsNullOrEmpty(param.Name) && !_parameters.ContainsKey(param.Name))
+                {
+                    _parameters.Add(param.Name, param);
+                }
+            }
+        }
+
+        public void SetParameters()
+        {
+            var window = new ParameterWindow(_parameters);
+
+            if (window.ShowDialog() == true)
+            {
+                // Получаем обновленные значения
+                var updatedValues = window.UpdatedValues;
+
+                // Применяем параметры
+                foreach (var kvp in updatedValues)
+                {
+                    //SetParameter(kvp.Key, kvp.Value?.ToString());
+                }
+
+                // Загружаем отчет
+            }
         }
 
         private List<string> ExtractQueries(string html)
         {
             var queries = new List<string>();
-            var pattern = @"<pre>(.*?)</pre>";
-            var matches = Regex.Matches(html, pattern, RegexOptions.Singleline);
-
-            foreach (Match match in matches)
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+            var queryNodes = doc.DocumentNode.SelectNodes("//div[@data-query]");
+            if (queryNodes != null)
             {
-                var query = CleanQuery(match.Groups[1].Value);
-                if (!string.IsNullOrEmpty(query) && query.Contains("SELECT", StringComparison.OrdinalIgnoreCase))
+                foreach (var node in queryNodes)
                 {
-                    queries.Add(query);
+                    var sql = node.InnerText.Trim();
+                    queries.Add(CleanQuery(sql));
                 }
             }
 
@@ -94,7 +174,7 @@ namespace Castor.database.reports
                 var placeholder = $"@{{{param.Key}}}";
                 if (query.Contains(placeholder))
                 {
-                    var value = FormatValue(param.Value);
+                    var value = FormatValue(param.Value?.Value);
                     query = query.Replace(placeholder, value);
                 }
             }
@@ -123,6 +203,45 @@ namespace Castor.database.reports
             return $"'{value.ToString()?.Replace("'", "''")}'";
         }
 
+        private static object? ConvertValue(string value, Type targetType)
+        {
+            if (string.IsNullOrEmpty(value))
+                return null;
+
+            try
+            {
+                if (targetType == typeof(string))
+                    return value;
+
+                if (targetType == typeof(DateTime))
+                    return DateTime.Parse(value);
+
+                if (targetType == typeof(int))
+                    return int.Parse(value);
+
+                if (targetType == typeof(bool))
+                    return bool.Parse(value);
+
+                if (targetType == typeof(decimal))
+                    return decimal.Parse(value);
+
+                if (targetType == typeof(double))
+                    return double.Parse(value);
+
+                if (targetType == typeof(float))
+                    return float.Parse(value);
+
+                if (targetType == typeof(Guid))
+                    return Guid.Parse(value);
+
+                return value;
+            }
+            catch
+            {
+                return value; // Возвращаем как строку в случае ошибки
+            }
+        }
+
         private async Task<object> ExecuteScalarAsync(SqliteConnection connection, string query)
         {
             using (var command = new SqliteCommand(query, connection))
@@ -130,6 +249,20 @@ namespace Castor.database.reports
                 command.CommandTimeout = 60;
                 return await command.ExecuteScalarAsync();
             }
+        }
+
+        public void SetParameter(string name, ReportParameter value)
+        {
+            _parameters[name] = value;
+        }
+
+        private string GetFullPath(string relativePath)
+        {
+            if (Path.IsPathRooted(relativePath))
+                return relativePath;
+
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            return Path.Combine(baseDirectory, relativePath);
         }
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Navigation;
 
 namespace Castor.database.reports
@@ -16,34 +17,26 @@ namespace Castor.database.reports
     {
         public bool CanStart => true;
         private readonly ReportCalculator _calculator;
+        public ICommand UpdateParameters { get; set; }
 
         public DisplayReport(object reportClassName = null)
         {
             InitializeComponent();
-
-            // Настраиваем WebBrowser для взаимодействия с JavaScript
-            //Browser.ObjectForScripting = this;
-            //Browser.Navigating += Browser_Navigating;
-
-            //if (reportClassName != null && !string.IsNullOrEmpty(reportClassName.ToString()))
-            //{
-            //    LoadReport(reportClassName.ToString());
-            //}
-            //else
-            //{
-            //    LoadReportList();
-            //}
+            DataContext = this;
+            
             _calculator = new ReportCalculator();
+            UpdateParameters = new RelayCommand(_calculator.SetParameters);
             LoadReport();
         }
 
+        
 
         private async void LoadReport()
         {
             try
             {
-                _calculator.SetParameter("StartDate", DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd"));
-                _calculator.SetParameter("EndDate", DateTime.Now.ToString("yyyy-MM-dd"));
+                //_calculator.SetParameter("StartDate", DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd"));
+                //_calculator.SetParameter("EndDate", DateTime.Now.ToString("yyyy-MM-dd"));
 
                 // Вычисляем данные
                 var (data, period, department) = await _calculator.CalculateAsync(@"assets\PatientMovementReport.html");
@@ -130,5 +123,6 @@ namespace Castor.database.reports
                 SelectReport(reportClassName);
             }
         }
+
     }
 }

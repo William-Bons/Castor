@@ -61,7 +61,7 @@
                             <StackPanel Margin="8">
 
                                 <MenuItem Header="Сменить период отчета"
-                                    Command="{Binding ReselectPeriodCommand}" Style="{StaticResource MenuItemStyle}"/>
+                                    Command="{Binding UpdateParameters}" Style="{StaticResource MenuItemStyle}"/>
 
                                 <MenuItem Header="Сохранить"
                                     Command="{Binding SaveCommand}" Style="{StaticResource MenuItemStyle}"/>

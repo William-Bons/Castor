@@ -74,38 +74,6 @@
             flex-wrap: wrap;
         }
 
-        .sql-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #2d2d2d;
-            border-radius: 10px;
-            color: #f8f8f8;
-        }
-
-            .sql-section h3 {
-                color: #f1c40f;
-                margin-top: 0;
-            }
-
-            .sql-section .query-block {
-                background: #1a1a1a;
-                padding: 10px;
-                border-radius: 5px;
-                margin: 10px 0;
-                overflow-x: auto;
-            }
-
-                .sql-section .query-block pre {
-                    margin: 0;
-                    color: #a8d8a8;
-                    font-size: 13px;
-                }
-
-                .sql-section .query-block .query-title {
-                    color: #f39c12;
-                    font-weight: bold;
-                    margin-bottom: 5px;
-                }
     </style>
 </head>
 <body>
@@ -169,65 +137,66 @@
         </div>
     </div>
 
-    <div class="sql-section">
-        <h3>📝 SQL-запросы</h3>
-
-        <div class="query-block">
-            <div class="query-title">📥 Поступило (Datein):</div>
-            <pre><![CDATA[
-SELECT COUNT(*) 
-FROM Movebooks 
-WHERE Datein >= @{StartDate} 
-  AND Datein <= @{EndDate}
-            ]]></pre>
+    <div class="parameter-section">
+        <div class="parameter-block">
+            <div class="parameter-name">StartDate</div>
+            <div class="parameter-type">DATE</div>
+            <pre>2026-06-30</pre>
         </div>
 
-        <div class="query-block">
-            <div class="query-title">📤 Выбыло (Dateout):</div>
-            <pre><![CDATA[
-SELECT COUNT(*) 
-FROM Movebooks 
-WHERE Dateout >= @{StartDate} 
-  AND Dateout <= @{EndDate}
-  AND Dateout IS NOT NULL
-  AND Closed = 1
-            ]]></pre>
+        <div class="parameter-block">
+            <div class="parameter-name">EndDate</div>
+            <div class="parameter-type">DATE</div>
+            <pre>2026-07-30</pre>
         </div>
 
-        <div class="query-block">
-            <div class="query-title">🔄 Переведено (Outto IS NOT NULL):</div>
-            <pre><![CDATA[
-SELECT COUNT(*) 
-FROM Movebooks 
-WHERE Dateout >= @{StartDate} 
-  AND Dateout <= @{EndDate}
-  AND Dateout IS NOT NULL
-  AND Outto IS NOT NULL
-            ]]></pre>
-        </div>
-
-        <div class="query-block">
-            <div class="query-title">⚰️ Умерло (Deceased = 1):</div>
-            <pre><![CDATA[
-SELECT COUNT(*) 
-FROM Movebooks 
-WHERE Dateout >= @{StartDate} 
-  AND Dateout <= @{EndDate}
-  AND Dateout IS NOT NULL
-  AND Deceased = 1
-            ]]></pre>
-        </div>
-
-        <div class="query-block">
-            <div class="query-title">📋 Активные (не закрыты):</div>
-            <pre><![CDATA[
-SELECT COUNT(*) 
-FROM Movebooks 
-WHERE Closed = 0
-  AND Dateout IS NULL
-            ]]></pre>
+        <div class="parameter-block">
+            <div class="parameter-name">Department</div>
+            <div class="parameter-type">STRING</div>
+            <pre>2710</pre>
         </div>
     </div>
+
+    <!-- Минималистичная структура для парсинга -->
+    <div id="sqlQueries" style="display:none;">
+        <div data-query="admitted">
+            SELECT COUNT(*)
+            FROM Movebooks
+            WHERE Datein >= @{StartDate}
+            AND Datein <= @{EndDate}
+        </div>
+        <div data-query="discharged">
+            SELECT COUNT(*)
+            FROM Movebooks
+            WHERE Dateout >= @{StartDate}
+            AND Dateout <= @{EndDate}
+            AND Dateout IS NOT NULL
+            AND Closed = 1
+        </div>
+        <div data-query="transferred">
+            SELECT COUNT(*)
+            FROM Movebooks
+            WHERE Dateout >= @{StartDate}
+            AND Dateout <= @{EndDate}
+            AND Dateout IS NOT NULL
+            AND Outto IS NOT NULL
+        </div>
+        <div data-query="deceased">
+            SELECT COUNT(*)
+            FROM Movebooks
+            WHERE Dateout >= @{StartDate}
+            AND Dateout <= @{EndDate}
+            AND Dateout IS NOT NULL
+            AND Deceased = 1
+        </div>
+        <div data-query="active">
+            SELECT COUNT(*)
+            FROM Movebooks
+            WHERE Closed = 0
+            AND Dateout IS NULL
+        </div>
+    </div>
+
 
     <script>
         // Универсальная функция обновления отчета
