@@ -16,6 +16,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/assets/Style.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <common:BoolArrayConverter x:Key="BoolArrayConverter"/>
             <local1:MovefilterHeaderItemConverter x:Key="MovefilterHeaderItemConverter"/>
             <common:EnabledBoolConverter x:Key="EnabledBoolConverter"/>
             <common:FssLogoConverter x:Key="FssLogoConverter"/>
@@ -98,7 +99,7 @@
         </Border>
 
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" MouseDoubleClick="PatientsTable_MouseDoubleClick" SelectedItem="{Binding Selected}" x:Name="MovebookDataGrid" Style="{StaticResource CastorDataGrid}" >
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LoadedData, Mode=OneWay}" MouseDoubleClick="PatientsTable_MouseDoubleClick" SelectedItem="{Binding Selected}" x:Name="MovebookDataGrid" Style="{StaticResource CastorDataGrid}" Language="RU" >
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Редактировать запись" Command="{Binding EditCommand}" Style="{StaticResource MenuItemStyle}"/>
@@ -142,8 +143,10 @@
                 <DataGridCheckBoxColumn Header="Возврат" Binding="{Binding Early}" ElementStyle="{StaticResource DataGridCheckBoxStyle}" CellStyle="{StaticResource DataGridCheckBoxCellStyle}"/>
                 <DataGridCheckBoxColumn Header="История сдана" Binding="{Binding Closed}" ElementStyle="{StaticResource DataGridCheckBoxStyle}" CellStyle="{StaticResource DataGridCheckBoxCellStyle}"/>
                 <DataGridCheckBoxColumn Header="Скончался" Binding="{Binding Deceased}" ElementStyle="{StaticResource DataGridCheckBoxStyle}" CellStyle="{StaticResource DataGridCheckBoxCellStyle}"/>
-                
-                
+
+                <DataGridTextColumn Binding="{Binding OrderDss, Converter={StaticResource BoolArrayConverter}}" />
+                <DataGridTextColumn Binding="{Binding DisorDss, Converter={StaticResource BoolArrayConverter}}" />
+
             </DataGrid.Columns>
         </DataGrid>
 

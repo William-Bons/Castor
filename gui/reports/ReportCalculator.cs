@@ -1,6 +1,9 @@
-﻿using HtmlAgilityPack;
+﻿using Castor.database;
+using Castor.gui.reports;
+using HtmlAgilityPack;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -9,7 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace Castor.database.reports
+namespace Castor.gui.reports
 {
     public class ReportParameter
     {
@@ -21,43 +24,106 @@ namespace Castor.database.reports
     public class ReportCalculator
     {
         private readonly Dictionary<string, ReportParameter> _parameters = new Dictionary<string, ReportParameter>();
+        private readonly WebBrowser Browser;
+        private IEnumerable<string>? queries;
+        private string? html;
 
-        public ReportCalculator()
+        public ReportCalculator(WebBrowser browser)
         {
+            Browser = browser;
         }
 
-        public async Task<(string[] data, string period, string department)> CalculateAsync(string htmlPath)
+        /// <summary>
+        /// Асинхронно выполняет расчет отчета на основе HTML шаблона
+        /// </summary>
+        /// <param name="htmlPath">Путь к HTML файлу с шаблоном отчета</param>
+        public async Task CalculateAsync(string htmlPath)
         {
-            var html = File.ReadAllText(GetFullPath(htmlPath));
+            // Читаем содержимое HTML файла по указанному пути
+            // html - поле класса, хранящее HTML содержимое
+            html = File.ReadAllText(htmlPath);
+
+            // Парсим HTML для извлечения параметров отчета
+            // _parameters - словарь, заполняемый в процессе парсинга
             ParseParameters(html);
-            var queries = ExtractQueries(html);
+
+            // Извлекаем SQL запросы из HTML
+            // queries - список строк с SQL запросами
+            queries = ExtractQueries(html);
+
+            // Загружаем браузер с данными и выполняем скрипты
+            await LoadBrowser();
+        }
+
+
+        /// <summary>
+        /// Асинхронно загружает HTML, подключается к БД и вызывает JavaScript функцию
+        /// </summary>
+        private async Task LoadBrowser()
+        {
+            // Список для хранения результатов выполнения SQL запросов
             var results = new List<string>();
 
+            // Список для хранения значений параметров
+            var pvalues = new List<string>();
+
+            // Создаем контекст базы данных Castor
             using CastorContext context = new CastorContext();
+
+            // Создаем подключение к SQLite базе данных
             using (var connection = new SqliteConnection(context.Database.GetConnectionString()))
             {
+                // Открываем подключение к базе данных асинхронно
                 await connection.OpenAsync();
 
-                foreach (var query in queries)
+                // Перебираем все SQL запросы из списка
+                foreach (var query in queries ?? [])
                 {
                     try
                     {
+                        // Заменяем параметры в SQL запросе на их значения
                         var sql = ReplaceParameters(query);
+
+                        // Выполняем SQL запрос и получаем скалярное значение
                         var result = await ExecuteScalarAsync(connection, sql);
-                        results.Add(result?.ToString() ?? "0");
+
+                        // Добавляем результат в список (если null, то Empty)
+                        results.Add(result?.ToString() ?? string.Empty);
                     }
                     catch (Exception ex)
                     {
+                        // В случае ошибки добавляем сообщение об ошибке
                         results.Add($"Ошибка: {ex.Message}");
                     }
                 }
             }
 
-            return (results.ToArray(), DateTime.Now.ToString("MMMM yyyy"), "Все отделения");
+            // Извлекаем значения параметров из словаря _parameters и добавляем в список pvalues
+            pvalues.AddRange(_parameters.Values.Select(p => p.Value.ToString()));
+
+            // Загружаем HTML страницу в WebBrowser
+            Browser.NavigateToString(html);
+
+            // Ожидаем загрузки HTML страницы (500 мс для полной загрузки)
+            await Task.Delay(500);
+
+            // Сериализуем результаты в JSON строку
+            var dataJson = JsonConvert.SerializeObject(results.ToArray());
+
+            // Сериализуем значения параметров в JSON строку
+            var paraJson = JsonConvert.SerializeObject(pvalues.ToArray());
+
+            // Формируем JavaScript код для вызова функции updateReport
+            // Передаем в функцию данные результатов и параметры
+            var script = $"updateReport({dataJson}, {paraJson});";
+
+            // Выполняем JavaScript код в загруженной HTML странице
+            Browser.InvokeScript("eval", script);
         }
 
-        
-
+        /// <summary>
+        /// формирует словарь параметров и заполняет значениями по умолчанию 
+        /// </summary>
         private void ParseParameters(string html)
         {
             // Clean First!
@@ -121,7 +187,10 @@ namespace Castor.database.reports
             }
         }
 
-        public void SetParameters()
+        /// <summary>
+        /// Обновляет значения параметров через вызов окна ParameterWindow
+        /// </summary>
+        public async Task SetParameters()
         {
             var window = new ParameterWindow(_parameters);
 
@@ -133,10 +202,11 @@ namespace Castor.database.reports
                 // Применяем параметры
                 foreach (var kvp in updatedValues)
                 {
-                    //SetParameter(kvp.Key, kvp.Value?.ToString());
+                    _parameters[kvp.Key].Value = kvp.Value;
                 }
 
                 // Загружаем отчет
+                _ = LoadBrowser();
             }
         }
 
@@ -181,7 +251,7 @@ namespace Castor.database.reports
             return query;
         }
 
-        private string FormatValue(object value)
+        private string FormatValue(object? value)
         {
             if (value == null) return "NULL";
 
@@ -246,23 +316,10 @@ namespace Castor.database.reports
         {
             using (var command = new SqliteCommand(query, connection))
             {
-                command.CommandTimeout = 60;
+                command.CommandTimeout = 5;
                 return await command.ExecuteScalarAsync();
             }
         }
 
-        public void SetParameter(string name, ReportParameter value)
-        {
-            _parameters[name] = value;
-        }
-
-        private string GetFullPath(string relativePath)
-        {
-            if (Path.IsPathRooted(relativePath))
-                return relativePath;
-
-            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            return Path.Combine(baseDirectory, relativePath);
-        }
     }
 }

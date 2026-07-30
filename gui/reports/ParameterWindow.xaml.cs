@@ -1,11 +1,11 @@
-﻿using Castor.database.reports;
+﻿using Castor.gui.reports;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Castor.database.reports
+namespace Castor.gui.reports
 {
     public partial class ParameterWindow : Window
     {

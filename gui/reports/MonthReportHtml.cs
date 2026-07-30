@@ -1,11 +1,12 @@
-﻿using Castor.database.tables;
+﻿using Castor.database;
+using Castor.database.tables;
 using Castor.gui.movebook;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 
-namespace Castor.database.reports
+namespace Castor.gui.reports
 {
     public class MonthReportHtml : ICastorHtmlReport, INotifyPropertyChanged
     {

@@ -116,10 +116,10 @@
     <None Update="assets\MonthReport.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="assets\PatientMovementReport.html">
+    <None Update="rep\PatientMovementReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\ReportsList.html">
+    <None Update="rep\ReportsList.html">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ReportsList.cs</LastGenOutput>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

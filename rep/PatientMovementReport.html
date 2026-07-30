@@ -1,0 +1,351 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчет по движению пациентов</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <style>
+        /* Стили для отчета */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+            .header h1 {
+                margin: 0 0 10px 0;
+            }
+
+            .header .info {
+                display: flex;
+                gap: 30px;
+                flex-wrap: wrap;
+                font-size: 14px;
+                opacity: 0.9;
+            }
+
+                .header .info label {
+                    font-weight: bold;
+                }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .footer {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        /* Стили для блока с параметрами */
+        .parameter-section {
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .parameter-block {
+            display: inline-block;
+            margin-right: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #3498db;
+        }
+
+        .parameter-name {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 13px;
+        }
+
+        .parameter-type {
+            font-size: 11px;
+            color: #7f8c8d;
+            margin: 2px 0;
+        }
+
+        .parameter-block pre {
+            margin: 5px 0 0 0;
+            font-size: 13px;
+            color: #2c3e50;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #ecf0f1;
+        }
+        .info {
+            display: flex;
+            gap: 30px; /* Расстояние между элементами */
+            flex-wrap: wrap;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка отчета -->
+    <div class="header">
+        <h1>📊 Отчет по движению пациентов</h1>
+        <p style="margin: 0 0 15px 0; opacity: 0.9;">Статистика за выбранный период</p>
+        <div class="info">
+            <div>
+                <label>📅 Период: </label>
+                <!--
+                    Элемент для отображения периода
+                    Заполняется из параметров[0] и parameters[1]
+                    Формат: "01.01.2024 - 31.12.2024"
+                -->
+                <span id="periodDisplay">Загрузка...</span>
+            </div>
+            <div>
+                <label>🏥 Отделение: </label>
+                <!--
+                    Элемент для отображения отделения
+                    Заполняется из parameters[2]
+                -->
+                <span id="departmentDisplay">Все отделения</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Таблица с показателями -->
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Показатель</th>
+                    <th>Значение</th>
+                </tr>
+            </thead>
+            <tbody id="reportBody">
+                <tr>
+                    <td>📥 Поступило</td>
+                    <!-- data[0] - количество поступивших -->
+                    <td><strong id="admitted">--</strong></td>
+                </tr>
+                <tr>
+                    <td>📤 Выбыло</td>
+                    <!-- data[1] - количество выбывших -->
+                    <td><strong id="discharged">--</strong></td>
+                </tr>
+                <tr>
+                    <td>🔄 Сдано</td>
+                    <!-- data[2] - количество закрытых случаев -->
+                    <td><strong id="closed">--</strong></td>
+                </tr>
+                <tr>
+                    <td>⚰️ Умерло</td>
+                    <!-- data[3] - количество умерших -->
+                    <td><strong id="deceased">--</strong></td>
+                </tr>
+                <tr>
+                    <td>📋 В отделении</td>
+                    <!-- data[4] - количество активных пациентов -->
+                    <td><strong id="active">--</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Нижний колонтитул -->
+    <div class="footer">
+        <div>
+            <strong>👥 Всего пациентов:</strong>
+            <!-- Сумма поступивших и выбывших -->
+            <span id="totalPatients">--</span>
+        </div>
+        <div>
+            <strong>🔄 Обновлено:</strong>
+            <!-- Время последнего обновления -->
+            <span id="updateTime">--</span>
+        </div>
+    </div>
+
+    <!--
+        Блок с параметрами отчета для отладки
+        Отображает текущие значения параметров
+    -->
+    <div class="parameter-section" style="display:none">
+        <h4 style="margin: 0 0 10px 0; color: #2c3e50;">📌 Параметры отчета</h4>
+        <div class="parameter-block">
+            <div class="parameter-name">StartDate</div>
+            <div class="parameter-type">DATE</div>
+            <pre id="paramStartDate">2026-06-30</pre>
+        </div>
+
+        <div class="parameter-block">
+            <div class="parameter-name">EndDate</div>
+            <div class="parameter-type">DATE</div>
+            <pre id="paramEndDate">2026-07-30</pre>
+        </div>
+
+        <div class="parameter-block">
+            <div class="parameter-name">Department</div>
+            <div class="parameter-type">STRING</div>
+            <pre id="paramDepartment">2710</pre>
+        </div>
+    </div>
+
+    <!--
+        Скрытый блок с SQL запросами
+        Используется для парсинга запросов в C#
+        Каждый запрос имеет атрибут data-query с идентификатором
+    -->
+    <div id="sqlQueries" style="display:none;">
+        <!-- Запрос для получения количества поступивших -->
+        <div data-query="admitted">
+            SELECT COUNT(*)
+            FROM Movebooks
+            WHERE Datein >= @{StartDate}
+            AND Datein <= @{EndDate}
+        </div>
+        <!-- Запрос для получения количества выбывших -->
+        <div data-query="discharged">
+            SELECT COUNT(*)
+            FROM Movebooks
+            WHERE Dateout >= @{StartDate}
+            AND Dateout <= @{EndDate}
+            AND Dateout IS NOT NULL
+        </div>
+        <!-- Запрос для получения количества закрытых случаев -->
+        <div data-query="closed">
+            SELECT COUNT(*)
+            FROM Movebooks
+            WHERE Dateout >= @{StartDate}
+            AND Dateout <= @{EndDate}
+            AND Dateout IS NOT NULL
+            AND Closed = 1
+        </div>
+        <!-- Запрос для получения количества умерших -->
+        <div data-query="deceased">
+            SELECT COUNT(*)
+            FROM Movebooks
+            WHERE Dateout >= @{StartDate}
+            AND Dateout <= @{EndDate}
+            AND Dateout IS NOT NULL
+            AND Deceased = 1
+        </div>
+        <!-- Запрос для получения количества активных пациентов -->
+        <div data-query="active">
+            SELECT COUNT(*)
+            FROM Movebooks
+            WHERE Closed = 0
+            AND Dateout IS NULL
+            AND Datein IS NOT NULL
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        /**
+         * Основная функция обновления отчета
+         * Вызывается из C# после выполнения SQL запросов
+         *
+         * @param {Array} data - Массив с результатами запросов в порядке:
+         *        data[0] - Количество поступивших (admitted)
+         *        data[1] - Количество выбывших (discharged)
+         *        data[2] - Количество закрытых (closed)
+         *        data[3] - Количество умерших (deceased)
+         *        data[4] - Количество активных (active)
+         *
+         * @param {Array} parameters - Массив с параметрами:
+         *        parameters[0] - Дата начала (StartDate)
+         *        parameters[1] - Дата окончания (EndDate)
+         *        parameters[2] - Отделение (Department)
+         *
+         * @example
+         * // Вызов из C#:
+         * var script = $"updateReport({dataJson}, {paraJson});";
+         * Browser.InvokeScript("eval", script);
+         *
+         * // Пример данных:
+         * // data = ["150", "120", "100", "5", "30"]
+         * // parameters = ["2024-01-01", "2024-12-31", "2710"]
+         */
+        function updateReport(data, parameters) {
+            try {
+                // 1. Обновляем период
+                // Формируем строку периода из дат начала и окончания
+                var periodDisplay = parameters[0] + ' - ' + parameters[1];
+                document.getElementById('periodDisplay').innerText = periodDisplay || 'Неизвестно';
+
+                // 2. Обновляем отделение
+                var departmentDisplay = document.getElementById('departmentDisplay');
+                if (departmentDisplay) {
+                    departmentDisplay.innerText = parameters[2] || 'Все отделения';
+                }
+
+                // 3. Обновляем значения показателей
+                // Проверяем, что данные получены (минимум 5 значений)
+                if (data && data.length >= 5) {
+                    // Обновляем каждый показатель
+                    document.getElementById('admitted').innerText = data[0] || '0';
+                    document.getElementById('discharged').innerText = data[1] || '0';
+                    document.getElementById('closed').innerText = data[2] || '0';
+                    document.getElementById('deceased').innerText = data[3] || '0';
+                    document.getElementById('active').innerText = data[4] || '0';
+
+                    // 4. Рассчитываем общее количество пациентов
+                    // Суммируем поступивших и выбывших
+                    var total = (parseInt(data[0] || 0) + parseInt(data[1] || 0));
+                    document.getElementById('totalPatients').innerText = total;
+
+                    // 5. Обновляем параметры в блоке отладки
+                    document.getElementById('paramStartDate').innerText = parameters[0] || '-';
+                    document.getElementById('paramEndDate').innerText = parameters[1] || '-';
+                    document.getElementById('paramDepartment').innerText = parameters[2] || '-';
+                }
+
+                // 6. Обновляем время последнего обновления
+                document.getElementById('updateTime').innerText = new Date().toLocaleString('ru-RU');
+
+            } catch (e) {
+                // Игнорируем ошибки для стабильной работы
+                // console.error('Ошибка обновления отчета:', e);
+            }
+        }
+    </script>
+</body>
+</html>

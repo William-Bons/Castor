@@ -1,5 +1,5 @@
 ﻿using Castor;
-using Castor.database.reports;
+using Castor.gui.reports;
 using Castor.gui.dialogs;
 using Castor.gui.force;
 using Castor.gui.movebook;

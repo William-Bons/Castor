@@ -20,7 +20,7 @@
 		<MenuItem Header="Выбор темы" ClassName="Castor.gui.dialogs.ThemeSelectorDialog"/>
 	</MenuItem>
 	<MenuItem Header="Отчеты" >
-		<MenuItem Header="Движение за месяц"  ClassName="Castor.database.reports.DisplayReport" Parameter="Castor.database.reports.MonthReportHtml"/>
+		<MenuItem Header="Движение за месяц"  ClassName="Castor.gui.reports.DisplayReport" Parameter="Castor.gui.reports.MonthReportHtml"/>
 	</MenuItem>
 	<MenuItem Header="Пациент" >
 		<MenuItem Header="Поиск"  ClassName="Castor.gui.find.PatientSearchWindow" />

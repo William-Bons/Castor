@@ -108,7 +108,7 @@
 
                 <!-- 3. Отчеты -->
                 <Border Style="{StaticResource ModuleCardStyle}"
-                        MouseLeftButtonDown="PatientsMovement_Click" Tag="Castor.database.reports.DisplayReport">
+                        MouseLeftButtonDown="PatientsMovement_Click" Tag="Castor.gui.reports.DisplayReport">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image Source="/img/fol-0.jpg" 
                                Style="{StaticResource ModuleIconStyle}"/>

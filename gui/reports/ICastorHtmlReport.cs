@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Castor.database.reports
+namespace Castor.gui.reports
 {
     public interface ICastorHtmlReport
     {

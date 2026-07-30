@@ -47,6 +47,8 @@ public class Movebook
     public virtual string? Section => Forceds?.Count>0 ? 
         Forceds.Where(f => f.Section!=null).Select(f => f.Section).FirstOrDefault() : null;
 
+    public virtual bool[] OrderDss => calc0(Dsin ?? string.Empty);
+    public virtual bool[] DisorDss => calc0(Dsout ?? string.Empty);
 
     /// <summary>
     /// Create array checking diagnisis in input line; 
