@@ -85,10 +85,25 @@ namespace Castor.gui.reports
                         var sql = ReplaceParameters(query);
 
                         // Выполняем SQL запрос и получаем скалярное значение
-                        var result = await ExecuteScalarAsync(connection, sql);
+                        //var result = await ExecuteScalarAsync(connection, sql);
+                        using (var command = new SqliteCommand(sql, connection))
+                        {
+                            using (var reader = await command.ExecuteReaderAsync())
+                            {
+                                if (await reader.ReadAsync())
+                                {
+                                    // Читаем все 86 столбцов
 
+                                    for (int i = 0; i < reader.FieldCount/2; i++)
+                                    {
+                                        results.Add(reader.IsDBNull(i) ? string.Empty : reader.GetString(i));
+                                    }
+
+                                }
+                            }
+                        }
                         // Добавляем результат в список (если null, то Empty)
-                        results.Add(result?.ToString() ?? string.Empty);
+                        //results.Add(result?.ToString() ?? string.Empty);
                     }
                     catch (Exception ex)
                     {

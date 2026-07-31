@@ -196,198 +196,239 @@
         </div>
     </div>
 
-    <!--
-        Скрытый блок с SQL запросами
-        Используется для парсинга запросов в C#
-        Каждый запрос имеет атрибут data-query с идентификатором
-    -->
-    <div id="sqlQueries" style="display:none;">
-        <!-- Запрос для получения количества поступивших -->
+
+    <!--<div id="sqlQueries" style="display:none;">
         <div data-query="val0-7">
-            -- Все показатели в одном запросе
+            -- ===== ОСНОВНОЙ ЗАПРОС ДЛЯ SQLITE =====
+            WITH base_data AS (
             SELECT
-            -- 1. Количество поступивших в отделение всего
-            COUNT(*) AS total_admitted,
+            -- Категория поступления
+            CASE
+            WHEN Datein >= '2026-01-01' AND Datein <= '2026-07-31' THEN 'admitted'
+            WHEN Datein >= '2026-01-01' AND Datein <= '2026-07-31' AND First = 1 THEN 'first_admitted'
+            WHEN Datein >= '2026-01-01' AND Datein <= '2026-07-31' AND Second = 1 THEN 'second_admitted'
+            END AS admission_category,
 
-            -- 1а. Психозы + слабоумие старческого возраста (F21, F22, F23, F25, F30, F31, F32, F33, F00, F01)
-            COUNT(CASE WHEN (Dsin LIKE 'F21%' OR Dsin LIKE 'F22%' OR Dsin LIKE 'F23%' OR Dsin LIKE 'F25%'
+            -- Категория выписки
+            CASE
+            WHEN Dateout >= '2026-01-01' AND Dateout <= '2026-07-31' AND Dateout IS NOT NULL THEN 'discharged'
+            END AS discharge_category,
+
+            -- Возраст на момент поступления
+            CAST(strftime('%Y', Datein) AS INTEGER) - CAST(strftime('%Y', Birthdate) AS INTEGER) -
+            CASE WHEN strftime('%m-%d', Datein) < strftime('%m-%d', Birthdate) THEN 1 ELSE 0 END AS AgeIn,
+
+            -- Возраст на момент выписки
+            CAST(strftime('%Y', Dateout) AS INTEGER) - CAST(strftime('%Y', Birthdate) AS INTEGER) -
+            CASE WHEN strftime('%m-%d', Dateout) < strftime('%m-%d', Birthdate) THEN 1 ELSE 0 END AS AgeOut,
+
+            -- Дополнительные поля
+            Deceased,
+            Outto,
+            Datein,
+            Dateout,
+            Dsin,
+            Dsout,
+            First,
+            Second,
+            Birthdate,
+            Id as Movebookid
+            FROM Movebooks
+            WHERE
+            (Datein >= '2026-01-01' AND Datein <= '2026-07-31')
+            OR (Dateout >= '2026-01-01' AND Dateout <= '2026-07-31' AND Dateout IS NOT NULL)
+            ),
+
+            forced_data AS (
+            SELECT
+            Movebookid,
+            1 AS is_forced
+            FROM Forced
+            ),
+
+            diagnosis_categories AS (
+            SELECT
+            b.*,
+            -- Категории для Dsin (поступление)
+            CASE
+            WHEN Dsin LIKE 'F21%' OR Dsin LIKE 'F22%' OR Dsin LIKE 'F23%' OR Dsin LIKE 'F25%'
             OR Dsin LIKE 'F30%' OR Dsin LIKE 'F31%' OR Dsin LIKE 'F32%' OR Dsin LIKE 'F33%'
-            OR Dsin LIKE 'F00%' OR Dsin LIKE 'F01%')
-            THEN 1 END) AS psychosis,
-
-            -- 1б. Шизофрения (F20)
-            COUNT(CASE WHEN Dsin LIKE 'F20%' THEN 1 END) AS schizophrenia,
-
-            -- 1в. Умственная отсталость (F70, F71, F72, F73)
-            COUNT(CASE WHEN (Dsin LIKE 'F70%' OR Dsin LIKE 'F71%' OR Dsin LIKE 'F72%' OR Dsin LIKE 'F73%')
-            THEN 1 END) AS mental_retardation,
-
-            -- 1г. Непсихотические расстройства (F02, F03, F04, F05, F06, F07, F50, F60, F61, F62, F90, F91, F40, F41, F42, F43, F45, F48, F65, F88, F84)
-            COUNT(CASE WHEN (Dsin LIKE 'F02%' OR Dsin LIKE 'F03%' OR Dsin LIKE 'F04%' OR Dsin LIKE 'F05%'
+            OR Dsin LIKE 'F00%' OR Dsin LIKE 'F01%' THEN 'psychosis'
+            WHEN Dsin LIKE 'F20%' THEN 'schizophrenia'
+            WHEN Dsin LIKE 'F70%' OR Dsin LIKE 'F71%' OR Dsin LIKE 'F72%' OR Dsin LIKE 'F73%' THEN 'mental_retardation'
+            WHEN Dsin LIKE 'F02%' OR Dsin LIKE 'F03%' OR Dsin LIKE 'F04%' OR Dsin LIKE 'F05%'
             OR Dsin LIKE 'F06%' OR Dsin LIKE 'F07%' OR Dsin LIKE 'F50%' OR Dsin LIKE 'F60%'
             OR Dsin LIKE 'F61%' OR Dsin LIKE 'F62%' OR Dsin LIKE 'F90%' OR Dsin LIKE 'F91%'
             OR Dsin LIKE 'F40%' OR Dsin LIKE 'F41%' OR Dsin LIKE 'F42%' OR Dsin LIKE 'F43%'
             OR Dsin LIKE 'F45%' OR Dsin LIKE 'F48%' OR Dsin LIKE 'F65%' OR Dsin LIKE 'F88%'
-            OR Dsin LIKE 'F84%')
-            THEN 1 END) AS non_psychotic,
-
-            -- 1д. ПАВ (F1*)
-            COUNT(CASE WHEN Dsin LIKE 'F1%' THEN 1 END) AS substance_use,
-
-            -- 1д1. Хронический алкоголизм (F10)
-            COUNT(CASE WHEN Dsin LIKE 'F10%' THEN 1 END) AS alcoholism,
-
-            -- 1д2. Наркомании, токсикомании (F11-F19)
-            COUNT(CASE WHEN (Dsin LIKE 'F11%' OR Dsin LIKE 'F12%' OR Dsin LIKE 'F13%'
+            OR Dsin LIKE 'F84%' THEN 'non_psychotic'
+            WHEN Dsin LIKE 'F1%' THEN 'substance_use'
+            WHEN Dsin LIKE 'F10%' THEN 'alcoholism'
+            WHEN Dsin LIKE 'F11%' OR Dsin LIKE 'F12%' OR Dsin LIKE 'F13%'
             OR Dsin LIKE 'F14%' OR Dsin LIKE 'F15%' OR Dsin LIKE 'F16%'
-            OR Dsin LIKE 'F17%' OR Dsin LIKE 'F18%' OR Dsin LIKE 'F19%')
-            THEN 1 END) AS drug_addiction
+            OR Dsin LIKE 'F17%' OR Dsin LIKE 'F18%' OR Dsin LIKE 'F19%' THEN 'drug_addiction'
+            END AS dsin_category,
 
-            FROM Movebooks
-            WHERE Datein >= @{StartDate}
-            AND Datein <= @{EndDate};
-        </div>
-
-        <!-- Запрос для получения количества поступивших впервые -->
-        <div data-query="val8-15">
-            -- Все показатели в одном запросе
-            SELECT
-            -- 1. Количество поступивших в отделение всего
-            COUNT(*) AS total_admitted,
-
-            -- 1а. Психозы + слабоумие старческого возраста (F21, F22, F23, F25, F30, F31, F32, F33, F00, F01)
-            COUNT(CASE WHEN (Dsin LIKE 'F21%' OR Dsin LIKE 'F22%' OR Dsin LIKE 'F23%' OR Dsin LIKE 'F25%'
-            OR Dsin LIKE 'F30%' OR Dsin LIKE 'F31%' OR Dsin LIKE 'F32%' OR Dsin LIKE 'F33%'
-            OR Dsin LIKE 'F00%' OR Dsin LIKE 'F01%')
-            THEN 1 END) AS psychosis,
-
-            -- 1б. Шизофрения (F20)
-            COUNT(CASE WHEN Dsin LIKE 'F20%' THEN 1 END) AS schizophrenia,
-
-            -- 1в. Умственная отсталость (F70, F71, F72, F73)
-            COUNT(CASE WHEN (Dsin LIKE 'F70%' OR Dsin LIKE 'F71%' OR Dsin LIKE 'F72%' OR Dsin LIKE 'F73%')
-            THEN 1 END) AS mental_retardation,
-
-            -- 1г. Непсихотические расстройства (F02, F03, F04, F05, F06, F07, F50, F60, F61, F62, F90, F91, F40, F41, F42, F43, F45, F48, F65, F88, F84)
-            COUNT(CASE WHEN (Dsin LIKE 'F02%' OR Dsin LIKE 'F03%' OR Dsin LIKE 'F04%' OR Dsin LIKE 'F05%'
-            OR Dsin LIKE 'F06%' OR Dsin LIKE 'F07%' OR Dsin LIKE 'F50%' OR Dsin LIKE 'F60%'
-            OR Dsin LIKE 'F61%' OR Dsin LIKE 'F62%' OR Dsin LIKE 'F90%' OR Dsin LIKE 'F91%'
-            OR Dsin LIKE 'F40%' OR Dsin LIKE 'F41%' OR Dsin LIKE 'F42%' OR Dsin LIKE 'F43%'
-            OR Dsin LIKE 'F45%' OR Dsin LIKE 'F48%' OR Dsin LIKE 'F65%' OR Dsin LIKE 'F88%'
-            OR Dsin LIKE 'F84%')
-            THEN 1 END) AS non_psychotic,
-
-            -- 1д. ПАВ (F1*)
-            COUNT(CASE WHEN Dsin LIKE 'F1%' THEN 1 END) AS substance_use,
-
-            -- 1д1. Хронический алкоголизм (F10)
-            COUNT(CASE WHEN Dsin LIKE 'F10%' THEN 1 END) AS alcoholism,
-
-            -- 1д2. Наркомании, токсикомании (F11-F19)
-            COUNT(CASE WHEN (Dsin LIKE 'F11%' OR Dsin LIKE 'F12%' OR Dsin LIKE 'F13%'
-            OR Dsin LIKE 'F14%' OR Dsin LIKE 'F15%' OR Dsin LIKE 'F16%'
-            OR Dsin LIKE 'F17%' OR Dsin LIKE 'F18%' OR Dsin LIKE 'F19%')
-            THEN 1 END) AS drug_addiction
-
-            FROM Movebooks
-            WHERE Datein >= @{StartDate}
-            AND Datein <= @{EndDate}
-            AND First = 1
-        </div>
-
-        <!-- Запрос для получения количества поступивших second-->
-        <div data-query="val16-23">
-            -- Все показатели в одном запросе
-            SELECT
-            -- 1. Количество поступивших в отделение всего
-            COUNT(*) AS total_admitted,
-
-            -- 1а. Психозы + слабоумие старческого возраста (F21, F22, F23, F25, F30, F31, F32, F33, F00, F01)
-            COUNT(CASE WHEN (Dsin LIKE 'F21%' OR Dsin LIKE 'F22%' OR Dsin LIKE 'F23%' OR Dsin LIKE 'F25%'
-            OR Dsin LIKE 'F30%' OR Dsin LIKE 'F31%' OR Dsin LIKE 'F32%' OR Dsin LIKE 'F33%'
-            OR Dsin LIKE 'F00%' OR Dsin LIKE 'F01%')
-            THEN 1 END) AS psychosis,
-
-            -- 1б. Шизофрения (F20)
-            COUNT(CASE WHEN Dsin LIKE 'F20%' THEN 1 END) AS schizophrenia,
-
-            -- 1в. Умственная отсталость (F70, F71, F72, F73)
-            COUNT(CASE WHEN (Dsin LIKE 'F70%' OR Dsin LIKE 'F71%' OR Dsin LIKE 'F72%' OR Dsin LIKE 'F73%')
-            THEN 1 END) AS mental_retardation,
-
-            -- 1г. Непсихотические расстройства (F02, F03, F04, F05, F06, F07, F50, F60, F61, F62, F90, F91, F40, F41, F42, F43, F45, F48, F65, F88, F84)
-            COUNT(CASE WHEN (Dsin LIKE 'F02%' OR Dsin LIKE 'F03%' OR Dsin LIKE 'F04%' OR Dsin LIKE 'F05%'
-            OR Dsin LIKE 'F06%' OR Dsin LIKE 'F07%' OR Dsin LIKE 'F50%' OR Dsin LIKE 'F60%'
-            OR Dsin LIKE 'F61%' OR Dsin LIKE 'F62%' OR Dsin LIKE 'F90%' OR Dsin LIKE 'F91%'
-            OR Dsin LIKE 'F40%' OR Dsin LIKE 'F41%' OR Dsin LIKE 'F42%' OR Dsin LIKE 'F43%'
-            OR Dsin LIKE 'F45%' OR Dsin LIKE 'F48%' OR Dsin LIKE 'F65%' OR Dsin LIKE 'F88%'
-            OR Dsin LIKE 'F84%')
-            THEN 1 END) AS non_psychotic,
-
-            -- 1д. ПАВ (F1*)
-            COUNT(CASE WHEN Dsin LIKE 'F1%' THEN 1 END) AS substance_use,
-
-            -- 1д1. Хронический алкоголизм (F10)
-            COUNT(CASE WHEN Dsin LIKE 'F10%' THEN 1 END) AS alcoholism,
-
-            -- 1д2. Наркомании, токсикомании (F11-F19)
-            COUNT(CASE WHEN (Dsin LIKE 'F11%' OR Dsin LIKE 'F12%' OR Dsin LIKE 'F13%'
-            OR Dsin LIKE 'F14%' OR Dsin LIKE 'F15%' OR Dsin LIKE 'F16%'
-            OR Dsin LIKE 'F17%' OR Dsin LIKE 'F18%' OR Dsin LIKE 'F19%')
-            THEN 1 END) AS drug_addiction
-
-            FROM Movebooks
-            WHERE Datein >= @{StartDate}
-            AND Datein <= @{EndDate}
-            AND Second = 1;
-        </div>
-
-        <div data-query="val24-30">
-            -- Все показатели для ВЫПИСАННЫХ в одном запросе
-            SELECT
-            -- 4. Количество выписанных больных всего
-            COUNT(*) AS total_discharged,
-
-            -- 4а. Психозы + слабоумие старческого возраста (F21, F22, F23, F25, F30, F31, F32, F33, F00, F01)
-            COUNT(CASE WHEN (Dsout LIKE 'F21%' OR Dsout LIKE 'F22%' OR Dsout LIKE 'F23%' OR Dsout LIKE 'F25%'
+            -- Категории для Dsout (выписка)
+            CASE
+            WHEN Dsout LIKE 'F21%' OR Dsout LIKE 'F22%' OR Dsout LIKE 'F23%' OR Dsout LIKE 'F25%'
             OR Dsout LIKE 'F30%' OR Dsout LIKE 'F31%' OR Dsout LIKE 'F32%' OR Dsout LIKE 'F33%'
-            OR Dsout LIKE 'F00%' OR Dsout LIKE 'F01%')
-            THEN 1 END) AS discharged_psychosis,
-
-            -- 4б. Шизофрения (F20)
-            COUNT(CASE WHEN Dsout LIKE 'F20%' THEN 1 END) AS discharged_schizophrenia,
-
-            -- 4в. Умственная отсталость (F70, F71, F72, F73)
-            COUNT(CASE WHEN (Dsout LIKE 'F70%' OR Dsout LIKE 'F71%' OR Dsout LIKE 'F72%' OR Dsout LIKE 'F73%')
-            THEN 1 END) AS discharged_mental_retardation,
-
-            -- 4г. Непсихотические расстройства (F02, F03, F04, F05, F06, F07, F50, F60, F61, F62, F90, F91, F40, F41, F42, F43, F45, F48, F65, F88, F84)
-            COUNT(CASE WHEN (Dsout LIKE 'F02%' OR Dsout LIKE 'F03%' OR Dsout LIKE 'F04%' OR Dsout LIKE 'F05%'
+            OR Dsout LIKE 'F00%' OR Dsout LIKE 'F01%' THEN 'psychosis'
+            WHEN Dsout LIKE 'F20%' THEN 'schizophrenia'
+            WHEN Dsout LIKE 'F70%' OR Dsout LIKE 'F71%' OR Dsout LIKE 'F72%' OR Dsout LIKE 'F73%' THEN 'mental_retardation'
+            WHEN Dsout LIKE 'F02%' OR Dsout LIKE 'F03%' OR Dsout LIKE 'F04%' OR Dsout LIKE 'F05%'
             OR Dsout LIKE 'F06%' OR Dsout LIKE 'F07%' OR Dsout LIKE 'F50%' OR Dsout LIKE 'F60%'
             OR Dsout LIKE 'F61%' OR Dsout LIKE 'F62%' OR Dsout LIKE 'F90%' OR Dsout LIKE 'F91%'
             OR Dsout LIKE 'F40%' OR Dsout LIKE 'F41%' OR Dsout LIKE 'F42%' OR Dsout LIKE 'F43%'
             OR Dsout LIKE 'F45%' OR Dsout LIKE 'F48%' OR Dsout LIKE 'F65%' OR Dsout LIKE 'F88%'
-            OR Dsout LIKE 'F84%')
-            THEN 1 END) AS discharged_non_psychotic,
-
-            -- 4д. ПАВ (F1*)
-            COUNT(CASE WHEN Dsout LIKE 'F1%' THEN 1 END) AS discharged_substance_use,
-
-            -- 4д1. Хронический алкоголизм (F10)
-            COUNT(CASE WHEN Dsout LIKE 'F10%' THEN 1 END) AS discharged_alcoholism,
-
-            -- 4д2. Наркомании, токсикомании (F11-F19)
-            COUNT(CASE WHEN (Dsout LIKE 'F11%' OR Dsout LIKE 'F12%' OR Dsout LIKE 'F13%'
+            OR Dsout LIKE 'F84%' THEN 'non_psychotic'
+            WHEN Dsout LIKE 'F1%' THEN 'substance_use'
+            WHEN Dsout LIKE 'F10%' THEN 'alcoholism'
+            WHEN Dsout LIKE 'F11%' OR Dsout LIKE 'F12%' OR Dsout LIKE 'F13%'
             OR Dsout LIKE 'F14%' OR Dsout LIKE 'F15%' OR Dsout LIKE 'F16%'
-            OR Dsout LIKE 'F17%' OR Dsout LIKE 'F18%' OR Dsout LIKE 'F19%')
-            THEN 1 END) AS discharged_drug_addiction
+            OR Dsout LIKE 'F17%' OR Dsout LIKE 'F18%' OR Dsout LIKE 'F19%' THEN 'drug_addiction'
+            END AS dsout_category,
 
-            FROM Movebooks
-            WHERE Dateout >= @{StartDate}
-            AND Dateout <= @{EndDate}
-            AND Dateout IS NOT NULL;
+            -- Хронизированные (Datein более года назад от текущей даты)
+            CASE WHEN julianday('2026-07-31') - julianday(Datein) > 365 THEN 1 ELSE 0 END AS is_chronic,
+
+            -- На принудительном лечении
+            CASE WHEN f.Movebookid IS NOT NULL THEN 1 ELSE 0 END AS is_forced,
+
+            -- На принудительном лечении более года
+            CASE
+            WHEN f.Movebookid IS NOT NULL AND julianday('2026-07-31') - julianday(Datein) > 365 THEN 1
+            ELSE 0
+            END AS is_forced_over_year,
+
+            -- Койко-дни
+            CASE
+            WHEN Dateout IS NOT NULL THEN julianday(Dateout) - julianday(Datein)
+            ELSE julianday('2026-07-31') - julianday(Datein)
+            END AS bed_days
+
+            FROM base_data b
+            LEFT JOIN forced_data f ON b.Movebookid = f.Movebookid
+            )
+
+            SELECT
+            -- =====================================================
+            -- ВЗРОСЛЫЕ (возраст >= 18 лет) - столбцы 01-43
+            -- =====================================================
+
+            -- ---- 1. ВСЕ ПОСТУПИВШИЕ ВЗРОСЛЫЕ (столбцы 01-08) ----
+            /*01*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn >= 18 THEN Datein || Dsin END) AS adult_total_admitted,
+            /*02*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn >= 18 AND dsin_category = 'psychosis' THEN Datein || Dsin END) AS adult_psychosis,
+            /*03*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn >= 18 AND dsin_category = 'schizophrenia' THEN Datein || Dsin END) AS adult_schizophrenia,
+            /*04*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn >= 18 AND dsin_category = 'mental_retardation' THEN Datein || Dsin END) AS adult_mental_retardation,
+            /*05*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn >= 18 AND dsin_category = 'non_psychotic' THEN Datein || Dsin END) AS adult_non_psychotic,
+            /*06*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn >= 18 AND dsin_category = 'substance_use' THEN Datein || Dsin END) AS adult_substance_use,
+            /*07*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn >= 18 AND dsin_category = 'alcoholism' THEN Datein || Dsin END) AS adult_alcoholism,
+            /*08*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn >= 18 AND dsin_category = 'drug_addiction' THEN Datein || Dsin END) AS adult_drug_addiction,
+
+            -- ---- 2. ПОСТУПИВШИЕ ВПЕРВЫЕ ВЗРОСЛЫЕ (столбцы 09-16) ----
+            /*09*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn >= 18 THEN Datein || Dsin END) AS adult_total_first_admitted,
+            /*10*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn >= 18 AND dsin_category = 'psychosis' THEN Datein || Dsin END) AS adult_first_psychosis,
+            /*11*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn >= 18 AND dsin_category = 'schizophrenia' THEN Datein || Dsin END) AS adult_first_schizophrenia,
+            /*12*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn >= 18 AND dsin_category = 'mental_retardation' THEN Datein || Dsin END) AS adult_first_mental_retardation,
+            /*13*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn >= 18 AND dsin_category = 'non_psychotic' THEN Datein || Dsin END) AS adult_first_non_psychotic,
+            /*14*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn >= 18 AND dsin_category = 'substance_use' THEN Datein || Dsin END) AS adult_first_substance_use,
+            /*15*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn >= 18 AND dsin_category = 'alcoholism' THEN Datein || Dsin END) AS adult_first_alcoholism,
+            /*16*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn >= 18 AND dsin_category = 'drug_addiction' THEN Datein || Dsin END) AS adult_first_drug_addiction,
+
+            -- ---- 3. ПОСТУПИВШИЕ ПОВТОРНО ВЗРОСЛЫЕ (столбцы 17-24) ----
+            /*17*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn >= 18 THEN Datein || Dsin END) AS adult_total_second_admitted,
+            /*18*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn >= 18 AND dsin_category = 'psychosis' THEN Datein || Dsin END) AS adult_second_psychosis,
+            /*19*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn >= 18 AND dsin_category = 'schizophrenia' THEN Datein || Dsin END) AS adult_second_schizophrenia,
+            /*20*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn >= 18 AND dsin_category = 'mental_retardation' THEN Datein || Dsin END) AS adult_second_mental_retardation,
+            /*21*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn >= 18 AND dsin_category = 'non_psychotic' THEN Datein || Dsin END) AS adult_second_non_psychotic,
+            /*22*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn >= 18 AND dsin_category = 'substance_use' THEN Datein || Dsin END) AS adult_second_substance_use,
+            /*23*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn >= 18 AND dsin_category = 'alcoholism' THEN Datein || Dsin END) AS adult_second_alcoholism,
+            /*24*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn >= 18 AND dsin_category = 'drug_addiction' THEN Datein || Dsin END) AS adult_second_drug_addiction,
+
+            -- ---- 4. ВЫПИСАННЫЕ ВЗРОСЛЫЕ (столбцы 25-32) ----
+            /*25*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut >= 18 THEN Dateout || Dsout END) AS adult_total_discharged,
+            /*26*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut >= 18 AND dsout_category = 'psychosis' THEN Dateout || Dsout END) AS adult_discharged_psychosis,
+            /*27*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut >= 18 AND dsout_category = 'schizophrenia' THEN Dateout || Dsout END) AS adult_discharged_schizophrenia,
+            /*28*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut >= 18 AND dsout_category = 'mental_retardation' THEN Dateout || Dsout END) AS adult_discharged_mental_retardation,
+            /*29*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut >= 18 AND dsout_category = 'non_psychotic' THEN Dateout || Dsout END) AS adult_discharged_non_psychotic,
+            /*30*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut >= 18 AND dsout_category = 'substance_use' THEN Dateout || Dsout END) AS adult_discharged_substance_use,
+            /*31*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut >= 18 AND dsout_category = 'alcoholism' THEN Dateout || Dsout END) AS adult_discharged_alcoholism,
+            /*32*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut >= 18 AND dsout_category = 'drug_addiction' THEN Dateout || Dsout END) AS adult_discharged_drug_addiction,
+
+            -- ---- 5. ДОПОЛНИТЕЛЬНЫЕ ПОКАЗАТЕЛИ ВЗРОСЛЫЕ (столбцы 33-43) ----
+            /*33*/ COUNT(DISTINCT CASE WHEN AgeIn >= 18 AND Deceased = 1 THEN Movebookid END) AS adult_deceased,
+            /*34*/ COUNT(DISTINCT CASE WHEN AgeIn >= 18 AND is_chronic = 1 THEN Movebookid END) AS adult_chronic,
+            /*35*/ SUM(CASE WHEN AgeIn >= 18 THEN bed_days ELSE 0 END) AS adult_bed_days,
+            /*36*/ COUNT(DISTINCT CASE WHEN AgeIn >= 18 AND Outto = 3 THEN Movebookid END) AS adult_transferred_pni,
+            /*37*/ COUNT(DISTINCT CASE WHEN AgeIn >= 18 AND is_chronic = 1 AND Dateout IS NULL THEN Movebookid END) AS adult_chronic_in_department,
+            /*38*/ COUNT(DISTINCT CASE WHEN AgeIn >= 18 AND is_forced = 1 THEN Movebookid END) AS adult_forced,
+            /*39*/ COUNT(DISTINCT CASE WHEN AgeIn >= 18 AND is_forced_over_year = 1 THEN Movebookid END) AS adult_forced_over_year,
+            /*40*/ 0 AS adult_unvoluntary,
+            /*41*/ 0 AS adult_unvoluntary_court,
+            /*42*/ 0 AS adult_mse_documents,
+            /*43*/ 0 AS adult_accidents,
+
+            -- =====================================================
+            -- НЕСОВЕРШЕННОЛЕТНИЕ (возраст < 18 лет) - столбцы 44-86
+            -- =====================================================
+
+            -- ---- 6. ВСЕ ПОСТУПИВШИЕ НЕСОВЕРШЕННОЛЕТНИЕ (столбцы 44-51) ----
+            /*44*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn < 18 THEN Datein || Dsin END) AS minor_total_admitted,
+            /*45*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn < 18 AND dsin_category = 'psychosis' THEN Datein || Dsin END) AS minor_psychosis,
+            /*46*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn < 18 AND dsin_category = 'schizophrenia' THEN Datein || Dsin END) AS minor_schizophrenia,
+            /*47*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn < 18 AND dsin_category = 'mental_retardation' THEN Datein || Dsin END) AS minor_mental_retardation,
+            /*48*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn < 18 AND dsin_category = 'non_psychotic' THEN Datein || Dsin END) AS minor_non_psychotic,
+            /*49*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn < 18 AND dsin_category = 'substance_use' THEN Datein || Dsin END) AS minor_substance_use,
+            /*50*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn < 18 AND dsin_category = 'alcoholism' THEN Datein || Dsin END) AS minor_alcoholism,
+            /*51*/ COUNT(DISTINCT CASE WHEN admission_category = 'admitted' AND AgeIn < 18 AND dsin_category = 'drug_addiction' THEN Datein || Dsin END) AS minor_drug_addiction,
+
+            -- ---- 7. ПОСТУПИВШИЕ ВПЕРВЫЕ НЕСОВЕРШЕННОЛЕТНИЕ (столбцы 52-59) ----
+            /*52*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn < 18 THEN Datein || Dsin END) AS minor_total_first_admitted,
+            /*53*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn < 18 AND dsin_category = 'psychosis' THEN Datein || Dsin END) AS minor_first_psychosis,
+            /*54*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn < 18 AND dsin_category = 'schizophrenia' THEN Datein || Dsin END) AS minor_first_schizophrenia,
+            /*55*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn < 18 AND dsin_category = 'mental_retardation' THEN Datein || Dsin END) AS minor_first_mental_retardation,
+            /*56*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn < 18 AND dsin_category = 'non_psychotic' THEN Datein || Dsin END) AS minor_first_non_psychotic,
+            /*57*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn < 18 AND dsin_category = 'substance_use' THEN Datein || Dsin END) AS minor_first_substance_use,
+            /*58*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn < 18 AND dsin_category = 'alcoholism' THEN Datein || Dsin END) AS minor_first_alcoholism,
+            /*59*/ COUNT(DISTINCT CASE WHEN admission_category = 'first_admitted' AND AgeIn < 18 AND dsin_category = 'drug_addiction' THEN Datein || Dsin END) AS minor_first_drug_addiction,
+
+            -- ---- 8. ПОСТУПИВШИЕ ПОВТОРНО НЕСОВЕРШЕННОЛЕТНИЕ (столбцы 60-67) ----
+            /*60*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn < 18 THEN Datein || Dsin END) AS minor_total_second_admitted,
+            /*61*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn < 18 AND dsin_category = 'psychosis' THEN Datein || Dsin END) AS minor_second_psychosis,
+            /*62*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn < 18 AND dsin_category = 'schizophrenia' THEN Datein || Dsin END) AS minor_second_schizophrenia,
+            /*63*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn < 18 AND dsin_category = 'mental_retardation' THEN Datein || Dsin END) AS minor_second_mental_retardation,
+            /*64*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn < 18 AND dsin_category = 'non_psychotic' THEN Datein || Dsin END) AS minor_second_non_psychotic,
+            /*65*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn < 18 AND dsin_category = 'substance_use' THEN Datein || Dsin END) AS minor_second_substance_use,
+            /*66*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn < 18 AND dsin_category = 'alcoholism' THEN Datein || Dsin END) AS minor_second_alcoholism,
+            /*67*/ COUNT(DISTINCT CASE WHEN admission_category = 'second_admitted' AND AgeIn < 18 AND dsin_category = 'drug_addiction' THEN Datein || Dsin END) AS minor_second_drug_addiction,
+
+            -- ---- 9. ВЫПИСАННЫЕ НЕСОВЕРШЕННОЛЕТНИЕ (столбцы 68-75) ----
+            /*68*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut < 18 THEN Dateout || Dsout END) AS minor_total_discharged,
+            /*69*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut < 18 AND dsout_category = 'psychosis' THEN Dateout || Dsout END) AS minor_discharged_psychosis,
+            /*70*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut < 18 AND dsout_category = 'schizophrenia' THEN Dateout || Dsout END) AS minor_discharged_schizophrenia,
+            /*71*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut < 18 AND dsout_category = 'mental_retardation' THEN Dateout || Dsout END) AS minor_discharged_mental_retardation,
+            /*72*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut < 18 AND dsout_category = 'non_psychotic' THEN Dateout || Dsout END) AS minor_discharged_non_psychotic,
+            /*73*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut < 18 AND dsout_category = 'substance_use' THEN Dateout || Dsout END) AS minor_discharged_substance_use,
+            /*74*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut < 18 AND dsout_category = 'alcoholism' THEN Dateout || Dsout END) AS minor_discharged_alcoholism,
+            /*75*/ COUNT(DISTINCT CASE WHEN discharge_category = 'discharged' AND AgeOut < 18 AND dsout_category = 'drug_addiction' THEN Dateout || Dsout END) AS minor_discharged_drug_addiction,
+
+            -- ---- 10. ДОПОЛНИТЕЛЬНЫЕ ПОКАЗАТЕЛИ НЕСОВЕРШЕННОЛЕТНИЕ (столбцы 76-86) ----
+            /*76*/ COUNT(DISTINCT CASE WHEN AgeIn < 18 AND Deceased = 1 THEN Movebookid END) AS minor_deceased,
+            /*77*/ COUNT(DISTINCT CASE WHEN AgeIn < 18 AND is_chronic = 1 THEN Movebookid END) AS minor_chronic,
+            /*78*/ SUM(CASE WHEN AgeIn < 18 THEN bed_days ELSE 0 END) AS minor_bed_days,
+            /*79*/ COUNT(DISTINCT CASE WHEN AgeIn < 18 AND Outto = 3 THEN Movebookid END) AS minor_transferred_pni,
+            /*80*/ COUNT(DISTINCT CASE WHEN AgeIn < 18 AND is_chronic = 1 AND Dateout IS NULL THEN Movebookid END) AS minor_chronic_in_department,
+            /*81*/ COUNT(DISTINCT CASE WHEN AgeIn < 18 AND is_forced = 1 THEN Movebookid END) AS minor_forced,
+            /*82*/ COUNT(DISTINCT CASE WHEN AgeIn < 18 AND is_forced_over_year = 1 THEN Movebookid END) AS minor_forced_over_year,
+            /*83*/ 0 AS minor_unvoluntary,
+            /*84*/ 0 AS minor_unvoluntary_court,
+            /*85*/ 0 AS minor_mse_documents,
+            /*86*/ 0 AS minor_accidents
+
+            FROM diagnosis_categories;
         </div>
-    </div>
+    </div>-->
 
     <script>
         // ============================================================
@@ -396,141 +437,48 @@
 
         // Основные значения (кол-во чел)
         var val = [
-            // 1. Количество поступивших в отделение всего
-            14,  // [0]  всего
-            6,   // [1]  психозы + слабоумие
-            5,   // [2]  шизофрения
-            0,   // [3]  умственная отсталость
-            2,   // [4]  непсихотические расстройства
-            1,   // [5]  ПАВ
-            0,   // [6]  хронический алкоголизм
-            0,   // [7]  наркомании
-
-            // 2. Поступило впервые в жизни
-            7,   // [8]  всего
-            4,   // [9]  психозы + слабоумие
-            0,   // [10] шизофрения
-            0,   // [11] умственная отсталость
-            2,   // [12] непсихотические расстройства
-            1,   // [13] ПАВ
-            0,   // [14] хронический алкоголизм
-            0,   // [15] наркомании
-
-            // 3. Поступило повторно в году
-            0,   // [16] всего
-            0,   // [17] психозы + слабоумие
-            0,   // [18] шизофрения
-            0,   // [19] умственная отсталость
-            0,   // [20] непсихотические расстройства
-            0,   // [21] ПАВ
-            0,   // [22] хронический алкоголизм
-            0,   // [23] наркомании
-
-            // 4. Выписано больных всего
-            6,   // [24] всего
-            1,   // [25] психозы + слабоумие
-            1,   // [26] шизофрения
-            0,   // [27] умственная отсталость
-            3,   // [28] непсихотические расстройства
-            1,   // [29] ПАВ
-            0,   // [30] хронический алкоголизм
-
-            // 5. Умерло больных всего
-            0,   // [31] всего
-            0,   // [32] хронизированных
-            0,   // [33] кол-во к/дней
-
-            // 6. Переведено в ПНИ впервые
-            0,   // [34] всего
-
-            // 7. Хронизированных больных на отделении
-            5,   // [35] всего
-
-            // 8. На принудительном лечении
-            6,   // [36] всего
-            4,   // [37] более года
-
-            // 9. Поступление в порядке "НГ"
-            3,   // [38] всего
-            3,   // [39] по решению суда (ст. 35)
-
-            // 10. Оформлено документов МСЭ
-            0,   // [40] всего
-
-            // 11. ЧП, побеги
-            0    // [41] всего
+            14, 6, 5, 0, 2, 1, 0, 0,  // 1-8
+            7, 4, 0, 0, 2, 1, 0, 0,   // 9-16
+            0, 0, 0, 0, 0, 0, 0, 0,   // 17-24
+            6, 1, 1, 0, 3, 1, 0, 0,   // 25-32
+            0, 0, 0,                   // 33-35
+            0,                         // 36
+            5,                         // 37
+            6, 4,                      // 38-39
+            3, 3,                      // 40-41
+            0,                         // 42
+            0                          // 43
         ];
 
         // Значения для столбца "из них 14-17 лет"
         var valTeen = [
-            0,   // 1. Количество поступивших - всего (14-17 лет)
-            0,   // психозы + слабоумие
-            0,   // шизофрения
-            0,   // умственная отсталость
-            0,   // непсихотические расстройства
-            0,   // ПАВ
-            0,   // хронический алкоголизм
-            0,   // наркомании
-
-            0,   // 2. Поступило впервые - всего
-            0,   // психозы + слабоумие
-            0,   // шизофрения
-            0,   // умственная отсталость
-            0,   // непсихотические расстройства
-            0,   // ПАВ
-            0,   // хронический алкоголизм
-            0,   // наркомании
-
-            0,   // 3. Поступило повторно - всего
-            0,   // психозы + слабоумие
-            0,   // шизофрения
-            0,   // умственная отсталость
-            0,   // непсихотические расстройства
-            0,   // ПАВ
-            0,   // хронический алкоголизм
-            0,   // наркомании
-
-            1,   // 4. Выписано - всего (14-17 лет)
-            0,   // психозы + слабоумие
-            0,   // шизофрения
-            0,   // умственная отсталость
-            1,   // непсихотические расстройства
-            0,   // ПАВ
-            0,   // хронический алкоголизм
-
-            0,   // 5. Умерло - всего
-            0,   // хронизированных
-            0,   // кол-во к/дней
-
-            0,   // 6. Переведено в ПНИ
-            0,   // 7. Хронизированных
-            0,   // 8. На принудительном лечении - всего
-            0,   // более года
-            0,   // 9. "НГ" - всего
-            0,   // по решению суда
-            0,   // 10. МСЭ
-            0    // 11. ЧП
+            0, 0, 0, 0, 0, 0, 0, 0,    // 1-8
+            0, 0, 0, 0, 0, 0, 0, 0,    // 9-16
+            0, 0, 0, 0, 0, 0, 0, 0,    // 17-24
+            1, 0, 0, 0, 1, 0, 0, 0,    // 25-32
+            0, 0, 0,                   // 33-35
+            0,                         // 36
+            0,                         // 37
+            0, 0,                      // 38-39
+            0, 0,                      // 40-41
+            0,                         // 42
+            0                          // 43
         ];
 
         // ============================================================
-        // ФУНКЦИЯ ОБНОВЛЕНИЯ ОТЧЕТА (вызывается из C#)
+        // ФУНКЦИЯ ОБНОВЛЕНИЯ ОТЧЕТА
         // ============================================================
 
-        /**
-         * Основная функция обновления отчета
-         * Вызывается из C# после выполнения SQL запросов
-         *
-         * @param {Array} data - Массив с результатами запросов (val)
-         * @param {Array} parameters - Массив с параметрами:
-         *        parameters[0] - Дата начала
-         *        parameters[1] - Дата окончания
-         *        parameters[2] - Отделение
-         */
         function updateReport(data, parameters) {
-            // Если переданы новые данные, обновляем массив val
-            if (data && data.length > 0) {
-                for (var i = 0; i < data.length && i < val.length; i++) {
+            // Если переданы новые данные, обновляем массивы
+            if (data && data.length >= 43) {
+                for (var i = 0; i < 43; i++) {
                     val[i] = data[i];
+                }
+            }
+            if (data && data.length >= 86) {
+                for (var m = 43; m < 86; m++) {
+                    valTeen[m - 43] = data[m];
                 }
             }
 
@@ -543,118 +491,106 @@
             }
 
             // Дата отчета
-            document.getElementById('reportDate').innerText = new Date().toLocaleDateString('ru-RU');
+            var now = new Date();
+            document.getElementById('reportDate').innerText = now.toLocaleDateString('ru-RU');
 
             // Строим таблицу
             buildTable();
 
             // Обновляем время
-            document.getElementById('updateTime').innerText = new Date().toLocaleString('ru-RU');
+            document.getElementById('updateTime').innerText = now.toLocaleString('ru-RU');
         }
 
         // ============================================================
         // ПОСТРОЕНИЕ ТАБЛИЦЫ
         // ============================================================
 
+        function createRow(label, value, teenValue) {
+            var valueDisplay = (value !== undefined && value !== null && value !== '') ? value : '0';
+            var teenDisplay = (teenValue !== undefined && teenValue !== null && teenValue !== '') ? teenValue : '0';
+
+            return '<tr>' +
+                '<td>' + label + '</td>' +
+                '<td class="col-center col-value">' + valueDisplay + '</td>' +
+                '<td class="col-center col-value-teen">' + teenDisplay + '</td>' +
+                '</tr>';
+        }
+
         function buildTable() {
             var tbody = document.getElementById('reportBody');
             var html = '';
 
-            // ============================================================
             // 1. Количество поступивших в отделение всего
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>1. Количество поступивших в отделение всего (из прием.покоя)</strong></td></tr>';
-            html += createRow('из них мужчины старше 60 лет, женщины старше 55 лет', '', '', true);
+            html += createRow('из них мужчины старше 60 лет, женщины старше 55 лет', '', '');
             html += createRow('а) Психозы + состояние слабоумия старческого возраста', val[1], valTeen[1]);
             html += createRow('б) Шизофрения', val[2], valTeen[2]);
             html += createRow('в) Умственная отсталость', val[3], valTeen[3]);
             html += createRow('г) Непсихотические расстройства', val[4], valTeen[4]);
             html += createRow('д) В связи с употреблением психоактивных веществ', val[5], valTeen[5]);
-            html += createRow('• из них: - хронический Алкоголизм (F 10.1; F 10.2; F 10.3)', val[6], valTeen[6], true);
-            html += createRow('  - наркомании, токсикомании', val[7], valTeen[7], true);
+            html += createRow('• из них: - хронический Алкоголизм (F 10.1; F 10.2; F 10.3)', val[6], valTeen[6]);
+            html += createRow('  - наркомании, токсикомании', val[7], valTeen[7]);
 
-            // ============================================================
             // 2. Поступило впервые в жизни всего
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>2. Поступило впервые в жизни всего</strong></td></tr>';
             html += createRow('а) Психозы + слабоумие старческого возраста', val[9], valTeen[9]);
             html += createRow('б) Шизофрения', val[10], valTeen[10]);
             html += createRow('в) Умственная отсталость', val[11], valTeen[11]);
             html += createRow('г) Непсихотические расстройства', val[12], valTeen[12]);
             html += createRow('д) В связи с употреблением психоактивных веществ', val[13], valTeen[13]);
-            html += createRow('• из них: - хронический Алкоголизм (F 10.1; F 10.2; F 10.3)', val[14], valTeen[14], true);
-            html += createRow('  - наркомании, токсикомании', val[15], valTeen[15], true);
+            html += createRow('• из них: - хронический Алкоголизм (F 10.1; F 10.2; F 10.3)', val[14], valTeen[14]);
+            html += createRow('  - наркомании, токсикомании', val[15], valTeen[15]);
 
-            // ============================================================
             // 3. Поступило повторно в году всего
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>3. Поступило повторно в году всего</strong></td></tr>';
             html += createRow('а) Психозы + слабоумие старческого возраста', val[17], valTeen[17]);
             html += createRow('б) Шизофрения', val[18], valTeen[18]);
             html += createRow('в) Умственная отсталость', val[19], valTeen[19]);
             html += createRow('г) Непсихотические расстройства', val[20], valTeen[20]);
             html += createRow('д) В связи с употреблением психоактивных веществ', val[21], valTeen[21]);
-            html += createRow('• из них: - хронический Алкоголизм (F 10.1; F 10.2; F 10.3)', val[22], valTeen[22], true);
-            html += createRow('  - наркомании, токсикомании', val[23], valTeen[23], true);
+            html += createRow('• из них: - хронический Алкоголизм (F 10.1; F 10.2; F 10.3)', val[22], valTeen[22]);
+            html += createRow('  - наркомании, токсикомании', val[23], valTeen[23]);
 
-            // ============================================================
             // 4. Выписано больных всего
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>4. Выписано больных всего</strong></td></tr>';
-            html += createRow('Из числа выписанных больных поступило по экстренным показаниям', '', '', true);
+            html += createRow('Из числа выписанных больных поступило по экстренным показаниям', '', '');
             html += createRow('а) Психозы + слабоумие старческого возраста', val[25], valTeen[25]);
             html += createRow('б) Шизофрения', val[26], valTeen[26]);
             html += createRow('в) Умственная отсталость', val[27], valTeen[27]);
             html += createRow('г) Непсихотические расстройства', val[28], valTeen[28]);
             html += createRow('д) В связи с употреблением психоактивных веществ', val[29], valTeen[29]);
-            html += createRow('• из них: - хронический Алкоголизм (F 10.1; F 10.2; F 10.3)', val[30], valTeen[30], true);
+            html += createRow('• из них: - хронический Алкоголизм (F 10.1; F 10.2; F 10.3)', val[30], valTeen[30]);
 
-            // ============================================================
             // 5. Умерло больных всего
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>5. Умерло больных всего</strong></td></tr>';
-            html += createRow('• хронизированных', val[32], valTeen[32], true);
-            html += createRow('• кол-во к/дней', val[33], valTeen[33], true);
+            html += createRow('• хронизированных', val[32], valTeen[32]);
+            html += createRow('• кол-во к/дней', val[33], valTeen[33]);
 
-            // ============================================================
             // 6. Переведено в ПНИ впервые всего
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>6. Переведено в ПНИ впервые всего</strong></td></tr>';
             html += createRow('', val[34], valTeen[34]);
 
-            // ============================================================
             // 7. Кол-во хронизированных больных на отделении
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>7. Кол-во хронизированных больных на отделении</strong></td></tr>';
             html += createRow('', val[35], valTeen[35]);
 
-            // ============================================================
             // 8. Кол-во больных на принудительном лечении
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>8. Кол-во больных, находящихся на принуд. стационарном лечении</strong></td></tr>';
-            html += createRow('• из них более года', val[37], valTeen[37], true);
+            html += createRow('• из них более года', val[37], valTeen[37]);
 
-            // ============================================================
             // Ранний возврат
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>Ранний возврат (Список лиц, госпитализированных ранее 21 дня)</strong></td></tr>';
             html += createRow('', '1', '');
 
-            // ============================================================
             // 9. Поступление в порядке "НГ"
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>9. Поступление в порядке «НГ» всего</strong></td></tr>';
-            html += createRow('-- из них по решению суда (ст. 35)', val[39], valTeen[39], true);
+            html += createRow('-- из них по решению суда (ст. 35)', val[39], valTeen[39]);
 
-            // ============================================================
             // 10. Оформлено документов МСЭ
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>10. Оформлено документов МСЭ, ИПР, восстановление справок</strong></td></tr>';
             html += createRow('', val[40], valTeen[40]);
 
-            // ============================================================
             // 11. Наличие ЧП, побеги
-            // ============================================================
             html += '<tr class="section-header"><td colspan="3"><strong>11. Наличие ЧП, побеги</strong></td></tr>';
             html += createRow('', val[41], valTeen[41]);
 
@@ -663,36 +599,7 @@
             // Подсчет общего количества пациентов
             var total = (parseInt(val[0] || 0) + parseInt(val[24] || 0));
             document.getElementById('totalPatients').innerText = total;
-        }
-
-        // ============================================================
-        // ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ СОЗДАНИЯ СТРОКИ
-        // ============================================================
-
-        function createRow(label, value, teenValue, isIndent) {
-            var indentClass = isIndent ? 'indent' : '';
-            var valueDisplay = (value !== undefined && value !== null && value !== '') ? value : '0';
-            var teenDisplay = (teenValue !== undefined && teenValue !== null && teenValue !== '') ? teenValue : '0';
-
-            return '<tr>' +
-                '<td class="' + indentClass + '">' + label + '</td>' +
-                '<td class="col-center col-value">' + valueDisplay + '</td>' +
-                '<td class="col-center col-value-teen">' + teenDisplay + '</td>' +
-                '</tr>';
-        }
-
-        // ============================================================
-        // ИНИЦИАЛИЗАЦИЯ (автозагрузка при открытии)
-        // ============================================================
-
-        // Автоматически строим таблицу при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function () {
-            // Если данные переданы из C#, они обновят таблицу через updateReport
-            // Иначе используем значения по умолчанию
-            buildTable();
-            document.getElementById('reportDate').innerText = new Date().toLocaleDateString('ru-RU');
-            document.getElementById('updateTime').innerText = new Date().toLocaleString('ru-RU');
-        });
+        }        
     </script>
 </body>
 </html>
