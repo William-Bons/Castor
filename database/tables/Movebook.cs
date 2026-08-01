@@ -18,7 +18,7 @@ public class Movebook
     public int? Ordered { get; set; }
     public string? Dsin { get; set; } = null!;
     public string? Dsout { get; set; }
-    public int? Outto { get; set; }
+    public int? Outto { get; set; } // 0-Домой 1-в др отделение 2-в др.стационар 3-в ПНИ
     public bool City { get; set; }
     public bool First { get; set; }
     public bool Second { get; set; }

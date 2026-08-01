@@ -68,7 +68,7 @@ namespace Castor.gui.reports
         {
             try
             {
-                Browser.NavigateToString(File.ReadAllText("rep/ReportsList.html"));
+                Browser.NavigateToString(File.ReadAllText("rep/SummaryReports.html"));
             }
             catch (Exception ex)
             {

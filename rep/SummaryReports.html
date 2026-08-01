@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сводные отчеты</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background-color: #f5f7fa;
+            font-size: 14px;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+            .header h1 {
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            .header p {
+                opacity: 0.8;
+                margin-top: 5px;
+            }
+
+        .reports-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+            .report-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            }
+
+            .report-card .icon {
+                font-size: 32px;
+                display: block;
+                margin-bottom: 10px;
+            }
+
+            .report-card h2 {
+                font-size: 18px;
+                color: #2c3e50;
+                margin-bottom: 8px;
+            }
+
+            .report-card .version {
+                font-size: 12px;
+                color: #7f8c8d;
+                background: #ecf0f1;
+                padding: 2px 8px;
+                border-radius: 12px;
+                display: inline-block;
+                margin-bottom: 8px;
+            }
+
+            .report-card .description {
+                font-size: 13px;
+                color: #555;
+                margin-bottom: 12px;
+            }
+
+            .report-card .meta {
+                font-size: 12px;
+                color: #7f8c8d;
+                border-top: 1px solid #ecf0f1;
+                padding-top: 10px;
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            .report-card .badge {
+                display: inline-block;
+                padding: 2px 10px;
+                border-radius: 12px;
+                font-size: 11px;
+                font-weight: 600;
+            }
+
+        .badge-active {
+            background: #27ae60;
+            color: white;
+        }
+
+        .badge-week {
+            background: #f39c12;
+            color: white;
+        }
+
+        .badge-month {
+            background: #2980b9;
+            color: white;
+        }
+
+        .badge-summary {
+            background: #8e44ad;
+            color: white;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 12px;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 10px;
+            }
+
+            .report-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+                .report-card:hover {
+                    transform: none;
+                    box-shadow: none;
+                }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Сводные отчеты</h1>
+            <p>Перечень доступных отчетных форм</p>
+        </div>
+
+        <div class="reports-grid">
+            <!-- MonthMovement.html -->
+            <div class="report-card" onclick="window.location.href='rep/MonthMovement.html'">
+                <span class="icon">📊</span>
+                <h2>Месячный отчет по движению пациентов</h2>
+                <span class="version">Версия 2.1</span>
+                <span class="badge badge-month">Месячный</span>
+                <div class="description">
+                    Подробный отчет по движению пациентов с детализацией по диагнозам.
+                    Включает 86 показателей (43 для всех пациентов + 43 для детей 14-17 лет).
+                </div>
+                <div class="meta">
+                    <span>📅 01.08.2026</span>
+                    <span>📌 11 разделов</span>
+                    <span>🔢 86 показателей</span>
+                    <span>📁 MonthMovement.html</span>
+                </div>
+            </div>
+
+            <!-- Weekmove.html -->
+            <div class="report-card" onclick="window.location.href='rep/Weekmove.html'">
+                <span class="icon">📈</span>
+                <h2>Недельный отчет по движению пациентов</h2>
+                <span class="version">Версия 2.11</span>
+                <span class="badge badge-week">Недельный</span>
+                <div class="description">
+                    Оперативный отчет по основным показателям движения пациентов.
+                    8 ключевых показателей: поступление, выбытие, закрытые случаи, исходы, активные.
+                </div>
+                <div class="meta">
+                    <span>📅 01.08.2026</span>
+                    <span>📌 5 разделов</span>
+                    <span>🔢 8 показателей</span>
+                    <span>📁 Weekmove.html</span>
+                </div>
+            </div>
+
+            <!-- MonthlySummary.html -->
+            <div class="report-card" onclick="window.location.href='rep/MonthlySummary.html'">
+                <span class="icon">📋</span>
+                <h2>Сводный отчет по отделению</h2>
+                <span class="version">Версия 1.0</span>
+                <span class="badge badge-summary">Сводный</span>
+                <div class="description">
+                    Горизонтальный отчет с основными показателями отделения.
+                    Включает: среднее количество пролеченных, поступление, выписку + умершие,
+                    с детализацией по принудительным, переводам и хронизированным.
+                </div>
+                <div class="meta">
+                    <span>📅 01.08.2026</span>
+                    <span>📌 4 колонки</span>
+                    <span>🔢 6 показателей</span>
+                    <span>📁 MonthlySummary.html</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Актуально на 01.08.2026</span>
+            <span style="margin: 0 10px;">|</span>
+            <span>WPF WebBrowser (IE-совместимый)</span>
+        </div>
+    </div>
+</body>
+</html>

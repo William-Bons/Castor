@@ -1,0 +1,344 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчет по движению пациентов</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background-color: #ffffff;
+            font-size: 15px; /* было 13px */
+            display: table;
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            display: table-cell;
+            vertical-align: middle;
+            padding: 10px 20px;
+        }
+
+        .report-wrapper {
+            max-width: 70%;
+            margin: 0 auto;
+        }
+
+        @page {
+            size: A4;
+            margin: 10mm 12mm;
+        }
+
+        @media print {
+            body {
+                font-size: 14px; /* было 12px */
+            }
+
+            .container {
+                padding: 0;
+                display: block;
+            }
+
+            .report-wrapper {
+                max-width: 100%;
+                margin: 0;
+            }
+
+            .header {
+                padding: 8px 12px;
+                margin-bottom: 10px;
+            }
+
+                .header h1 {
+                    font-size: 18px; /* было 16px */
+                    margin: 0;
+                }
+
+            .report-table th,
+            .report-table td {
+                padding: 6px 10px;
+                font-size: 13px; /* было 11px */
+            }
+
+            .report-table th {
+                font-size: 13px; /* было 11px */
+            }
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 12px 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+            .header h1 {
+                margin: 0;
+                font-size: 20px; /* было 18px */
+                font-weight: bold;
+            }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px; /* было 13px */
+            height: auto;
+        }
+
+            .report-table th,
+            .report-table td {
+                border: 1px solid #000000;
+                padding: 8px 12px;
+                text-align: left;
+                vertical-align: middle;
+                line-height: 1.5;
+            }
+
+            .report-table th {
+                background: #34495e;
+                color: white;
+                font-weight: 600;
+                font-size: 15px; /* было 13px */
+            }
+
+            .report-table .section-header {
+                background: #e8edf2;
+                font-weight: bold;
+            }
+
+                .report-table .section-header td {
+                    padding: 8px 12px;
+                }
+
+            .report-table .sub-section {
+                padding-left: 30px;
+                font-style: italic;
+                color: #555;
+            }
+
+            .report-table .col-value {
+                font-weight: 600;
+                text-align: center;
+                font-size: 16px; /* было 14px */
+            }
+
+        .footer {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border: 1px solid #000000;
+            font-size: 14px; /* было 12px */
+            display: table;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+            .footer div {
+                display: inline-block;
+                margin-right: 30px;
+            }
+
+        .parameter-section {
+            display: none;
+        }
+
+        #sqlQueries {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="report-wrapper">
+            <div class="header">
+                <h1 id="headerTitle">Показатели работы отделения с 01.01.2026 по 31.07.2026, отд № 2710</h1>
+            </div>
+
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th style="width: 70%;">Наименование показателя</th>
+                        <th style="width: 30%; text-align: center;">Кол-во чел</th>
+                    </tr>
+                </thead>
+                <tbody id="reportBody">
+                    <!-- Данные заполняются через JavaScript -->
+                </tbody>
+            </table>
+
+            <div class="footer">
+                <div>
+                    <strong>Всего пациентов:</strong>
+                    <span id="totalPatients">--</span>
+                </div>
+                <div>
+                    <strong>Обновлено:</strong>
+                    <span id="updateTime">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--
+        Блок с параметрами отчета для отладки
+    -->
+    <div class="parameter-section">
+        <h4>Параметры отчета</h4>
+        <div class="required"></div>
+        <div class="parameter-block">
+            <div class="parameter-name">StartDate</div>
+            <pre id="paramStartDate">2026-06-30</pre>
+            <div class="parameter-type">DATE</div>
+        </div>
+        <div class="parameter-block">
+            <div class="parameter-name">EndDate</div>
+            <pre id="paramEndDate">2026-07-31</pre>
+            <div class="parameter-type">DATE</div>
+        </div>
+        <div class="parameter-block">
+            <div class="parameter-name">Department</div>
+            <pre id="paramDepartment">2710</pre>
+        </div>
+    </div>
+
+    <!--
+        Скрытый блок с SQL запросами
+    -->
+    <div id="sqlQueries">
+        <div data-query="all">
+            SELECT
+            COUNT(CASE WHEN Datein >= '@{StartDate}' AND Datein <= '@{EndDate}' THEN 1 END) AS admitted,
+            COUNT(CASE WHEN Dateout >= '@{StartDate}' AND Dateout <= '@{EndDate}' AND Dateout IS NOT NULL THEN 1 END) AS discharged,
+            COUNT(CASE WHEN Dateout >= '@{StartDate}' AND Dateout <= '@{EndDate}' AND Dateout IS NOT NULL AND Closed = 1 THEN 1 END) AS closed,
+            COUNT(CASE WHEN Dateout >= '@{StartDate}' AND Dateout <= '@{EndDate}' AND Dateout IS NOT NULL AND Deceased = 1 THEN 1 END) AS deceased,
+            COUNT(CASE WHEN Closed = 0 AND Dateout IS NULL AND Datein IS NOT NULL THEN 1 END) AS active,
+            COUNT(CASE WHEN Dateout >= '@{StartDate}' AND Dateout <= '@{EndDate}' AND Dateout IS NOT NULL AND Outto = 1 THEN 1 END) AS transferred,
+            COUNT(CASE WHEN Dateout >= '@{StartDate}' AND Dateout <= '@{EndDate}' AND Dateout IS NOT NULL AND Outto = 2 THEN 1 END) AS transferred_other,
+            COUNT(CASE WHEN Dateout >= '@{StartDate}' AND Dateout <= '@{EndDate}' AND Dateout IS NOT NULL AND Outto = 3 THEN 1 END) AS transferred_pni
+            FROM Movebooks
+            WHERE
+            (Datein >= '@{StartDate}' AND Datein <= '@{EndDate}')
+            OR (Dateout >= '@{StartDate}' AND Dateout <= '@{EndDate}' AND Dateout IS NOT NULL)
+            OR (Closed = 0 AND Dateout IS NULL AND Datein IS NOT NULL);
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // ДАННЫЕ ДЛЯ ОТЧЕТА
+        // ============================================================
+
+        // Значения показателей (по умолчанию - нули)
+        // [admitted, discharged, closed, deceased, active, transferred, transferred_other, transferred_pni]
+        var val = [0, 0, 0, 0, 0, 0, 0, 0];
+
+        // ============================================================
+        // ПОСТРОЕНИЕ ТАБЛИЦЫ
+        // ============================================================
+
+        function createRow(label, value) {
+            var valueDisplay = (value !== undefined && value !== null && value !== '') ? value : '0';
+            return '<tr>' +
+                '<td class="sub-section">' + label + '</td>' +
+                '<td class="col-value">' + valueDisplay + '</td>' +
+                '</tr>';
+        }
+
+        function createSectionHeader(title, value) {
+            var valueDisplay = (value !== undefined && value !== null && value !== '') ? value : '0';
+            return '<tr class="section-header">' +
+                '<td><strong>' + title + '</strong></td>' +
+                '<td class="col-value">' + valueDisplay + '</td>' +
+                '</tr>';
+        }
+
+        function buildTable() {
+            var tbody = document.getElementById('reportBody');
+            var html = '';
+
+            // 1. Поступление
+            html += createSectionHeader('1. Поступление', val[0] || 0);
+
+            // 2. Выбытие
+            html += createSectionHeader('2. Выбытие', val[1] || 0);
+
+            // 3. Закрытые случаи
+            html += createSectionHeader('3. Закрытые случаи', val[2] || 0);
+
+            // 4. Исходы (с подразделами)
+            html += createSectionHeader('4. Исходы', val[1] || 0);
+            html += createRow('Умерло', val[3] || 0);
+            html += createRow('Переведено в другие учреждения', val[6] || 0);
+            html += createRow('Переведено в ПНИ', val[7] || 0);
+            html += createRow('Переведено', val[5] || 0);
+
+            // 5. Активные пациенты
+            html += createSectionHeader('5. Активные пациенты', val[4] || 0);
+
+            tbody.innerHTML = html;
+        }
+
+        // ============================================================
+        // ФУНКЦИЯ ОБНОВЛЕНИЯ ДАННЫХ (вызывается из C#)
+        // ============================================================
+
+        function updateReport(data, parameters) {
+            // data - массив из 8 значений
+            // parameters - массив [startDate, endDate, department]
+
+            if (data && data.length >= 8) {
+                for (var i = 0; i < 8; i++) {
+                    val[i] = data[i] || 0;
+                }
+            }
+
+            // Обновляем заголовок
+            if (parameters && parameters.length >= 3) {
+                var startDate = parameters[0] || '01.01.2026';
+                var endDate = parameters[1] || '31.07.2026';
+                var department = parameters[2] || '2710';
+                document.getElementById('headerTitle').innerText = 'Показатели работы отделения с ' + startDate.split(' ')[0] + ' по ' + endDate.split(' ')[0] + ', отд № ' + department;
+            }
+
+            // Обновляем время
+            document.getElementById('updateTime').innerText = new Date().toLocaleString('ru-RU');
+
+            // Рассчитываем общее количество
+            var total = (parseInt(val[0] || 0) + parseInt(val[1] || 0));
+            document.getElementById('totalPatients').innerText = total;
+
+            // Перестраиваем таблицу
+            buildTable();
+        }
+
+        // ============================================================
+        // АВТОМАТИЧЕСКАЯ ЗАГРУЗКА
+        // ============================================================
+
+        (function () {
+            var startDate = '01.01.2026';
+            var endDate = '31.07.2026';
+            var department = '2710';
+            document.getElementById('headerTitle').innerText = 'Показатели работы отделения с ' + startDate.split(' ')[0] + ' по ' + endDate.split(' ')[0] + ', отд № ' + department;
+            document.getElementById('updateTime').innerText = new Date().toLocaleString('ru-RU');
+
+            // Инициализируем с нулевыми значениями
+            buildTable();
+        })();
+    </script>
+</body>
+</html>

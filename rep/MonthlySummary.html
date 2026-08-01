@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сводный отчет по отделению</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #ffffff;
+            font-size: 13px;
+            padding: 10px 20px;
+        }
+
+        .container {
+            height: 100%;
+            padding: 10px 20px;
+            box-sizing: border-box;
+        }
+
+        .report-wrapper {
+            max-width: 80%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            height: 100%;
+        }
+
+        .content {
+            flex: 1 0 auto;
+        }
+
+        @page {
+            size: A4 landscape;
+            margin: 10mm 12mm;
+        }
+
+        @media print {
+            body {
+                font-size: 12px;
+                padding: 0;
+                height: 100%;
+            }
+
+            .container {
+                padding: 0;
+                height: 100%;
+            }
+
+            .report-wrapper {
+                max-width: 100%;
+                margin: 0;
+                min-height: 100vh;
+                height: 100%;
+            }
+
+            .content {
+                flex: 1 0 auto;
+            }
+
+            .footer {
+                flex-shrink: 0;
+                border: 1px solid #000000;
+                page-break-inside: avoid;
+            }
+
+            .header .org-name {
+                font-size: 13px;
+            }
+
+            .header .org-sub {
+                font-size: 12px;
+            }
+
+            .recipient {
+                font-size: 12px;
+            }
+
+            .request-title {
+                font-size: 16px;
+            }
+
+            .request-text {
+                font-size: 13px;
+            }
+
+            .report-table th,
+            .report-table td {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            .report-table th {
+                font-size: 11px;
+            }
+
+            .verified-block {
+                font-size: 12px;
+            }
+
+            .signature {
+                font-size: 12px;
+            }
+        }
+
+        /* --- Шапка с официальным бланком --- */
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+            .header .org-name {
+                font-weight: bold;
+                font-size: 14px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .header .org-sub {
+                font-weight: bold;
+                font-size: 13px;
+            }
+
+        /* --- Правая часть (получатель) --- */
+        .recipient {
+            text-align: right;
+            margin-bottom: 10px;
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        /* --- Заголовок заявления --- */
+        .request-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- Текст заявления --- */
+        .request-text {
+            text-align: center;
+            line-height: 1.8;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+            .request-text .period {
+                font-weight: bold;
+            }
+
+        /* --- Основная таблица --- */
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            height: auto;
+            margin-top: 10px;
+        }
+
+            .report-table th,
+            .report-table td {
+                border: 1px solid #000000;
+                padding: 8px 12px;
+                text-align: center;
+                vertical-align: middle;
+                line-height: 1.5;
+            }
+
+            .report-table th {
+                background: #34495e;
+                color: white;
+                font-weight: 600;
+                font-size: 13px;
+            }
+
+            .report-table .section-header {
+                background: #e8edf2;
+                font-weight: bold;
+            }
+
+            .report-table .sub-section {
+                background: #f8f9fa;
+                font-style: italic;
+            }
+
+            .report-table .col-value {
+                font-weight: 600;
+                font-size: 14px;
+            }
+
+            .report-table .col-total {
+                font-weight: 700;
+                font-size: 15px;
+                color: #2c3e50;
+            }
+
+        /* --- Подпись --- */
+        .signature {
+            margin-top: 20px;
+            text-align: right;
+            line-height: 2;
+            font-size: 13px;
+        }
+
+            .signature .doctor-name {
+                font-weight: bold;
+            }
+
+            .signature .doctor-dept {
+                font-size: 12px;
+                color: #333;
+            }
+
+        /* --- Блок "ПРОВЕРЕНО" --- */
+        .verified-block {
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+            .verified-block .verified-title {
+                font-weight: bold;
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .verified-block .verified-text {
+                line-height: 2;
+            }
+
+                .verified-block .verified-text .label {
+                    font-weight: bold;
+                }
+
+                .verified-block .verified-text .underline {
+                    display: inline-block;
+                    width: 80px;
+                    border-bottom: 1px solid #000000;
+                    margin: 0 5px;
+                }
+
+            .verified-block .verified-footer {
+                margin-top: 15px;
+                text-align: right;
+                line-height: 2;
+            }
+
+                .verified-block .verified-footer .statistician {
+                    font-weight: bold;
+                }
+
+                .verified-block .verified-footer .signature-line {
+                    display: inline-block;
+                    width: 120px;
+                    border-bottom: 1px solid #000000;
+                    margin-left: 10px;
+                }
+
+        /* --- Футер --- */
+        .footer {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border: 1px solid #000000;
+            font-size: 12px;
+            display: table;
+            width: 100%;
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+            .footer div {
+                display: inline-block;
+                margin-right: 30px;
+            }
+
+        .parameter-section {
+            display: none;
+        }
+
+        #sqlQueries {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="report-wrapper">
+            <div class="content">
+                <!-- ШАПКА (официальный бланк) -->
+                <div class="header">
+                    <div class="org-name">КОМИТЕТ ПО ЗДРАВООХРАНЕНИЮ ЛЕНИНГРАДСКОЙ ОБЛАСТИ</div>
+                    <div class="org-sub">ГОСУДАРСТВЕННОЕ КАЗЕННОЕ УЧРЕЖДЕНИЕ ЗДРАВООХРАНЕНИЯ</div>
+                    <div class="org-sub">ДРУЖНОСЕЛЬСКАЯ ПСИХИАТРИЧЕСКАЯ БОЛЬНИЦА</div>
+                </div>
+
+                <!-- ПОЛУЧАТЕЛЬ (по правому краю) -->
+                <div class="recipient">
+                    <div>Главному врачу ГКУЗ ЛО ДПБ</div>
+                    <div>Кузиной Е.В.</div>
+                    <div id="doctorInfo">от врача психиатра Иванов И.И. отделение Психиатрическое отделение № 6</div>
+                </div>
+
+                <!-- ЗАЯВЛЕНИЕ -->
+                <div class="request-title">ЗАЯВЛЕНИЕ</div>
+                <div class="request-text">
+                    Прошу оплатить увеличенный объем работы за период
+                    <span class="period" id="periodDisplay">с 01.07.2026 по 31.07.2026</span> года.
+                </div>
+
+                <!-- ОСНОВНАЯ ТАБЛИЦА -->
+                <table class="report-table" id="reportTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Показатель</th>
+                            <th style="width: 12%;">Отделение</th>
+                            <th style="width: 17%;">Среднее кол-во пролеченных</th>
+                            <th style="width: 17%;">Поступило больных из ПО</th>
+                            <th style="width: 17%;">Принято на курацию от других врачей</th>
+                            <th style="width: 17%;">Выписано + умершие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportBody">
+                        <!-- Данные заполняются через JavaScript -->
+                    </tbody>
+                </table>
+
+                <!-- ПОДПИСЬ -->
+                <div class="signature">
+                    <div class="doctor-name" id="doctorFullName">Иванов Иван Иванович</div>
+                    <div class="doctor-dept" id="doctorDept">врач психиатр Психиатрическое отделение № 6</div>
+                    <div id="signatureDate">__________________</div>
+                </div>
+
+                <!-- БЛОК "ПРОВЕРЕНО" -->
+                <div class="verified-block">
+                    <div class="verified-title">ПРОВЕРЕНО</div>
+                    <div class="verified-text">
+                        <div>
+                            <span class="label">Данные представленного отчета</span>
+                        </div>
+                        <div>
+                            <span class="label">согласованы со статистиками</span>
+                        </div>
+                        <div>
+                            <span class="label">пролечено</span>
+                            <span class="underline"></span>
+                        </div>
+                        <div>
+                            <span class="label">поступило</span>
+                            <span class="underline"></span>
+                        </div>
+                        <div>
+                            <span class="label">выписано</span>
+                            <span class="underline"></span>
+                        </div>
+                    </div>
+                    <div class="verified-footer">
+                        <span class="statistician">врач-статистик</span>
+                        <span>&nbsp;&nbsp;Дата: <span class="underline" style="width:100px;"></span></span>
+                        <span class="signature-line"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ФУТЕР -->
+            <div class="footer">
+                <div>
+                    <strong>Дата отчета:</strong>
+                    <span id="reportDate">--</span>
+                </div>
+                <div>
+                    <strong>Обновлено:</strong>
+                    <span id="updateTime">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Параметры и SQL запросы -->
+    <div class="parameter-section">
+        <h4>Параметры отчета</h4>
+        <div class="parameter-block">
+            <div class="parameter-name">StartDate</div>
+            <pre id="paramStartDate">2026-07-01</pre>
+            <div class="parameter-type">DATE</div>
+        </div>
+        <div class="parameter-block">
+            <div class="parameter-name">EndDate</div>
+            <pre id="paramEndDate">2026-07-31</pre>
+            <div class="parameter-type">DATE</div>
+        </div>
+        <div class="parameter-block">
+            <div class="parameter-name">Department</div>
+            <pre id="paramDepartment">2710</pre>
+            <div class="parameter-type">INT</div>
+        </div>
+        <div class="parameter-block">
+            <div class="parameter-name">DoctorName</div>
+            <pre id="paramDoctorName">36386</pre>
+            <div class="parameter-type">INT</div>
+        </div>
+    </div>
+
+    <div id="sqlQueries">
+        <div data-query="admitted" data-context="MedisContext">
+            SELECT COUNT(DISTINCT v.keyid)
+            FROM visit v
+            INNER JOIN visit root_v ON root_v.keyid = v.rootid
+            WHERE root_v.dat::date BETWEEN '@{StartDate}'::date AND '@{EndDate}'::date
+            AND v.depid = @{Department}
+            AND v.doctorid = @{DoctorName};
+        </div>
+        <div data-query="discharged_deceased" data-context="MedisContext">
+            SELECT COUNT(*)
+            FROM visit
+            WHERE depid=@{Department}
+            AND doctorid=@{DoctorName}
+            AND cast(dat1 as date) >= '@{StartDate}'
+            AND cast(dat1 as date) <= '@{EndDate}'
+        </div>
+        <div data-query="avg_patients" data-context="MedisContext">
+            WITH dates AS (
+            SELECT generate_series(
+            '@{StartDate}'::date,
+            '@{EndDate}'::date,
+            '1 day'::interval
+            )::date AS date
+            )
+            SELECT ROUND(AVG(daily_count)) AS avg_patients
+            FROM (
+            SELECT
+            d.date,
+            COUNT(DISTINCT v.keyid) AS daily_count
+            FROM dates d
+            INNER JOIN visit v
+            ON v.dat <= d.date
+            AND (v.dat1 IS NULL OR v.dat1 >= d.date)
+            AND v.depid = @{Department}
+            AND v.doctorid = @{DoctorName}
+            GROUP BY d.date
+            ) daily;
+        </div>
+
+        <div data-query="forced" data-context="MedisContext">
+            SELECT COUNT(*)
+            FROM visit
+            WHERE depid=@{Department}
+            AND doctorid=@{DoctorName}
+            AND cast(dat as date) >= '@{StartDate}'
+            AND cast(dat as date) <= '@{EndDate}'
+        </div>
+        <div data-query="transferred_other" data-context="MedisContext">
+            SELECT COUNT(*)
+            FROM visit
+            WHERE depid=@{Department}
+            AND doctorid=@{DoctorName}
+            AND cast(dat1 as date) >= '@{StartDate}'
+            AND cast(dat1 as date) <= '@{EndDate}'
+            AND dep1id!=22
+            AND depid!=dep1id
+        </div>
+        <div data-query="chronic" data-context="MedisContext">
+            SELECT COUNT(DISTINCT v.keyid)
+            FROM visit v
+            INNER JOIN visit root_v ON root_v.keyid = v.rootid
+            WHERE root_v.dat::date <= ('@{EndDate}'::date - INTERVAL '365 days')
+            AND (v.dat1 IS NULL OR v.dat1::date >= '@{StartDate}'::date)
+            AND v.depid = @{Department}
+            AND v.doctorid = @{DoctorName};
+        </div>
+        <div data-query="accepted_for_curation" data-context="MedisContext">
+            SELECT
+            (SELECT COUNT(DISTINCT keyid)
+            FROM visit
+            WHERE depid = @{Department}
+            AND doctorid = @{DoctorName})
+            -
+            (SELECT COUNT(DISTINCT v.keyid)
+            FROM visit v
+            INNER JOIN visit root_v ON root_v.keyid = v.rootid
+            WHERE root_v.dat::date BETWEEN '@{StartDate}'::date AND '@{EndDate}'::date
+            AND v.depid = @{Department}
+            AND v.doctorid = @{DoctorName}) AS accepted_for_curation;
+        </div>
+        <div data-query="doctor_name" data-context="MedisContext">
+            SELECT text
+            FROM solution_med.docdep
+            WHERE keyid = @{DoctorName};
+        </div>
+        <div data-query="dep_name" data-context="MedisContext">
+            SELECT text
+            FROM solution_med.dep
+            WHERE keyid = @{Department};
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // ДАННЫЕ ДЛЯ ОТЧЕТА (массив значений)
+        // ============================================================
+        // val[0] - admitted (поступило)
+        // val[1] - discharged_deceased (выписано + умершие)
+        // val[2] - avg_patients (среднее кол-во пролеченных)
+        // val[3] - forced (принудительное лечение)
+        // val[4] - transferred_other (перевод на др. отд.)
+        // val[5] - chronic (хронизированные)
+        // val[6] - accepted_for_curation (принято на курацию)
+        // val[7] - doctor_name (имя врача из docdep)
+        // val[8] - dep_name (название отделения из dep)
+
+        var val = [7, 4, 13, 0, 0, 5, 2, 'Иванов И.И.', 'Психиатрическое отделение № 6'];
+
+        // ============================================================
+        // ПОСТРОЕНИЕ ТАБЛИЦЫ
+        // ============================================================
+
+        function createRow(label, value, isTotal) {
+            var valueDisplay = (value !== undefined && value !== null && value !== '') ? value : '0';
+            var rowClass = isTotal ? ' class="col-total"' : '';
+            return '<tr>' +
+                '<td class="section-header"><strong>' + label + '</strong></td>' +
+                '<td>' + val[8] + '</td>' +
+                '<td>' + val[2] + '</td>' +
+                '<td>' + val[0] + '</td>' +
+                '<td>' + val[6] + '</td>' +
+                '<td' + rowClass + '>' + valueDisplay + '</td>' +
+                '</tr>';
+        }
+
+        function createDetailRow(label, value) {
+            var valueDisplay = (value !== undefined && value !== null && value !== '') ? value : '0';
+            return '<tr>' +
+                '<td class="sub-section" style="padding-left:30px;">' + label + '</td>' +
+                '<td></td>' +
+                '<td></td>' +
+                '<td></td>' +
+                '<td></td>' +
+                '<td>' + valueDisplay + '</td>' +
+                '</tr>';
+        }
+
+        function buildTable() {
+            var tbody = document.getElementById('reportBody');
+            var html = '';
+
+            html += createRow('Итого по отделению', val[1], true);
+            html += createDetailRow('Из них: Принуд.', val[3]);
+            html += createDetailRow('Перевод на др. отд.', val[4]);
+            html += createDetailRow('Хронизир.', val[5]);
+
+            tbody.innerHTML = html;
+        }
+
+        // ============================================================
+        // ФУНКЦИЯ ОБНОВЛЕНИЯ ДАННЫХ (вызывается из C#)
+        // ============================================================
+
+        function updateReport(data, parameters) {
+            // data - массив из 9 значений
+            // parameters - массив [startDate, endDate, department, doctorName, doctorFullName]
+
+            // 1. Обновляем все данные из массива
+            if (data && data.length >= 0) {
+                for (var i = 0; i < data.length; i++) {
+                    val[i] = data[i] || 0;
+                }
+            }
+
+            // 2. Обновляем период из параметров (только даты)
+            if (parameters && parameters.length >= 2) {
+                var startDate = parameters[0] || '01.07.2026';
+                var endDate = parameters[1] || '31.07.2026';
+                document.getElementById('periodDisplay').innerText = 'с ' + startDate.slice(0, 10) + ' по ' + endDate.slice(0, 10);
+            }
+
+            // 3. Обновляем все элементы, зависящие от val (уже обновлен из data)
+            document.getElementById('doctorInfo').innerHTML = 'от врача психиатра<br>'
+                + val[7]
+                + '<br>отделение '
+                + val[8];
+            document.getElementById('doctorFullName').innerText = val[7];
+            document.getElementById('doctorDept').innerText = 'врач психиатр ' + val[8];
+
+            document.getElementById('reportDate').innerText = new Date().toLocaleDateString('ru-RU');
+            document.getElementById('updateTime').innerText = new Date().toLocaleString('ru-RU');
+
+            buildTable();
+        }
+
+        // ============================================================
+        // АВТОМАТИЧЕСКАЯ ЗАГРУЗКА
+        // ============================================================
+
+        (function () {
+            var startDate = '01.07.2026';
+            var endDate = '31.07.2026';
+
+            document.getElementById('periodDisplay').innerText = 'с ' + startDate.slice(0, 10) + ' по ' + endDate.slice(0, 10);
+            document.getElementById('doctorInfo').innerHTML = 'от врача психиатра<br>'
+                + val[7]
+                + '<br>отделение '
+                + val[8];
+            document.getElementById('doctorFullName').innerText = val[7];
+            document.getElementById('doctorDept').innerText = 'врач психиатр ' + val[8];
+            document.getElementById('reportDate').innerText = new Date().toLocaleDateString('ru-RU');
+            document.getElementById('updateTime').innerText = new Date().toLocaleString('ru-RU');
+
+            buildTable();
+        })();
+    </script>
+</body>
+</html>
