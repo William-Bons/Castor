@@ -1,4 +1,5 @@
 ﻿using Castor.gui.reports;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -71,7 +72,12 @@ namespace Castor.gui.reports
             var type = param.Type;
             var value = param.Value;
 
-            return type.Name switch
+            if (param.Items != null && param.Items.Count > 0)
+            {
+                return CreateComboBox(param);
+            }
+            // иначе построение контролла под тип параметра
+            else return type.Name switch
             {
                 "DateTime" => CreateDatePicker(param),
                 "Boolean" => CreateCheckBox(param),
@@ -80,6 +86,18 @@ namespace Castor.gui.reports
                 "Guid" => CreateTextBox(param, typeof(Guid)),
                 _ => CreateTextBox(param, typeof(string))
             };
+        }
+
+        private UIElement CreateComboBox(ReportParameter param)
+        {
+            ComboBox combo = new ComboBox()
+            {
+                ItemsSource = param.Items,
+                SelectedValuePath = "ID",
+                DisplayMemberPath = "Value",
+                SelectedValue = param.Value
+            };
+            return combo;
         }
 
         private UIElement CreateDatePicker(ReportParameter param)
@@ -176,6 +194,7 @@ namespace Castor.gui.reports
         {
             return control switch
             {
+                ComboBox box => box.SelectedValue ?? 0,
                 DatePicker picker => picker.SelectedDate ?? DateTime.Now,
                 CheckBox checkBox => checkBox.IsChecked ?? false,
                 TextBox textBox => ConvertValue(textBox.Text, targetType),

@@ -25,7 +25,7 @@ namespace Castor.gui.reports
             InitializeComponent();
             DataContext = this;
             LoadReportList();
-            _calculator = new(Browser);
+            //_calculator = new(Browser);
 
             // перехватывает навигацию из HTML в параметре е - Uri
             Browser.Navigating += (a, e) =>

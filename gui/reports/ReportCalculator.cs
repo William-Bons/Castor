@@ -1,6 +1,6 @@
 ﻿using Castor.database;
 using Castor.database.tab_medis;
-using Castor.gui.reports;
+using Castor.Properties;
 using HtmlAgilityPack;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -9,41 +9,63 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Windows;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Castor.gui.reports
 {
+    /// <summary>
+    /// Представляет параметр отчета с именем, типом, значением и метаданными
+    /// </summary>
     public class ReportParameter
     {
         public ReportParameter() { }
         public string Name { get; set; } = string.Empty;
         public Type Type { get; set; } = typeof(string);
         public object? Value { get; set; } = null;
+        public string? Query { get; set; } = string.Empty;
+        public Type? Context { get; set; } = typeof(CastorContext);
+        public List<object>? Items { get; set; }
     }
 
+    /// <summary>
+    /// Представляет SQL-запрос отчета с именем и контекстом выполнения
+    /// </summary>
     public class ReportQuery
     {
         public ReportQuery() { }
         public string Query { get; set; } = string.Empty;
-        public string Name {  set; get; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public Type Context { get; set; } = typeof(CastorContext);
     }
+
+    /// <summary>
+    /// Основной класс для вычисления отчетов
+    /// </summary>
     public class ReportCalculator
     {
+        private readonly IBrowserAdapter _browserAdapter;
         private readonly Dictionary<string, ReportParameter> _parameters = new Dictionary<string, ReportParameter>();
-        private readonly WebBrowser Browser;
-        private IEnumerable<ReportQuery>? queries;
-        private string? html;
-        private bool _isParameterRequired=false;
+        private IEnumerable<ReportQuery>? _queries;
+        private string? _html;
+        private bool _isParameterRequired = false;
 
-        public ReportCalculator(WebBrowser browser)
+        /// <summary>
+        /// Путь к текущему загруженному отчету
+        /// </summary>
+        public string? CurrentReportPath { get; private set; }
+
+        /// <summary>
+        /// Конструктор с адаптером браузера
+        /// </summary>
+        /// <param name="browserAdapter">Адаптер для взаимодействия с браузером</param>
+        public ReportCalculator(IBrowserAdapter browserAdapter)
         {
-            Browser = browser;
+            _browserAdapter = browserAdapter ?? throw new ArgumentNullException(nameof(browserAdapter));
         }
 
         /// <summary>
@@ -52,113 +74,46 @@ namespace Castor.gui.reports
         /// <param name="htmlPath">Путь к HTML файлу с шаблоном отчета</param>
         public async Task CalculateAsync(string htmlPath)
         {
-            // Читаем содержимое HTML файла по указанному пути
-            // html - поле класса, хранящее HTML содержимое
-            html = File.ReadAllText(htmlPath);
+            if (string.IsNullOrEmpty(htmlPath))
+                throw new ArgumentException("Путь к HTML файлу не может быть пустым", nameof(htmlPath));
 
-            // Парсим HTML для извлечения параметров отчета
-            // _parameters - словарь, заполняемый в процессе парсинга
-            ParseParameters(html);
+            if (!File.Exists(htmlPath))
+                throw new FileNotFoundException($"HTML файл не найден: {htmlPath}");
 
-            if (_isParameterRequired) SetParameters();
+            CurrentReportPath = htmlPath;
+            _html = File.ReadAllText(htmlPath);
 
-            // Извлекаем SQL запросы из HTML
-            // queries - список строк с SQL запросами
-            await ParseSqlQueriesAsync(html);
+            // Парсим параметры отчета
+            ParseParameters(_html);
 
-            
-        }
-
-
-        /// <summary>
-        /// Асинхронно загружает HTML, подключается к БД и вызывает JavaScript функцию
-        /// </summary>
-        private async Task LoadBrowser()
-        {
-            // Список для хранения результатов выполнения SQL запросов
-            var results = new List<object>();
-
-            // Список для хранения значений параметров
-            var pvalues = new List<string>();
-
-
-            // Создаем подключение к SQLite базе данных
-            //using (var connection = new SqliteConnection(context.Database.GetConnectionString()))
-            
-                
-                // Перебираем все SQL запросы из списка
-            foreach (var query in queries ?? [])
+            // Если требуются параметры - открываем окно и завершаем
+            if (_isParameterRequired)
             {
-                try
-                {
-                    // Заменяем параметры в SQL запросе на их значения
-                    var sql = ReplaceParameters(query.Query);
-                    using DbContext context = (DbContext)Activator.CreateInstance(query?.Context ?? typeof(CastorContext));
-                    using DbConnection connection = context is CastorContext ?
-                        new SqliteConnection(context.Database.GetConnectionString()) :
-                        new NpgsqlConnection(context.Database.GetConnectionString());
-                        
-
-                    // Открываем подключение к базе данных асинхронно
-                    await connection.OpenAsync();
-
-                    // Выполняем SQL запрос и получаем скалярное значение
-
-                    using DbCommand command = connection is SqliteConnection ?
-                        new SqliteCommand(sql, (global::Microsoft.Data.Sqlite.SqliteConnection?)connection) :
-                        new NpgsqlCommand(sql, (global::Npgsql.NpgsqlConnection?)connection);
-                    
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            // Читаем все столбцов
-
-                            for (int i = 0; i < reader.FieldCount; i++)
-                            {
-                                results.Add(reader.IsDBNull(i) ? string.Empty : reader.GetValue(i));
-                            }
-
-                        }
-                    }
-                    
-                }
-                catch (Exception ex)
-                {
-                    // В случае ошибки добавляем сообщение об ошибке
-                    results.Add($"Ошибка: {ex.Message}");
-                }
+                await SetParameters();
+                return;
             }
-            
 
-            // Извлекаем значения параметров из словаря _parameters и добавляем в список pvalues
-            pvalues.AddRange(_parameters.Values.Select(p => p.Value.ToString()));
-
-            // Загружаем HTML страницу в WebBrowser
-            Browser.NavigateToString(html);
-
-            // Ожидаем загрузки HTML страницы (500 мс для полной загрузки)
-            await Task.Delay(500);
-
-            // Сериализуем результаты в JSON строку
-            var dataJson = JsonConvert.SerializeObject(results.ToArray());
-
-            // Сериализуем значения параметров в JSON строку
-            var paraJson = JsonConvert.SerializeObject(pvalues.ToArray());
-
-            // Формируем JavaScript код для вызова функции updateReport
-            var script = $"updateReport({dataJson}, {paraJson});";
-
-            // Выполняем JavaScript код в загруженной HTML странице
-            Browser.InvokeScript("eval", script);
+            // Иначе парсим SQL запросы и загружаем браузер
+            await ParseSqlQueriesAsync(_html);
         }
 
         /// <summary>
-        /// формирует словарь параметров и заполняет значениями по умолчанию 
+        /// Загружает список доступных отчетов
         /// </summary>
-        private void ParseParameters(string html)
+        public async Task LoadReportListAsync(string htmlPath)
         {
-            // Clean First!
+            if (!File.Exists(htmlPath))
+                throw new FileNotFoundException($"Файл списка отчетов не найден: {htmlPath}");
+
+            var html = File.ReadAllText(htmlPath);
+            await _browserAdapter.NavigateToStringAsync(html);
+        }
+
+        /// <summary>
+        /// Парсит параметры отчета из HTML
+        /// </summary>
+        private async void ParseParameters(string html)
+        {
             _parameters.Clear();
 
             var doc = new HtmlDocument();
@@ -175,7 +130,6 @@ namespace Castor.gui.reports
                 isRequired = requiredNode != null;
             }
 
-            // Устанавливаем флаг на уровне функции/класса
             _isParameterRequired = isRequired;
 
             // Ищем все блоки параметров
@@ -217,12 +171,68 @@ namespace Castor.gui.reports
                     };
                 }
 
-                // Извлекаем значение (по умолчанию)
+                // Извлекаем значение по умолчанию
                 var preNode = block.SelectSingleNode(".//pre");
                 if (preNode != null)
                 {
                     var valueStr = preNode.InnerText.Trim();
                     param.Value = ConvertValue(valueStr, param.Type);
+                }
+
+                // Извлекаем запрос для параметров выбора
+                var qnode = block.SelectSingleNode(".//div[contains(@class, 'parameter-query')]");
+                if (qnode != null)
+                {
+                    param.Query = qnode.InnerText?.Trim() ?? string.Empty;
+                    param.Context = GetContextType(qnode.GetAttributeValue("context", string.Empty));
+                    param.Items = new List<object>();
+
+                    try
+                    {
+                        // Заменяем параметры в запросе
+                        var sql = ReplaceParameters(param.Query);
+                        using DbContext context = (DbContext)Activator.CreateInstance(param?.Context ?? typeof(CastorContext));
+                        using DbConnection connection = context is CastorContext ?
+                            new SqliteConnection(context.Database.GetConnectionString()) :
+                            new NpgsqlConnection(context.Database.GetConnectionString());
+
+                        await connection.OpenAsync();
+
+                        using DbCommand command = connection is SqliteConnection ?
+                            new SqliteCommand(sql, (SqliteConnection?)connection) :
+                            new NpgsqlCommand(sql, (NpgsqlConnection?)connection);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                param.Items.Add(new { ID = reader.GetValue(0), Value = reader.GetValue(1) });
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Ошибка выполнения запроса для параметра {param.Name}: {ex.Message}");
+                        param.Items = new List<object>();
+                    }
+                }
+
+                // Извлекаем значение по умолчанию из настроек приложения
+                var snode = block.SelectSingleNode(".//div[contains(@class, 'parameter-current')]");
+                if (snode != null)
+                {
+                    var settingName = snode.InnerText?.Trim() ?? string.Empty;
+                    if (!string.IsNullOrEmpty(settingName))
+                    {
+                        try
+                        {
+                            param.Value = Settings.Default[settingName];
+                        }
+                        catch
+                        {
+                            // Если настройка не найдена, оставляем значение по умолчанию
+                        }
+                    }
                 }
 
                 // Добавляем в словарь
@@ -232,8 +242,7 @@ namespace Castor.gui.reports
                 }
             }
         }
-        
-        
+
         /// <summary>
         /// Обновляет значения параметров через вызов окна ParameterWindow
         /// </summary>
@@ -243,19 +252,51 @@ namespace Castor.gui.reports
 
             if (window.ShowDialog() == true)
             {
-                // Получаем обновленные значения
                 var updatedValues = window.UpdatedValues;
 
-                // Применяем параметры
                 foreach (var kvp in updatedValues)
                 {
-                    _parameters[kvp.Key].Value = kvp.Value;
+                    if (_parameters.ContainsKey(kvp.Key))
+                    {
+                        _parameters[kvp.Key].Value = kvp.Value;
+                    }
                 }
 
-                // Загружаем отчет
-                //_ = LoadBrowser();
+                // Сохраняем настройки
+                SaveParametersToSettings();
+
                 // Загружаем браузер с данными и выполняем скрипты
                 await LoadBrowser();
+            }
+        }
+
+        /// <summary>
+        /// Сохраняет параметры в настройки приложения
+        /// </summary>
+        private void SaveParametersToSettings()
+        {
+            try
+            {
+                foreach (var param in _parameters.Values)
+                {
+                    // Сохраняем только если есть атрибут parameter-current
+                    // Ищем соответствующий элемент в HTML для определения имени настройки
+                    // Этот метод может быть расширен в зависимости от логики приложения
+                    if (param.Value != null)
+                    {
+                        // Пример сохранения - можно адаптировать под свои нужды
+                        var settingName = $"Param_{param.Name}";
+                        if (Settings.Default.Properties[settingName] != null)
+                        {
+                            Settings.Default[settingName] = param.Value;
+                        }
+                    }
+                }
+                Settings.Default.Save();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Ошибка сохранения параметров: {ex.Message}");
             }
         }
 
@@ -272,29 +313,103 @@ namespace Castor.gui.reports
             // Ищем все div с атрибутом data-query внутри блока #sqlQueries
             var queryNodes = doc.DocumentNode.SelectNodes("//div[@data-query]");
 
-            if (queryNodes == null || queryNodes.Count == 0)
-                return;
-
-            foreach (var node in queryNodes)
+            if (queryNodes != null && queryNodes.Count > 0)
             {
-                var query = new ReportQuery();
+                foreach (var node in queryNodes)
+                {
+                    var query = new ReportQuery();
 
-                // Извлекаем имя запроса (data-query)
-                query.Name = node.GetAttributeValue("data-query", string.Empty);
+                    // Извлекаем имя запроса (data-query)
+                    query.Name = node.GetAttributeValue("data-query", string.Empty);
 
-                // Извлекаем контекст (data-context)
-                var contextName = node.GetAttributeValue("data-context", "CastorContext");
-                query.Context = GetContextType(contextName);
+                    // Извлекаем контекст (data-context)
+                    var contextName = node.GetAttributeValue("data-context", "CastorContext");
+                    query.Context = GetContextType(contextName);
 
-                // Извлекаем текст SQL-запроса
-                query.Query = CleanQuery(node.InnerText.Trim());
+                    // Извлекаем текст SQL-запроса
+                    query.Query = CleanQuery(node.InnerText.Trim());
 
-                result.Add(query);
+                    result.Add(query);
+                }
             }
-            queries = result;
+
+            _queries = result;
 
             // Загружаем браузер с данными и выполняем скрипты
             await LoadBrowser();
+        }
+
+        /// <summary>
+        /// Загружает браузер с HTML и выполняет JavaScript для обновления данных
+        /// </summary>
+        private async Task LoadBrowser()
+        {
+            var results = new List<object>();
+            var pvalues = new List<string>();
+
+            // Выполняем SQL запросы
+            if (_queries != null)
+            {
+                foreach (var query in _queries)
+                {
+                    try
+                    {
+                        var sql = ReplaceParameters(query.Query);
+                        using DbContext context = (DbContext)Activator.CreateInstance(query?.Context ?? typeof(CastorContext));
+                        using DbConnection connection = context is CastorContext ?
+                            new SqliteConnection(context.Database.GetConnectionString()) :
+                            new NpgsqlConnection(context.Database.GetConnectionString());
+
+                        await connection.OpenAsync();
+
+                        using DbCommand command = connection is SqliteConnection ?
+                            new SqliteCommand(sql, (SqliteConnection?)connection) :
+                            new NpgsqlCommand(sql, (NpgsqlConnection?)connection);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    results.Add(reader.IsDBNull(i) ? string.Empty : reader.GetValue(i));
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        results.Add($"Ошибка: {ex.Message}");
+                        System.Diagnostics.Debug.WriteLine($"Ошибка выполнения запроса {query.Name}: {ex.Message}");
+                    }
+                }
+            }
+
+            // Добавляем значения параметров
+            pvalues.AddRange(_parameters.Values.Select(p => p.Value?.ToString() ?? string.Empty));
+
+            // Загружаем HTML в браузер
+            if (!string.IsNullOrEmpty(_html))
+            {
+                await _browserAdapter.NavigateToStringAsync(_html);
+            }
+            else
+            {
+                throw new InvalidOperationException("HTML контент не загружен");
+            }
+
+            // Ожидаем загрузки HTML страницы
+            await Task.Delay(500);
+
+            // Сериализуем результаты в JSON
+            var dataJson = JsonConvert.SerializeObject(results.ToArray());
+            var paraJson = JsonConvert.SerializeObject(pvalues.ToArray());
+
+            // Формируем JavaScript код для вызова функции updateReport
+            var script = $"updateReport({dataJson}, {paraJson});";
+
+            // Выполняем JavaScript код в загруженной HTML странице
+            await _browserAdapter.InvokeScriptAsync(script);
         }
 
         /// <summary>
@@ -304,12 +419,15 @@ namespace Castor.gui.reports
         {
             return contextName switch
             {
-                "MedisContext" => typeof(MedisContext), // или ваш тип
+                "MedisContext" => typeof(MedisContext),
                 "CastorContext" => typeof(CastorContext),
-                _ => typeof(CastorContext) // по умолчанию
+                _ => typeof(CastorContext)
             };
         }
 
+        /// <summary>
+        /// Очищает SQL-запрос от лишних символов
+        /// </summary>
         private string CleanQuery(string query)
         {
             query = Regex.Replace(query, @"<!\[CDATA\[|\]\]>", "");
@@ -319,20 +437,30 @@ namespace Castor.gui.reports
             return query.Trim();
         }
 
+        /// <summary>
+        /// Заменяет параметры в SQL-запросе на их значения
+        /// </summary>
         private string ReplaceParameters(string query)
         {
+            if (string.IsNullOrEmpty(query))
+                return query;
+
+            var result = query;
             foreach (var param in _parameters)
             {
                 var placeholder = $"@{{{param.Key}}}";
-                if (query.Contains(placeholder))
+                if (result.Contains(placeholder))
                 {
                     var value = FormatValue(param.Value?.Value);
-                    query = query.Replace(placeholder, value);
+                    result = result.Replace(placeholder, value);
                 }
             }
-            return query;
+            return result;
         }
 
+        /// <summary>
+        /// Форматирует значение для вставки в SQL-запрос
+        /// </summary>
         private string FormatValue(object? value)
         {
             if (value == null) return "NULL";
@@ -352,9 +480,15 @@ namespace Castor.gui.reports
             if (value is Enum)
                 return $"{(int)value}";
 
+            if (value is int || value is long || value is decimal || value is double || value is float)
+                return value.ToString() ?? "0";
+
             return $"'{value.ToString()?.Replace("'", "''")}'";
         }
 
+        /// <summary>
+        /// Преобразует строковое значение в указанный тип
+        /// </summary>
         private static object? ConvertValue(string value, Type targetType)
         {
             if (string.IsNullOrEmpty(value))
@@ -390,18 +524,39 @@ namespace Castor.gui.reports
             }
             catch
             {
-                return value; // Возвращаем как строку в случае ошибки
+                return value;
             }
         }
 
-        private async Task<object> ExecuteScalarAsync(SqliteConnection connection, string query)
+        /// <summary>
+        /// Получает значение параметра по имени
+        /// </summary>
+        public object? GetParameterValue(string name)
         {
-            using (var command = new SqliteCommand(query, connection))
+            if (_parameters.TryGetValue(name, out var param))
             {
-                command.CommandTimeout = 5;
-                return await command.ExecuteScalarAsync();
+                return param.Value;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Устанавливает значение параметра по имени
+        /// </summary>
+        public void SetParameterValue(string name, object? value)
+        {
+            if (_parameters.TryGetValue(name, out var param))
+            {
+                param.Value = value;
             }
         }
 
+        /// <summary>
+        /// Получает список всех параметров
+        /// </summary>
+        public Dictionary<string, ReportParameter> GetParameters()
+        {
+            return new Dictionary<string, ReportParameter>(_parameters);
+        }
     }
 }
