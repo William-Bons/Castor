@@ -178,7 +178,7 @@
 
         <div class="reports-grid">
             <!-- MonthMovement.html -->
-            <div class="report-card" onclick="window.location.href='rep/MonthMovement.html'">
+            <div class="report-card" onclick="loadReport('rep/MonthMovement.html')">
                 <span class="icon">📊</span>
                 <h2>Показатели работы отделения за месяц</h2>
                 <span class="version">Версия 2.1</span>
@@ -196,7 +196,7 @@
             </div>
 
             <!-- Weekmove.html -->
-            <div class="report-card" onclick="window.location.href='rep/Weekmove.html'">
+            <div class="report-card" onclick="loadReport('rep/Weekmove.html')">
                 <span class="icon">📈</span>
                 <h2>Недельный отчет по движению пациентов</h2>
                 <span class="version">Версия 2.11</span>
@@ -214,7 +214,7 @@
             </div>
 
             <!-- MonthlySummary.html -->
-            <div class="report-card" onclick="window.location.href='rep/MonthlySummary.html'">
+            <div class="report-card" onclick="loadReport('rep/MonthlySummary.html')">
                 <span class="icon">📋</span>
                 <h2>Заявление врача за месяц</h2>
                 <span class="version">Версия 1.0</span>
@@ -236,8 +236,30 @@
         <div class="footer">
             <span>Актуально на 01.08.2026</span>
             <span style="margin: 0 10px;">|</span>
-            <span>WPF WebBrowser (IE-совместимый)</span>
+            <span>WPF WebBrowser</span>
         </div>
     </div>
+
+    <script>
+        // ============================================================
+        // УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ЗАГРУЗКИ ОТЧЕТОВ
+        // Работает в WebBrowser (через window.location)
+        // и в WebView2 (через postMessage)
+        // ============================================================
+        function loadReport(path) {
+            // Пытаемся отправить сообщение в WebView2
+            try {
+                if (window.chrome && window.chrome.webview) {
+                    window.chrome.webview.postMessage(path);
+                    return;
+                }
+            } catch (e) {
+                // Игнорируем ошибку и переходим к fallback
+            }
+
+            // Fallback для WebBrowser и других браузеров
+            window.location.href = path;
+        }
+    </script>
 </body>
 </html>

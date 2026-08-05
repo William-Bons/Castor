@@ -1,5 +1,6 @@
 ﻿using Castor.gui.common;
 using Microsoft.Web.WebView2.Wpf;
+using Microsoft.Web.WebView2.Core;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -37,6 +38,9 @@ namespace Castor.gui.reports
             // Команда обновления параметров
             UpdateParameters = new RelayCommandAsync(_calculator.SetParameters);
 
+            // Подписываемся на событие загрузки страницы
+            Loaded += Page_Loaded;
+
             // Загружаем список отчетов
             LoadReportList();
         }
@@ -63,9 +67,16 @@ namespace Castor.gui.reports
 
                 await Browser.EnsureCoreWebView2Async();
 
-                // Подписываемся на события
-                Browser.CoreWebView2.NewWindowRequested += OnNewWindowRequested;
+                // Проверяем, что CoreWebView2 не null
+                if (Browser.CoreWebView2 == null)
+                    throw new Exception("CoreWebView2 не инициализирован");
+
+                // ====== ПОДПИСКА НА СОБЫТИЯ ======
+                // Основной способ: WebMessageReceived для связи JS ↔ C#
                 Browser.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
+
+                // Для обработки открытия новых окон
+                Browser.CoreWebView2.NewWindowRequested += OnNewWindowRequested;
 
                 _isBrowserInitialized = true;
                 StatusText.Text = "✅ Браузер готов";
@@ -87,24 +98,38 @@ namespace Castor.gui.reports
         }
 
         /// <summary>
-        /// Обработка открытия новых окон
+        /// Обработка сообщений из JavaScript (WebView2)
         /// </summary>
-        private void OnNewWindowRequested(object? sender,
-            Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs e)
+        private void OnWebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
-            e.Handled = true;
-            Browser.CoreWebView2.Navigate(e.Uri);
+            try
+            {
+                var message = e.TryGetWebMessageAsString();
+                System.Diagnostics.Debug.WriteLine($"[WebMessageReceived] Получено: {message}");
+
+                if (string.IsNullOrEmpty(message))
+                    return;
+
+                // Проверяем, что это путь к HTML файлу
+                if (message.EndsWith(".html", StringComparison.OrdinalIgnoreCase) ||
+                    message.EndsWith(".htm", StringComparison.OrdinalIgnoreCase))
+                {
+                    LoadReport(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[WebMessageReceived] Ошибка: {ex.Message}");
+            }
         }
 
         /// <summary>
-        /// Обработка сообщений из JavaScript
+        /// Обработка открытия новых окон
         /// </summary>
-        private void OnWebMessageReceived(object? sender,
-            Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs e)
+        private void OnNewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)
         {
-            var message = e.TryGetWebMessageAsString();
-            // Можно обрабатывать сообщения из JavaScript
-            // Например, для логирования или команд
+            e.Handled = true;
+            Browser.CoreWebView2.Navigate(e.Uri);
         }
 
         /// <summary>
@@ -236,17 +261,6 @@ namespace Castor.gui.reports
         }
 
         /// <summary>
-        /// Обработка выбора отчета из списка
-        /// </summary>
-        private void ReportList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ReportList.SelectedItem is string reportPath && !string.IsNullOrEmpty(reportPath))
-            {
-                LoadReport(reportPath);
-            }
-        }
-
-        /// <summary>
         /// Обновление отчета
         /// </summary>
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
@@ -299,7 +313,6 @@ namespace Castor.gui.reports
 
                 if (Browser.CoreWebView2 != null)
                 {
-                    // WebView2 использует тот же диалог для печати и предпросмотра
                     Browser.CoreWebView2.ShowPrintUI();
                     StatusText.Text = "📄 Открыт предпросмотр печати";
                 }
@@ -312,53 +325,5 @@ namespace Castor.gui.reports
                               MessageBoxImage.Error);
             }
         }
-
-        /// <summary>
-        /// Экспорт в PDF
-        /// </summary>
-        //private async void ExportPdfButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        if (!_isBrowserInitialized)
-        //            await InitializeBrowserAsync();
-
-        //        if (Browser.CoreWebView2 == null)
-        //            return;
-
-        //        var saveDialog = new Microsoft.Win32.SaveFileDialog
-        //        {
-        //            Filter = "PDF files (*.pdf)|*.pdf",
-        //            DefaultExt = "pdf",
-        //            FileName = $"Report_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"
-        //        };
-
-        //        if (saveDialog.ShowDialog() == true)
-        //        {
-        //            var settings = new Microsoft.Web.WebView2.Core.CoreWebView2PrintSettings
-        //            {
-        //                ShouldPrintBackgrounds = true,
-        //                Orientation = Microsoft.Web.WebView2.Core.CoreWebView2PrintOrientation.Portrait,
-        //                PageWidth = 210,  // A4 в мм
-        //                PageHeight = 297
-        //            };
-
-        //            await Browser.CoreWebView2.PrintToPdfAsync(saveDialog.FileName, settings);
-        //            StatusText.Text = $"✅ PDF сохранен: {Path.GetFileName(saveDialog.FileName)}";
-
-        //            MessageBox.Show($"PDF успешно сохранен:\n{saveDialog.FileName}",
-        //                          "Успех",
-        //                          MessageBoxButton.OK,
-        //                          MessageBoxImage.Information);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Ошибка экспорта в PDF:\n\n{ex.Message}",
-        //                      "Ошибка",
-        //                      MessageBoxButton.OK,
-        //                      MessageBoxImage.Error);
-        //    }
-        //}
     }
 }

@@ -24,9 +24,9 @@
                 <Button Content="📎 Параметры" Command="{Binding UpdateParameters}" Margin="3" Padding="8,4" ToolTip="Настроить параметры отчета"/>
                 <Separator Width="2" Background="#CCCCCC" Margin="5,0"/>
                 <TextBlock Text="Отчет:" VerticalAlignment="Center" Margin="5,0" FontWeight="SemiBold"/>
-                <ComboBox x:Name="ReportList" Width="250" Margin="3" 
+                <!--<ComboBox x:Name="ReportList" Width="250" Margin="3" 
                           SelectionChanged="ReportList_SelectionChanged"
-                          ToolTip="Выберите отчет для загрузки"/>
+                          ToolTip="Выберите отчет для загрузки"/>-->
                 <TextBlock x:Name="StatusText" Text="Готов" VerticalAlignment="Center" Margin="15,0,5,0" Foreground="#666666" FontSize="11"/>
             </StackPanel>
         </Border>
